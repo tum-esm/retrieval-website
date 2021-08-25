@@ -73,7 +73,7 @@ export default function D3Plot(props: {
                 .enter()
                 .append('line')
                 .attr('class', 'y-axis-line')
-                .attr('x1', 96)
+                .attr('x1', 80)
                 .attr('x2', 1000 - paddingRight)
                 .attr('stroke', '#CBD5E1')
                 .attr('stroke-linecap', 'round')
@@ -95,16 +95,35 @@ export default function D3Plot(props: {
             xAxisLabels
                 .enter()
                 .append('text')
-                .attr(
-                    'class',
-                    'x-axis-label text-xs font-semibold fill-gray-700'
-                )
+                .attr('class', 'x-axis-label text-xs font-medium fill-gray-600')
                 .style('text-anchor', 'middle')
                 .attr('y', 372)
                 .attr('x', (x: number, i: number) => xScale(x))
                 .text((x: number, i: number) => x.toFixed(2).padStart(5, '0'));
 
             xAxisLabels.exit().remove();
+
+            let yAxisLabels = svg
+                .selectAll('.y-axis-label')
+                .data(
+                    range(
+                        domain[props.gas].from,
+                        domain[props.gas].to + domain[props.gas].step,
+                        domain[props.gas].step
+                    )
+                );
+            yAxisLabels
+                .enter()
+                .append('text')
+                .attr('class', 'y-axis-label text-xs font-medium fill-gray-600')
+                .style('dominant-baseline', 'middle')
+                .attr('x', 50)
+                .attr('y', (y: number, i: number) => yScale(y))
+                .text((y: number, i: number) =>
+                    y.toFixed(props.gas === 'co2' ? 0 : 3)
+                );
+
+            yAxisLabels.exit().remove();
         }
     });
 

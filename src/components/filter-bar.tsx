@@ -1,6 +1,7 @@
 /* This example requires Tailwind CSS v2.0+ */
 import React from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
+import DateGrid from './date-grid';
 
 export default function FilterBar() {
     return (
@@ -39,7 +40,7 @@ export default function FilterBar() {
                 </span>
             </div>
             <div className='h-full mx-6 border-r border-gray-300' />
-
+            <DateGrid displayDay='20210701' />
             <div className='flex-grow' />
         </div>
     );

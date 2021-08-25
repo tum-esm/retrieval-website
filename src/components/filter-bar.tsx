@@ -11,8 +11,15 @@ export default function FilterBar() {
                 'bg-white text-gray-900 shadow'
             }
         >
-            <div className='space-y-1 flex-col-center'>
-                <div className='text-xl font-semibold h-9'>Aug 14 2021</div>
+            <div className='flex-col-center'>
+                <div className='p-1 mb-2 bg-green-100 rounded flex-col-center'>
+                    <div className='h-4 px-2 mt-1 text-xs text-green-700 flex-row-center'>
+                        displayed day
+                    </div>
+                    <div className='px-2 text-xl font-semibold text-green-900 h-7 flex-row-center'>
+                        Aug 14 2021
+                    </div>
+                </div>
                 <span className='relative z-0 inline-flex rounded-md shadow-sm'>
                     <button
                         type='button'

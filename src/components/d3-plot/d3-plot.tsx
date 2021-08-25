@@ -2,6 +2,9 @@ import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
 import { range } from 'lodash';
 
+const paddingRight = 18;
+const paddingTop = 8;
+
 export default function D3Plot(props: {
     plotAxisRange: {
         [key in 'time' | 'co2' | 'ch4']: {
@@ -23,7 +26,7 @@ export default function D3Plot(props: {
                     props.plotAxisRange.time.from,
                     props.plotAxisRange.time.to,
                 ])
-                .range([100, 996]);
+                .range([100, 1000 - paddingRight]);
 
             const yScale = d3
                 .scaleLinear()
@@ -31,7 +34,7 @@ export default function D3Plot(props: {
                     props.plotAxisRange[props.gas].from,
                     props.plotAxisRange[props.gas].to,
                 ])
-                .range([350, 4]);
+                .range([350, paddingTop]);
 
             const svg = d3.select(d3Container.current);
             let xAxisLines = svg
@@ -47,8 +50,8 @@ export default function D3Plot(props: {
                 .enter()
                 .append('line')
                 .attr('class', 'x-axis-line')
-                .attr('y1', 4)
-                .attr('y2', 350)
+                .attr('y1', paddingTop)
+                .attr('y2', 354)
                 .attr('stroke', '#CBD5E1')
                 .attr('stroke-linecap', 'round')
                 .attr('stroke-width', 1.4)
@@ -70,8 +73,8 @@ export default function D3Plot(props: {
                 .enter()
                 .append('line')
                 .attr('class', 'y-axis-line')
-                .attr('x1', 100)
-                .attr('x2', 996)
+                .attr('x1', 96)
+                .attr('x2', 1000 - paddingRight)
                 .attr('stroke', '#CBD5E1')
                 .attr('stroke-linecap', 'round')
                 .attr('stroke-width', 1.4)
@@ -79,6 +82,29 @@ export default function D3Plot(props: {
                 .attr('y2', (y: number, i: number) => yScale(y));
 
             yAxisLines.exit().remove();
+
+            let xAxisLabels = svg
+                .selectAll('.x-axis-label')
+                .data(
+                    range(
+                        domain.time.from,
+                        domain.time.to + domain.time.step,
+                        domain.time.step
+                    )
+                );
+            xAxisLabels
+                .enter()
+                .append('text')
+                .attr(
+                    'class',
+                    'x-axis-label text-xs font-semibold fill-gray-700'
+                )
+                .style('text-anchor', 'middle')
+                .attr('y', 372)
+                .attr('x', (x: number, i: number) => xScale(x))
+                .text((x: number, i: number) => x.toFixed(2).padStart(5, '0'));
+
+            xAxisLabels.exit().remove();
         }
     });
 

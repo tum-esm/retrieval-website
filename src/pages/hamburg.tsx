@@ -17,6 +17,7 @@ const Page = () => {
     const [dayIndex, setDayIndex] = useState(
         sortedDayStrings.indexOf(displayDayString)
     );
+    const [gasIndex, setGasIndex] = useState(0);
 
     const isFirstDay = () => dayIndex === 0;
     const isLastDay = () => dayIndex === sortedDayStrings.length - 1;
@@ -48,6 +49,8 @@ const Page = () => {
                     displayDay={displayDay}
                     dayStrings={sortedDayStrings}
                     gases={gases}
+                    gasIndex={gasIndex}
+                    setGasIndex={setGasIndex}
                     setDisplayDay={d => {
                         setDayIndex(
                             sortedDayStrings.indexOf(

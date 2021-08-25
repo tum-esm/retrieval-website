@@ -74,21 +74,32 @@ export default function DateGrid(props: {
                         monthObject.month
                     }${day.toString().padStart(2, '0')}`;
                     const displayDayString = `${displayDay.year}${displayDay.month}${displayDay.day}`;
+
+                    const dayHasData = dayStrings.includes(dayString);
                     return (
-                        <div
+                        <button
                             style={day === 0 ? skipColStyles : {}}
                             className={
-                                'w-6 h-4 rounded-sm ' +
-                                (dayStrings.includes(dayString)
+                                'w-6 h-4 rounded-sm font-medium ' +
+                                (dayHasData
                                     ? 'bg-green-300 text-green-900 '
                                     : 'bg-gray-100 text-gray-400 ') +
                                 (dayString === displayDayString
-                                    ? 'ring-2 ring-blue-500 '
+                                    ? 'ring-[2px] ring-indigo-500 '
                                     : ' ')
                             }
+                            disabled={!dayHasData}
+                            onClick={() => {
+                                if (dayHasData) {
+                                    props.setDisplayDay({
+                                        ...monthObject,
+                                        day: day.toString().padStart(2, '0'),
+                                    });
+                                }
+                            }}
                         >
                             {day}
-                        </div>
+                        </button>
                     );
                 })}
             </div>

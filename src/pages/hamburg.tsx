@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import getDayObjectFromString from '../utils/get-day-object-from-string';
-import FilterBar from '../components/filter-bar';
+import FilterBar from '../components/filter-bar/filter-bar';
 
 const dayStrings = ['20210801', '20200801', '20210803', '20210701'];
 const displayDayString = '20210801';

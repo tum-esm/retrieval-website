@@ -1,32 +1,40 @@
 {
-  "name": "retrieval-plots-v2",
-  "version": "1.0.0",
-  "private": true,
-  "description": "retrieval-plots-v2",
-  "author": "Moritz Makowski",
-  "keywords": [
-    "gatsby"
-  ],
-  "scripts": {
-    "develop": "gatsby develop",
-    "start": "gatsby develop",
-    "build": "gatsby build",
-    "serve": "gatsby serve",
-    "clean": "gatsby clean"
-  },
-  "dependencies": {
-    "@mdx-js/mdx": "^1.6.22",
-    "@mdx-js/react": "^1.6.22",
-    "autoprefixer": "^10.3.2",
-    "gatsby": "^3.11.1",
-    "gatsby-plugin-mdx": "^2.12.0",
-    "gatsby-plugin-postcss": "^4.12.0",
-    "gatsby-plugin-react-helmet": "^4.12.0",
-    "gatsby-source-filesystem": "^3.12.0",
-    "postcss": "^8.3.6",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-helmet": "^6.1.0",
-    "tailwindcss": "^2.2.7"
-  }
+    "name": "retrieval-plots-v2",
+    "version": "0.1.0",
+    "private": true,
+    "description": "retrieval-plots-v2",
+    "author": {
+        "name": "Moritz Makowski",
+        "email": "moritz.makowski@tum.de"
+    },
+    "scripts": {
+        "develop": "gatsby develop",
+        "start": "gatsby develop",
+        "build": "gatsby build",
+        "serve": "gatsby serve",
+        "clean": "gatsby clean",
+        "test": "jest"
+    },
+    "dependencies": {
+        "@heroicons/react": "^1.0.4",
+        "@mdx-js/mdx": "^1.6.22",
+        "@mdx-js/react": "^1.6.22",
+        "autoprefixer": "^10.3.2",
+        "gatsby": "^3.11.1",
+        "gatsby-plugin-mdx": "^2.12.0",
+        "gatsby-plugin-postcss": "^4.12.0",
+        "gatsby-plugin-react-helmet": "^4.12.0",
+        "gatsby-source-filesystem": "^3.12.0",
+        "postcss": "^8.3.6",
+        "react": "^17.0.1",
+        "react-dom": "^17.0.1",
+        "react-helmet": "^6.1.0",
+        "tailwindcss": "^2.2.7"
+    },
+    "devDependencies": {
+        "@types/jest": "^27.0.1",
+        "jest": "^27.0.6",
+        "ts-jest": "^27.0.5",
+        "typescript": "^4.3.5"
+    }
 }

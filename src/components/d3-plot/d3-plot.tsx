@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { range } from 'lodash';
 
 const paddingRight = 18;
-const paddingTop = 8;
+const paddingTop = 10;
 
 export default function D3Plot(props: {
     plotAxisRange: {
@@ -26,7 +26,7 @@ export default function D3Plot(props: {
                     props.plotAxisRange.time.from,
                     props.plotAxisRange.time.to,
                 ])
-                .range([100, 1000 - paddingRight]);
+                .range([90, 1000 - paddingRight]);
 
             const yScale = d3
                 .scaleLinear()
@@ -73,7 +73,7 @@ export default function D3Plot(props: {
                 .enter()
                 .append('line')
                 .attr('class', 'y-axis-line')
-                .attr('x1', 80)
+                .attr('x1', 70)
                 .attr('x2', 1000 - paddingRight)
                 .attr('stroke', '#CBD5E1')
                 .attr('stroke-linecap', 'round')
@@ -117,13 +117,41 @@ export default function D3Plot(props: {
                 .append('text')
                 .attr('class', 'y-axis-label text-xs font-medium fill-gray-600')
                 .style('dominant-baseline', 'middle')
-                .attr('x', 50)
+                .attr('x', 40)
                 .attr('y', (y: number, i: number) => yScale(y))
                 .text((y: number, i: number) =>
                     y.toFixed(props.gas === 'co2' ? 0 : 3)
                 );
 
             yAxisLabels.exit().remove();
+
+            if (svg.selectAll('.x-axis-title').empty()) {
+                svg.append('text')
+                    .attr(
+                        'class',
+                        'x-axis-title font-semibold fill-gray-900 text-sm'
+                    )
+                    .style('text-anchor', 'middle')
+                    .attr('y', 400 - 4)
+                    .attr('x', 1000 / 2)
+                    .text('daytime [h] (UTC)');
+            }
+
+            if (svg.selectAll('.y-axis-title').empty()) {
+                svg.append('text')
+                    .attr(
+                        'class',
+                        'y-axis-title font-semibold fill-gray-900 text-sm'
+                    )
+                    .attr('y', 0)
+                    .attr('x', 0)
+                    .attr(
+                        'transform',
+                        `rotate(-90) translate(-${(400 - 35) / 2}, 18)`
+                    )
+                    .style('text-anchor', 'middle')
+                    .text(`concentration [ppm]`);
+            }
         }
     });
 

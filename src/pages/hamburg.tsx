@@ -64,7 +64,7 @@ const Page = () => {
 
     return (
         <>
-            <header className='fixed top-0 left-0 hidden w-screen bg-white shadow'>
+            <header className='fixed top-0 left-0 w-screen bg-white shadow'>
                 <FilterBar
                     {...{ isFirstDay, isLastDay, prevDay, nextDay }}
                     {...{

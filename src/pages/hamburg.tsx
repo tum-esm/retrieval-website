@@ -47,6 +47,7 @@ const Page = () => {
                     nextDay={nextDay}
                     displayDay={displayDay}
                     dayStrings={sortedDayStrings}
+                    gases={gases}
                     setDisplayDay={d => {
                         setDayIndex(
                             sortedDayStrings.indexOf(

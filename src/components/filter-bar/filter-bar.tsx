@@ -1,7 +1,8 @@
 /* This example requires Tailwind CSS v2.0+ */
-import React from 'react';
+import React, { useState } from 'react';
 import DateGrid from './date-grid';
 import DisplayDay from './display-day';
+import DataSelector from './data-selector';
 
 export default function FilterBar(props: {
     isFirstDay(): boolean;
@@ -11,8 +12,11 @@ export default function FilterBar(props: {
 
     displayDay: { year: string; month: string; day: string };
     setDisplayDay(d: { year: string; month: string; day: string }): void;
+
     dayStrings: string[];
+    gases: { name: string; unit: string }[];
 }) {
+    const [gasIndex, setGasIndex] = useState(0);
     return (
         <div
             className={
@@ -26,6 +30,11 @@ export default function FilterBar(props: {
             <div className='h-full ml-2 mr-6 border-r border-gray-300' />
             <div className='flex-grow' />
             <div className='h-full ml-2 mr-6 border-r border-gray-300' />
+            <DataSelector
+                gases={props.gases}
+                gasIndex={gasIndex}
+                setGasIndex={setGasIndex}
+            />
         </div>
     );
 }

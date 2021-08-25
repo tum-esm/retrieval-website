@@ -64,9 +64,9 @@ const customColors = {
 module.exports = {
     mode: 'jit',
     purge: [
-        './src/pages/*.{js,jsx,ts,tsx}',
-        './src/components/*.{js,jsx,ts,tsx}',
-        './src/assets/*.{js,jsx,ts,tsx}',
+        './src/pages/**/*.{js,jsx,ts,tsx}',
+        './src/components/**/*.{js,jsx,ts,tsx}',
+        './src/assets/**/*.{js,jsx,ts,tsx}',
     ],
     darkMode: false, // or 'media' or 'class'
     theme: {
@@ -78,5 +78,4 @@ module.exports = {
     variants: {
         extend: {},
     },
-    plugins: [],
 };

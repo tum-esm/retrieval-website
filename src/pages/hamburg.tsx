@@ -90,7 +90,7 @@ const Page = () => {
             <main
                 className={'bg-gray-100 w-screen min-h-screen pt-40 pb-8 px-4'}
             >
-                <D3Plot plotAxisRange={plotAxisRange} />
+                <D3Plot plotAxisRange={plotAxisRange} gas='co2' />
             </main>
         </>
     );

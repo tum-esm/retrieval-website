@@ -1,4 +1,3 @@
-/* This example requires Tailwind CSS v2.0+ */
 import React from 'react';
 import DateGrid from './date-grid';
 import DisplayDay from './display-day';

@@ -1,3 +1,5 @@
+import getDayObjectFromString from './get-day-object-from-string';
+
 function generateDayObject(dayStrings: string[]) {
     const dayObject: {
         [key: string]: {
@@ -5,9 +7,7 @@ function generateDayObject(dayStrings: string[]) {
         };
     } = {};
     for (let i = 0; i < dayStrings.length; i++) {
-        const year = dayStrings[i].substring(0, 4);
-        const month = dayStrings[i].substring(4, 6);
-        const day = dayStrings[i].substring(6);
+        const { year, month, day } = getDayObjectFromString(dayStrings[i]);
         if (!Object.keys(dayObject).includes(year)) {
             dayObject[year] = {};
         }

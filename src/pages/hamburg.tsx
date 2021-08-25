@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import getDayObjectFromString from '../utils/get-day-object-from-string';
+import FilterBar from '../components/filter-bar';
 
-const dayStrings = ['20210801', '20210803'];
+const dayStrings = ['20210801', '20200801', '20210803', '20210701'];
 const displayDay = '20210801';
 const gases = [
     { name: 'co2', unit: 'ppm' },
@@ -37,8 +38,8 @@ const Page = () => {
     }, [dayIndex]);
 
     return (
-        <main className={'w-screen min-h-screen py-8 px-4 flex-col-center '}>
-            Hello
+        <main className={'bg-gray-100 w-screen min-h-screen'}>
+            <FilterBar />
         </main>
     );
 };

@@ -16,6 +16,7 @@
         "test": "jest"
     },
     "dependencies": {
+        "@headlessui/react": "^1.4.0",
         "@heroicons/react": "^1.0.4",
         "@mdx-js/mdx": "^1.6.22",
         "@mdx-js/react": "^1.6.22",

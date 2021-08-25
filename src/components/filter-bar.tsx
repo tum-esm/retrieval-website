@@ -10,7 +10,7 @@ export default function FilterBar() {
                 'bg-white text-gray-900 shadow'
             }
         >
-            <div className='space-y-1 flex-col-left'>
+            <div className='space-y-1 flex-col-center'>
                 <div className='text-xl font-semibold h-9'>Aug 14 2021</div>
                 <span className='relative z-0 inline-flex rounded-md shadow-sm'>
                     <button
@@ -23,6 +23,9 @@ export default function FilterBar() {
                             aria-hidden='true'
                         />
                     </button>
+                    <div className='relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-300 whitespace-nowrap'>
+                        <span className='h-5'>± 1 Day</span>
+                    </div>
                     <button
                         type='button'
                         className='relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'
@@ -36,6 +39,7 @@ export default function FilterBar() {
                 </span>
             </div>
             <div className='h-full mx-6 border-r border-gray-300' />
+
             <div className='flex-grow' />
         </div>
     );

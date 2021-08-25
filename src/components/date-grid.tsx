@@ -1,6 +1,7 @@
 import { range } from 'lodash';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
+import { MONTH_LABEL } from '../utils/constants';
 
 function getDaysInMonth(monthObject: { year: string; month: string }) {
     return new Date(
@@ -19,14 +20,23 @@ function getFirstWeekday(monthObject: { year: string; month: string }) {
 }
 
 export default function DateGrid(props: {
-    displayDay: string;
-    setDisplayDay?: string;
-    activeDays?: string[];
+    displayDay: { year: string; month: string; day: string };
+    setDisplayDay(d: { year: string; month: string; day: string }): void;
+    dayStrings: string[];
 }) {
+    const { displayDay, setDisplayDay, dayStrings } = props;
+
     const [monthObject, setMonthObject] = useState({
-        year: props.displayDay.substring(0, 4),
-        month: props.displayDay.substring(4, 6),
+        year: displayDay.year,
+        month: displayDay.month,
     });
+
+    useEffect(() => {
+        setMonthObject({
+            year: displayDay.year,
+            month: displayDay.month,
+        });
+    }, [displayDay]);
 
     const daysInMonth = getDaysInMonth(monthObject);
     const skipColStyles = {
@@ -56,25 +66,39 @@ export default function DateGrid(props: {
             <div
                 className={
                     'grid grid-flow-row grid-cols-7 gap-1 ' +
-                    'text-xs text-center font-semibold text-gray-500'
+                    'text-xs text-center font-semibold'
                 }
             >
-                {range(daysInMonth).map(i => (
-                    <div
-                        style={i === 0 ? skipColStyles : {}}
-                        className='w-6 h-4 bg-gray-100 rounded-sm'
-                    >
-                        {i + 1}
-                    </div>
-                ))}
+                {range(1, daysInMonth + 1).map(day => {
+                    const dayString = `${monthObject.year}${
+                        monthObject.month
+                    }${day.toString().padStart(2, '0')}`;
+                    const displayDayString = `${displayDay.year}${displayDay.month}${displayDay.day}`;
+                    return (
+                        <div
+                            style={day === 0 ? skipColStyles : {}}
+                            className={
+                                'w-6 h-4 rounded-sm ' +
+                                (dayStrings.includes(dayString)
+                                    ? 'bg-green-300 text-green-900 '
+                                    : 'bg-gray-100 text-gray-400 ') +
+                                (dayString === displayDayString
+                                    ? 'ring-2 ring-blue-500 '
+                                    : ' ')
+                            }
+                        >
+                            {day}
+                        </div>
+                    );
+                })}
             </div>
-            <div className='ml-4 flex-col-center'>
+            <div className='ml-2 flex-col-center'>
                 <div className='p-1 mb-2 flex-col-center'>
                     <div className='h-4 px-2 mt-1 text-xs text-gray-500 flex-row-center'>
                         available days
                     </div>
-                    <div className='px-2 text-xl font-semibold text-gray-700 h-7 flex-row-center'>
-                        Aug {monthObject.year.substring(2)}
+                    <div className='px-2 text-xl font-semibold text-gray-700 w-28 h-7 flex-row-center'>
+                        {MONTH_LABEL[monthObject.month]} {monthObject.year}
                     </div>
                 </div>
                 <span className='relative z-0 inline-flex rounded-md shadow-sm'>

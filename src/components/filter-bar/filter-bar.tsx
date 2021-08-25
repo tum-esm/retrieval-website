@@ -22,12 +22,7 @@ export default function FilterBar(props: {
     setFilterData(b: boolean): void;
 }) {
     return (
-        <div
-            className={
-                'fixed w-screen h-32 px-4 py-2 flex-row-center ' +
-                'bg-white text-gray-900 shadow'
-            }
-        >
+        <div className={'w-full h-32 px-4 py-2 flex-row-center text-gray-900'}>
             <DisplayDay {...props} />
             <div className='h-full mx-6 border-r border-gray-300' />
             <DateGrid {...props} />

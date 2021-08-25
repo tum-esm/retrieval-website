@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import getDayObjectFromString from '../utils/get-day-object-from-string';
 import FilterBar from '../components/filter-bar/filter-bar';
+import D3Plot from '../components/d3-plot/d3-plot';
 
 const dayStrings = ['20210801', '20200801', '20210803', '20210701'];
 const displayDayString = '20210801';
@@ -8,6 +9,24 @@ const gases = [
     { name: 'co2', unit: 'ppm' },
     { name: 'ch4', unit: 'ppb' },
 ];
+
+const plotAxisRange = {
+    time: {
+        from: 7,
+        to: 19,
+        step: 1,
+    },
+    co2: {
+        from: 407,
+        to: 417,
+        step: 1,
+    },
+    ch4: {
+        from: 1.86,
+        to: 1.92,
+        step: 0.005,
+    },
+};
 
 const Page = () => {
     const [displayDay, setDisplayDay] =
@@ -39,12 +58,20 @@ const Page = () => {
         setDisplayDay(getDayObjectFromString(sortedDayStrings[dayIndex]));
     }, [dayIndex]);
 
+    if (displayDay === undefined) {
+        return <div />;
+    }
+
     return (
-        <main className={'bg-gray-100 w-screen min-h-screen'}>
-            {displayDay !== undefined && (
+        <>
+            <header className='fixed top-0 left-0 w-screen bg-white shadow'>
                 <FilterBar
                     {...{ isFirstDay, isLastDay, prevDay, nextDay }}
-                    {...{ dayStrings: sortedDayStrings, gases, displayDay }}
+                    {...{
+                        dayStrings: sortedDayStrings,
+                        gases,
+                        displayDay,
+                    }}
                     setDisplayDay={d => {
                         setDayIndex(
                             sortedDayStrings.indexOf(
@@ -52,10 +79,20 @@ const Page = () => {
                             )
                         );
                     }}
-                    {...{ gasIndex, setGasIndex, filterData, setFilterData }}
+                    {...{
+                        gasIndex,
+                        setGasIndex,
+                        filterData,
+                        setFilterData,
+                    }}
                 />
-            )}
-        </main>
+            </header>
+            <main
+                className={'bg-gray-100 w-screen min-h-screen pt-40 pb-8 px-4'}
+            >
+                <D3Plot plotAxisRange={plotAxisRange} />
+            </main>
+        </>
     );
 };
 

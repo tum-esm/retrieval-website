@@ -83,7 +83,7 @@ export default function DateGrid(props: {
                                 'w-6 h-4 rounded-sm font-medium ' +
                                 (dayHasData
                                     ? 'bg-green-300 text-green-900 '
-                                    : 'bg-gray-100 text-gray-400 ') +
+                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed ') +
                                 (dayString === displayDayString
                                     ? 'ring-[2px] ring-indigo-500 '
                                     : ' ')

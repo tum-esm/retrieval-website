@@ -18,6 +18,7 @@ const Page = () => {
         sortedDayStrings.indexOf(displayDayString)
     );
     const [gasIndex, setGasIndex] = useState(0);
+    const [filterData, setFilterData] = useState(true);
 
     const isFirstDay = () => dayIndex === 0;
     const isLastDay = () => dayIndex === sortedDayStrings.length - 1;
@@ -42,15 +43,8 @@ const Page = () => {
         <main className={'bg-gray-100 w-screen min-h-screen'}>
             {displayDay !== undefined && (
                 <FilterBar
-                    isFirstDay={isFirstDay}
-                    isLastDay={isLastDay}
-                    prevDay={prevDay}
-                    nextDay={nextDay}
-                    displayDay={displayDay}
-                    dayStrings={sortedDayStrings}
-                    gases={gases}
-                    gasIndex={gasIndex}
-                    setGasIndex={setGasIndex}
+                    {...{ isFirstDay, isLastDay, prevDay, nextDay }}
+                    {...{ dayStrings: sortedDayStrings, gases, displayDay }}
                     setDisplayDay={d => {
                         setDayIndex(
                             sortedDayStrings.indexOf(
@@ -58,6 +52,7 @@ const Page = () => {
                             )
                         );
                     }}
+                    {...{ gasIndex, setGasIndex, filterData, setFilterData }}
                 />
             )}
         </main>

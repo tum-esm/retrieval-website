@@ -18,6 +18,8 @@ export default function FilterBar(props: {
 
     gasIndex: number;
     setGasIndex(i: number): void;
+    filterData: boolean;
+    setFilterData(b: boolean): void;
 }) {
     return (
         <div

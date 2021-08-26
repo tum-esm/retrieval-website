@@ -1,14 +1,17 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import { implementAxisTitles } from '../../utils/d3-elements/grid-and-labels';
 import {
     implementConcentrationDividers,
     implementConcentrationLabels,
     implementTimeDividers,
     implementTimeLabels,
+    implementAxisTitles,
 } from '../../utils/d3-elements/grid-and-labels';
-import ld from 'lodash';
-import { generateLines } from '../../utils/d3-elements/lines';
+import {
+    implementCircles,
+    implementLines,
+    generateTimeseries,
+} from '../../utils/d3-elements/circles-and-lines';
 
 const paddingRight = 18;
 const paddingTop = 10;
@@ -40,12 +43,6 @@ const exampleData: plotDayData = {
         },
     ],
 };
-
-export const generateTimeseries = (xs: number[], ys: number[]) =>
-    ld
-        .zip(xs, ys)
-        .map(d => ({ x: d[0], y: d[1] }))
-        .filter(e => e.y !== 0);
 
 export default function D3Plot(props: {
     plotAxisRange: {
@@ -91,50 +88,25 @@ export default function D3Plot(props: {
                 const dataPoints: { x: number; y: number }[] =
                     generateTimeseries(plotData.hours, ys);
 
-                let circles: any = svg
-                    .selectAll(`.circle-${gas}-${location}-${sensor}`)
-                    .data(dataPoints);
-                circles
-                    .enter()
-                    .append('circle')
-                    .attr('fill', '#2A9D8F')
-                    .attr('class', `circle-${gas}-${location}-${sensor}`)
-
-                    // Keep all circles in sync with the data
-                    .merge(circles)
-                    .attr('r', 2.4)
-                    .attr('opacity', true ? '100%' : '0%')
-                    .attr('cx', (d: { x: number; y: number }, i: number) =>
-                        xScale(d.x)
-                    )
-                    .attr('cy', (d: { x: number; y: number }, i: number) =>
-                        yScale(d.y)
-                    );
-
-                // Remove old circle elements
-                circles.exit().remove();
-
-                // generateLines(xScale, yScale)
-                let line: any = svg.selectAll(
-                    `.line-${gas}-${location}-${sensor}`
+                implementCircles(
+                    svg,
+                    gas,
+                    location,
+                    sensor,
+                    dataPoints,
+                    xScale,
+                    yScale
                 );
-                if (line.empty()) {
-                    line = svg
-                        .append('path')
-                        .attr(
-                            'class',
-                            `line-${gas}-${location}-${sensor} pointer-events-none`
-                        )
-                        .style('stroke', '#2A9D8F')
-                        .style('stroke-width', 2.4)
-                        .style('stroke-linecap', 'round')
-                        .style('stroke-linejoin', 'round')
-                        //.style('stroke-dasharray', '5,7.5')
-                        .style('fill', 'none');
-                }
-                line.style('stroke-width', 4.8)
-                    .attr('opacity', true ? '30%' : '0%')
-                    .attr('d', generateLines(xScale, yScale)(dataPoints));
+
+                implementLines(
+                    svg,
+                    gas,
+                    location,
+                    sensor,
+                    dataPoints,
+                    xScale,
+                    yScale
+                );
             }
         }
     }, [props.gas, d3Container.current]);

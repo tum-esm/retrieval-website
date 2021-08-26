@@ -8,6 +8,7 @@ import {
     implementTimeLabels,
 } from '../../utils/d3-elements/grid-and-labels';
 import ld from 'lodash';
+import { generateLines } from '../../utils/d3-elements/lines';
 
 const paddingRight = 18;
 const paddingTop = 10;
@@ -87,9 +88,12 @@ export default function D3Plot(props: {
                     sensor,
                     data: ys,
                 } = plotData.timeseries[i];
+                const dataPoints: { x: number; y: number }[] =
+                    generateTimeseries(plotData.hours, ys);
+
                 let circles: any = svg
                     .selectAll(`.circle-${gas}-${location}-${sensor}`)
-                    .data(generateTimeseries(plotData.hours, ys));
+                    .data(dataPoints);
                 circles
                     .enter()
                     .append('circle')
@@ -109,6 +113,28 @@ export default function D3Plot(props: {
 
                 // Remove old circle elements
                 circles.exit().remove();
+
+                // generateLines(xScale, yScale)
+                let line: any = svg.selectAll(
+                    `.line-${gas}-${location}-${sensor}`
+                );
+                if (line.empty()) {
+                    line = svg
+                        .append('path')
+                        .attr(
+                            'class',
+                            `line-${gas}-${location}-${sensor} pointer-events-none`
+                        )
+                        .style('stroke', '#2A9D8F')
+                        .style('stroke-width', 2.4)
+                        .style('stroke-linecap', 'round')
+                        .style('stroke-linejoin', 'round')
+                        //.style('stroke-dasharray', '5,7.5')
+                        .style('fill', 'none');
+                }
+                line.style('stroke-width', 4.8)
+                    .attr('opacity', true ? '30%' : '0%')
+                    .attr('d', generateLines(xScale, yScale)(dataPoints));
             }
         }
     }, [props.gas, d3Container.current]);

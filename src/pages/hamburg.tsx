@@ -5,7 +5,7 @@ import D3Plot from '../components/d3-plot/d3-plot';
 
 const dayStrings = ['20210801', '20200801', '20210803', '20210701'];
 const displayDayString = '20210801';
-const gases = [
+const gases: { name: 'co2' | 'ch4'; unit: 'ppm' | 'ppb' }[] = [
     { name: 'co2', unit: 'ppm' },
     { name: 'ch4', unit: 'ppb' },
 ];
@@ -90,7 +90,10 @@ const Page = () => {
             <main
                 className={'bg-gray-100 w-screen min-h-screen pt-40 pb-8 px-4'}
             >
-                <D3Plot plotAxisRange={plotAxisRange} gas='co2' />
+                <D3Plot
+                    plotAxisRange={plotAxisRange}
+                    gas={gases[gasIndex].name}
+                />
             </main>
         </>
     );

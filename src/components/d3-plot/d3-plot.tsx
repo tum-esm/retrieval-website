@@ -60,7 +60,7 @@ export default function D3Plot(props: {
 
             xAxisLines.exit().remove();
 
-            let yAxisLines = svg
+            let yAxisLines: any = svg
                 .selectAll(`.y-axis-line`)
                 .data(
                     range(
@@ -78,6 +78,7 @@ export default function D3Plot(props: {
                 .attr('stroke', '#CBD5E1')
                 .attr('stroke-linecap', 'round')
                 .attr('stroke-width', 1.4)
+                .merge(yAxisLines)
                 .attr('y1', (y: number, i: number) => yScale(y))
                 .attr('y2', (y: number, i: number) => yScale(y));
 
@@ -103,7 +104,7 @@ export default function D3Plot(props: {
 
             xAxisLabels.exit().remove();
 
-            let yAxisLabels = svg
+            let yAxisLabels: any = svg
                 .selectAll('.y-axis-label')
                 .data(
                     range(
@@ -117,7 +118,9 @@ export default function D3Plot(props: {
                 .append('text')
                 .attr('class', 'y-axis-label text-xs font-medium fill-gray-600')
                 .style('dominant-baseline', 'middle')
-                .attr('x', 40)
+                .style('text-anchor', 'end')
+                .attr('x', 65)
+                .merge(yAxisLabels)
                 .attr('y', (y: number, i: number) => yScale(y))
                 .text((y: number, i: number) =>
                     y.toFixed(props.gas === 'co2' ? 0 : 3)
@@ -153,7 +156,7 @@ export default function D3Plot(props: {
                     .text(`concentration [ppm]`);
             }
         }
-    });
+    }, [props.gas, d3Container.current]);
 
     return (
         <div

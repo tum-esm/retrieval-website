@@ -1,4 +1,4 @@
-export const MONTH_LABEL = {
+export const MONTH_LABEL: any = {
     '01': 'Jan',
     '02': 'Feb',
     '03': 'Mar',

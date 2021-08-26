@@ -6,8 +6,8 @@ import {
     implementTimeDividers,
     implementTimeLabels,
     implementAxisTitles,
-} from '../../utils/d3-elements/grid-and-labels';
-import * as circleUtils from '../../utils/d3-elements/circles-and-lines';
+} from 'utils/d3-elements/grid-and-labels';
+import * as circleUtils from 'utils/d3-elements/circles-and-lines';
 
 const paddingRight = 18;
 const paddingTop = 10;

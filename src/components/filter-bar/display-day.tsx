@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
-import { MONTH_LABEL } from '../../utils/constants';
+import { MONTH_LABEL } from 'utils/constants';
 
 export default function DisplayDay(props: {
     isFirstDay(): boolean;

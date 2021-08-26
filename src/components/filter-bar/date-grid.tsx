@@ -1,7 +1,7 @@
 import { range } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
-import { MONTH_LABEL } from '../../utils/constants';
+import { MONTH_LABEL } from 'utils/constants';
 
 function getDaysInMonth(monthObject: { year: string; month: string }) {
     return new Date(

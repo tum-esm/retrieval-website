@@ -7,11 +7,7 @@ import {
     implementTimeLabels,
     implementAxisTitles,
 } from '../../utils/d3-elements/grid-and-labels';
-import {
-    implementCircles,
-    implementLines,
-    generateTimeseries,
-} from '../../utils/d3-elements/circles-and-lines';
+import * as circleUtils from '../../utils/d3-elements/circles-and-lines';
 
 const paddingRight = 18;
 const paddingTop = 10;
@@ -21,10 +17,12 @@ type plotDayData = {
     timeseries: {
         gas: 'co2' | 'ch4';
         location: string;
-        sensor: string;
         data: number[];
     }[];
 };
+
+const GASES = ['co2', 'ch4'];
+const LOCATIONS = ['ROS', 'HAW'];
 
 const exampleData: plotDayData = {
     hours: [8, 9, 10],
@@ -32,14 +30,12 @@ const exampleData: plotDayData = {
         {
             gas: 'co2',
             location: 'ROS',
-            sensor: 'mb86',
             data: [410, 411, 410.75],
         },
         {
             gas: 'ch4',
             location: 'ROS',
-            sensor: 'mb86',
-            data: [1.9, 1.9091, 1.8914],
+            data: [1.9, 1.9091, 1.8876],
         },
     ],
 };
@@ -55,7 +51,7 @@ export default function D3Plot(props: {
     gas: 'co2' | 'ch4';
 }) {
     const d3Container = useRef(null);
-    const { plotAxisRange: domains, gas } = props;
+    const { plotAxisRange: domains } = props;
     const plotData: plotDayData = exampleData;
 
     useEffect(() => {
@@ -74,39 +70,54 @@ export default function D3Plot(props: {
 
             implementTimeDividers(svg, domains.time, xScale);
             implementTimeLabels(svg, domains.time, xScale);
-            implementConcentrationDividers(svg, domains[gas], yScale);
-            implementConcentrationLabels(svg, domains[gas], yScale, gas);
+            implementConcentrationDividers(svg, domains[props.gas], yScale);
+            implementConcentrationLabels(
+                svg,
+                domains[props.gas],
+                yScale,
+                props.gas
+            );
             implementAxisTitles(svg);
 
+            const implementCircles = circleUtils.implementCircles(
+                svg,
+                xScale,
+                yScale
+            );
+            const implementLines = circleUtils.implementLines(
+                svg,
+                xScale,
+                yScale
+            );
+
             for (let i = 0; i < plotData.timeseries.length; i++) {
-                const {
-                    gas,
-                    location,
-                    sensor,
-                    data: ys,
-                } = plotData.timeseries[i];
-                const dataPoints: { x: number; y: number }[] =
-                    generateTimeseries(plotData.hours, ys);
+                const ts = plotData.timeseries[i];
+                if (ts.gas === props.gas) {
+                    const dataPoints = circleUtils.generateTimeseries(
+                        plotData.hours,
+                        ts.data
+                    );
+                    implementCircles(ts.gas, ts.location, dataPoints);
+                    implementLines(ts.gas, ts.location, dataPoints);
+                }
+            }
 
-                implementCircles(
-                    svg,
-                    gas,
-                    location,
-                    sensor,
-                    dataPoints,
-                    xScale,
-                    yScale
-                );
+            const locationsWithTimeseries = plotData.timeseries
+                .filter(t => t.gas === props.gas)
+                .map(d => d.location);
 
-                implementLines(
-                    svg,
-                    gas,
-                    location,
-                    sensor,
-                    dataPoints,
-                    xScale,
-                    yScale
-                );
+            for (let i = 0; i < GASES.length; i++) {
+                for (let j = 0; j < LOCATIONS.length; j++) {
+                    const gas = GASES[i];
+                    const location = LOCATIONS[j];
+                    if (
+                        gas !== props.gas ||
+                        !locationsWithTimeseries.includes(location)
+                    ) {
+                        implementCircles(gas, location, []);
+                        implementLines(gas, location, []);
+                    }
+                }
             }
         }
     }, [props.gas, d3Container.current]);

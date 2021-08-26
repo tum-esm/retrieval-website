@@ -52,66 +52,61 @@ const separateDataLines = (xs: DataPoint[]) => {
     );
 };
 
-export function implementCircles(
-    svg: any,
-    gas: string,
-    location: string,
-    sensor: string,
-    dataPoints: {
-        x: number;
-        y: number;
-    }[],
-    xScale: (n: number) => number,
-    yScale: (n: number) => number
-) {
-    let circles: any = svg
-        .selectAll(`.circle-${gas}-${location}-${sensor}`)
-        .data(dataPoints);
-    circles
-        .enter()
-        .append('circle')
-        .attr('fill', '#2A9D8F')
-        .attr('class', `circle-${gas}-${location}-${sensor}`)
+export const implementCircles =
+    (svg: any, xScale: (n: number) => number, yScale: (n: number) => number) =>
+    (
+        gas: string,
+        location: string,
+        dataPoints: {
+            x: number;
+            y: number;
+        }[]
+    ) => {
+        let circles: any = svg
+            .selectAll(`.circle-${gas}-${location}`)
+            .data(dataPoints);
+        circles
+            .enter()
+            .append('circle')
+            .attr('fill', '#2A9D8F')
+            .attr('class', `circle-${gas}-${location}`)
 
-        // Keep all circles in sync with the data
-        .merge(circles)
-        .attr('r', 2.4)
-        .attr('opacity', true ? '100%' : '0%')
-        .attr('cx', (d: { x: number; y: number }, i: number) => xScale(d.x))
-        .attr('cy', (d: { x: number; y: number }, i: number) => yScale(d.y));
+            // Keep all circles in sync with the data
+            .merge(circles)
+            .attr('r', 2.4)
+            .attr('opacity', true ? '100%' : '0%')
+            .attr('cx', (d: { x: number; y: number }, i: number) => xScale(d.x))
+            .attr('cy', (d: { x: number; y: number }, i: number) =>
+                yScale(d.y)
+            );
 
-    // Remove old circle elements
-    circles.exit().remove();
-}
+        // Remove old circle elements
+        circles.exit().remove();
+    };
 
-export function implementLines(
-    svg: any,
-    gas: string,
-    location: string,
-    sensor: string,
-    dataPoints: {
-        x: number;
-        y: number;
-    }[],
-    xScale: (n: number) => number,
-    yScale: (n: number) => number
-) {
-    let line: any = svg.selectAll(`.line-${gas}-${location}-${sensor}`);
-    if (line.empty()) {
-        line = svg
-            .append('path')
-            .attr(
-                'class',
-                `line-${gas}-${location}-${sensor} pointer-events-none`
-            )
-            .style('stroke', '#2A9D8F')
-            .style('stroke-width', 2.4)
-            .style('stroke-linecap', 'round')
-            .style('stroke-linejoin', 'round')
-            //.style('stroke-dasharray', '5,7.5')
-            .style('fill', 'none');
-    }
-    line.style('stroke-width', 4.8)
-        .attr('opacity', true ? '30%' : '0%')
-        .attr('d', generateLines(xScale, yScale)(dataPoints));
-}
+export const implementLines =
+    (svg: any, xScale: (n: number) => number, yScale: (n: number) => number) =>
+    (
+        gas: string,
+        location: string,
+        dataPoints: {
+            x: number;
+            y: number;
+        }[]
+    ) => {
+        let line: any = svg.selectAll(`.line-${gas}-${location}`);
+        if (line.empty()) {
+            line = svg
+                .append('path')
+                .attr('class', `line-${gas}-${location} pointer-events-none`)
+                .style('stroke', '#2A9D8F')
+                .style('stroke-width', 2.4)
+                .style('stroke-linecap', 'round')
+                .style('stroke-linejoin', 'round')
+                //.style('stroke-dasharray', '5,7.5')
+                .style('fill', 'none');
+        }
+        line.style('stroke-width', 4.8)
+            .attr('opacity', true ? '30%' : '0%')
+            .attr('d', generateLines(xScale, yScale)(dataPoints));
+    };

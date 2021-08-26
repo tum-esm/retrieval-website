@@ -2,6 +2,7 @@ import React from 'react';
 import DateGrid from './date-grid';
 import DisplayDay from './display-day';
 import DataSelector from './data-selector';
+import types from 'types';
 
 export default function FilterBar(props: {
     isFirstDay(): boolean;
@@ -9,11 +10,11 @@ export default function FilterBar(props: {
     prevDay(): void;
     nextDay(): void;
 
-    displayDay: { year: string; month: string; day: string };
-    setDisplayDay(d: { year: string; month: string; day: string }): void;
+    displayDay: types.dayObject;
+    setDisplayDay(d: types.dayObject): void;
 
     dayStrings: string[];
-    gases: { name: string; unit: string }[];
+    gases: { name: types.gas; unit: string }[];
 
     gasIndex: number;
     setGasIndex(i: number): void;

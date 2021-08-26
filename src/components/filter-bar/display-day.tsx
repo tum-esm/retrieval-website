@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
-import { MONTH_LABEL } from 'utils/constants';
+import constants from 'utils/constants';
+import types from 'types';
 
 export default function DisplayDay(props: {
     isFirstDay(): boolean;
@@ -8,7 +9,7 @@ export default function DisplayDay(props: {
     prevDay(): void;
     nextDay(): void;
 
-    displayDay: { year: string; month: string; day: string };
+    displayDay: types.dayObject;
 }) {
     const { displayDay, isFirstDay, isLastDay, prevDay, nextDay } = props;
     return (
@@ -18,8 +19,8 @@ export default function DisplayDay(props: {
                     displayed day
                 </div>
                 <div className='w-40 px-2 text-xl font-semibold text-green-900 h-7 flex-row-center'>
-                    {MONTH_LABEL[displayDay.month]} {parseInt(displayDay.day)}{' '}
-                    {displayDay.year}
+                    {constants.MONTH_LABEL[displayDay.month]}{' '}
+                    {parseInt(displayDay.day)} {displayDay.year}
                 </div>
             </div>
             <span className='relative z-0 inline-flex rounded-md shadow-sm'>

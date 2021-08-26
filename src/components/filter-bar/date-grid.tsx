@@ -1,9 +1,10 @@
 import { range } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
-import { MONTH_LABEL } from 'utils/constants';
+import constants from 'utils/constants';
+import types from 'types';
 
-function getDaysInMonth(monthObject: { year: string; month: string }) {
+function getDaysInMonth(monthObject: types.monthObject) {
     return new Date(
         parseInt(monthObject.year),
         parseInt(monthObject.month),
@@ -11,7 +12,7 @@ function getDaysInMonth(monthObject: { year: string; month: string }) {
     ).getDate();
 }
 
-function getFirstWeekday(monthObject: { year: string; month: string }) {
+function getFirstWeekday(monthObject: types.monthObject) {
     return new Date(
         parseInt(monthObject.year),
         parseInt(monthObject.month) - 1,
@@ -20,13 +21,13 @@ function getFirstWeekday(monthObject: { year: string; month: string }) {
 }
 
 export default function DateGrid(props: {
-    displayDay: { year: string; month: string; day: string };
-    setDisplayDay(d: { year: string; month: string; day: string }): void;
+    displayDay: types.dayObject;
+    setDisplayDay(d: types.dayObject): void;
     dayStrings: string[];
 }) {
     const { displayDay, setDisplayDay, dayStrings } = props;
 
-    const [monthObject, setMonthObject] = useState({
+    const [monthObject, setMonthObject] = useState<types.monthObject>({
         year: displayDay.year,
         month: displayDay.month,
     });
@@ -109,7 +110,8 @@ export default function DateGrid(props: {
                         available days
                     </div>
                     <div className='px-2 text-xl font-semibold text-gray-700 w-28 h-7 flex-row-center'>
-                        {MONTH_LABEL[monthObject.month]} {monthObject.year}
+                        {constants.MONTH_LABEL[monthObject.month]}{' '}
+                        {monthObject.year}
                     </div>
                 </div>
                 <span className='relative z-0 inline-flex rounded-md shadow-sm'>

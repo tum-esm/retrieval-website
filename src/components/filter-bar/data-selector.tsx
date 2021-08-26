@@ -1,8 +1,9 @@
 import { Switch } from '@headlessui/react';
 import React from 'react';
+import types from 'types';
 
 export default function DataSelector(props: {
-    gases: { name: string; unit: string }[];
+    gases: types.gasMeta[];
     gasIndex: number;
     setGasIndex(i: number): void;
     filterData: boolean;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import getDayObjectFromString from 'utils/get-day-object-from-string';
 import FilterBar from 'components/filter-bar/filter-bar';
 import D3Plot from 'components/d3-plot/d3-plot';
+import types from 'types';
 
 const dayStrings = ['20210801', '20200801', '20210803', '20210701'];
 const displayDayString = '20210801';
@@ -29,8 +30,9 @@ const plotAxisRange = {
 };
 
 const Page = () => {
-    const [displayDay, setDisplayDay] =
-        useState<{ year: string; month: string; day: string }>(undefined);
+    const [displayDay, setDisplayDay] = useState<types.dayObject | undefined>(
+        undefined
+    );
 
     const sortedDayStrings = dayStrings.sort();
     const [dayIndex, setDayIndex] = useState(

@@ -1,14 +1,24 @@
-export const MONTH_LABEL: any = {
-    '01': 'Jan',
-    '02': 'Feb',
-    '03': 'Mar',
-    '04': 'Apr',
-    '05': 'May',
-    '06': 'Jun',
-    '07': 'Jul',
-    '08': 'Aug',
-    '09': 'Sep',
-    '10': 'Oct',
-    '11': 'Nov',
-    '12': 'Dev',
+const constants: any = {
+    MONTH_LABEL: {
+        '01': 'Jan',
+        '02': 'Feb',
+        '03': 'Mar',
+        '04': 'Apr',
+        '05': 'May',
+        '06': 'Jun',
+        '07': 'Jul',
+        '08': 'Aug',
+        '09': 'Sep',
+        '10': 'Oct',
+        '11': 'Nov',
+        '12': 'Dev',
+    },
+    PLOT: {
+        width: 1000,
+        height: 400,
+        paddingRight: 18,
+        paddingTop: 10,
+    },
 };
+
+export default constants;

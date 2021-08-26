@@ -1,11 +1,11 @@
 import ld from 'lodash';
 import * as d3 from 'd3';
+import types from 'types';
 
-type DataPoint = { x: number; y: number };
-
-export const generateTimeseries = (xs: number[], ys: number[]) =>
+export const generateTimeseries = (xs: number[], ys: number[]): any =>
     ld
         .zip(xs, ys)
+        .filter(d => !d.includes(undefined) && d.length === 2)
         .map(d => ({ x: d[0], y: d[1] }))
         .filter(e => e.y !== 0);
 
@@ -16,20 +16,20 @@ export const generateLine = (
     d3
         .line()
         // @ts-ignore
-        .x((d: DataPoint) => xScale(d.x))
+        .x((d: any) => xScale(d.x))
         // @ts-ignore
-        .y((d: DataPoint) => yScale(d.y))
+        .y((d: types.dataPoint) => yScale(d.y))
         .curve(d3.curveCatmullRom.alpha(0.5));
 
 export const generateLines =
     (xScale: (x: number) => number, yScale: (y: number) => number) =>
-    (xs: DataPoint[]) => {
+    (xs: types.dataPoint[]) => {
         if (xs.length == 0) {
             return '';
         }
         return ld.reduce(
             separateDataLines(xs),
-            (acc: string, next: DataPoint[]) => {
+            (acc: string, next: types.dataPoint[]) => {
                 // @ts-ignore
                 return acc + ' ' + generateLine(xScale, yScale)(next);
             },
@@ -37,11 +37,11 @@ export const generateLines =
         );
     };
 
-const separateDataLines = (xs: DataPoint[]) => {
+/*const separateDataLines = (xs: types.dataPoint[]) => {
     return ld.tail(
         ld.reduce(
             ld.tail(xs),
-            (acc: DataPoint[][], next: DataPoint) =>
+            (acc: types.dataPoint[][], next: types.dataPoint) =>
                 next.x - ld.last(ld.last(acc)).x <= 1800
                     ? ld.concat(ld.initial(acc), [
                           ld.concat(ld.last(acc), next),
@@ -50,6 +50,23 @@ const separateDataLines = (xs: DataPoint[]) => {
             [[], [ld.head(xs)]]
         )
     );
+};*/
+
+const separateDataLines = (xs: types.dataPoint[]): types.dataPoint[][] => {
+    let out: types.dataPoint[][] = [];
+    let runningLine: types.dataPoint[] = [xs[0]];
+    for (let i = 1; i < xs.length; i++) {
+        if (xs[i].x - xs[i - 1].x <= 1800) {
+            // append to running line
+            runningLine.push(xs[i]);
+        } else {
+            // start a new line after gaps of > 30 minutes
+            out.push(runningLine);
+            runningLine = [xs[i]];
+        }
+    }
+    out.push(runningLine);
+    return out;
 };
 
 export const implementCircles =

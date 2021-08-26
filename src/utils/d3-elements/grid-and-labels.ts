@@ -1,26 +1,26 @@
 import { range } from 'lodash';
-import * as d3 from 'd3';
-
-const paddingRight = 18;
-const paddingTop = 10;
+import constants from 'utils/constants';
+import types from 'types';
 
 export function implementTimeDividers(
     svg: any,
-    domain: {
-        from: number;
-        to: number;
-        step: number;
-    },
+    axisDomain: types.plotAxisDomain,
     xScale: (n: number) => number
 ) {
     let xAxisLines = svg
         .selectAll(`.x-axis-line`)
-        .data(range(domain.from, domain.to + domain.step, domain.step));
+        .data(
+            range(
+                axisDomain.from,
+                axisDomain.to + axisDomain.step,
+                axisDomain.step
+            )
+        );
     xAxisLines
         .enter()
         .append('line')
         .attr('class', 'x-axis-line')
-        .attr('y1', paddingTop)
+        .attr('y1', constants.PLOT.paddingTop)
         .attr('y2', 354)
         .attr('stroke', '#CBD5E1')
         .attr('stroke-linecap', 'round')
@@ -33,22 +33,24 @@ export function implementTimeDividers(
 
 export function implementConcentrationDividers(
     svg: any,
-    domain: {
-        from: number;
-        to: number;
-        step: number;
-    },
+    axisDomain: types.plotAxisDomain,
     yScale: (n: number) => number
 ) {
     let yAxisLines: any = svg
         .selectAll(`.y-axis-line`)
-        .data(range(domain.from, domain.to + domain.step, domain.step));
+        .data(
+            range(
+                axisDomain.from,
+                axisDomain.to + axisDomain.step,
+                axisDomain.step
+            )
+        );
     yAxisLines
         .enter()
         .append('line')
         .attr('class', 'y-axis-line')
         .attr('x1', 65)
-        .attr('x2', 1000 - paddingRight)
+        .attr('x2', constants.PLOT.width - constants.PLOT.paddingRight)
         .attr('stroke', '#CBD5E1')
         .attr('stroke-linecap', 'round')
         .attr('stroke-width', 1.4)
@@ -61,16 +63,18 @@ export function implementConcentrationDividers(
 
 export function implementTimeLabels(
     svg: any,
-    domain: {
-        from: number;
-        to: number;
-        step: number;
-    },
+    axisDomain: types.plotAxisDomain,
     xScale: (n: number) => number
 ) {
     let xAxisLabels = svg
         .selectAll('.x-axis-label')
-        .data(range(domain.from, domain.to + domain.step, domain.step));
+        .data(
+            range(
+                axisDomain.from,
+                axisDomain.to + axisDomain.step,
+                axisDomain.step
+            )
+        );
     xAxisLabels
         .enter()
         .append('text')
@@ -85,17 +89,19 @@ export function implementTimeLabels(
 
 export function implementConcentrationLabels(
     svg: any,
-    domain: {
-        from: number;
-        to: number;
-        step: number;
-    },
+    axisDomain: types.plotAxisDomain,
     yScale: (n: number) => number,
     gas: 'co2' | 'ch4'
 ) {
     let yAxisLabels: any = svg
         .selectAll('.y-axis-label')
-        .data(range(domain.from, domain.to + domain.step, domain.step));
+        .data(
+            range(
+                axisDomain.from,
+                axisDomain.to + axisDomain.step,
+                axisDomain.step
+            )
+        );
     yAxisLabels
         .enter()
         .append('text')
@@ -115,8 +121,8 @@ export function implementAxisTitles(svg: any) {
         svg.append('text')
             .attr('class', 'x-axis-title font-medium fill-gray-900 text-xs')
             .style('text-anchor', 'middle')
-            .attr('y', 400 - 4)
-            .attr('x', 1000 / 2)
+            .attr('y', constants.PLOT.height - 4)
+            .attr('x', constants.PLOT.width / 2)
             .text('daytime [h] (UTC)');
     }
 
@@ -125,8 +131,27 @@ export function implementAxisTitles(svg: any) {
             .attr('class', 'y-axis-title font-medium fill-gray-900 text-xs')
             .attr('y', 0)
             .attr('x', 0)
-            .attr('transform', `rotate(-90) translate(-${(400 - 35) / 2}, 12)`)
+            .attr(
+                'transform',
+                `rotate(-90) translate(-${
+                    (constants.PLOT.height - 35) / 2
+                }, 12)`
+            )
             .style('text-anchor', 'middle')
             .text(`concentration [ppm]`);
     }
+}
+
+export function implementPlotGrid(
+    svg: any,
+    domain: types.plotDomain,
+    xScale: (n: number) => number,
+    yScale: (n: number) => number,
+    gas: types.gas
+) {
+    implementTimeDividers(svg, domain.time, xScale);
+    implementTimeLabels(svg, domain.time, xScale);
+    implementConcentrationDividers(svg, domain[gas], yScale);
+    implementConcentrationLabels(svg, domain[gas], yScale, gas);
+    implementAxisTitles(svg);
 }

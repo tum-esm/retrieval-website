@@ -1,30 +1,14 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import {
-    implementConcentrationDividers,
-    implementConcentrationLabels,
-    implementTimeDividers,
-    implementTimeLabels,
-    implementAxisTitles,
-} from 'utils/d3-elements/grid-and-labels';
-import * as circleUtils from 'utils/d3-elements/circles-and-lines';
+import * as plotGridUtils from 'utils/d3-elements/grid-and-labels';
+import * as plotGraphUtils from 'utils/d3-elements/circles-and-lines';
+import types from 'types';
+import constants from 'utils/constants';
 
-const paddingRight = 18;
-const paddingTop = 10;
-
-type plotDayData = {
-    hours: number[];
-    timeseries: {
-        gas: 'co2' | 'ch4';
-        location: string;
-        data: number[];
-    }[];
-};
-
-const GASES = ['co2', 'ch4'];
+const GASES: types.gas[] = ['co2', 'ch4'];
 const LOCATIONS = ['ROS', 'HAW'];
 
-const exampleData: plotDayData = {
+const exampleData: types.plotDayData = {
     hours: [8, 9, 10],
     timeseries: [
         {
@@ -41,50 +25,44 @@ const exampleData: plotDayData = {
 };
 
 export default function D3Plot(props: {
-    plotAxisRange: {
-        [key in 'time' | 'co2' | 'ch4']: {
-            from: number;
-            to: number;
-            step: number;
-        };
-    };
-    gas: 'co2' | 'ch4';
+    plotAxisRange: types.plotDomain;
+    gas: types.gas;
 }) {
     const d3Container = useRef(null);
     const { plotAxisRange: domains } = props;
-    const plotData: plotDayData = exampleData;
+    const plotData: types.plotDayData = exampleData;
 
     useEffect(() => {
         if (d3Container.current) {
             const xScale = d3
                 .scaleLinear()
                 .domain([domains.time.from, domains.time.to])
-                .range([80, 1000 - paddingRight]);
+                .range([
+                    80,
+                    constants.PLOT.width - constants.PLOT.paddingRight,
+                ]);
 
             const yScale = d3
                 .scaleLinear()
                 .domain([domains[props.gas].from, domains[props.gas].to])
-                .range([350, paddingTop]);
+                .range([350, constants.PLOT.paddingTop]);
 
             const svg = d3.select(d3Container.current);
 
-            implementTimeDividers(svg, domains.time, xScale);
-            implementTimeLabels(svg, domains.time, xScale);
-            implementConcentrationDividers(svg, domains[props.gas], yScale);
-            implementConcentrationLabels(
+            plotGridUtils.implementPlotGrid(
                 svg,
-                domains[props.gas],
+                domains,
+                xScale,
                 yScale,
                 props.gas
             );
-            implementAxisTitles(svg);
 
-            const implementCircles = circleUtils.implementCircles(
+            const implementCircles = plotGraphUtils.implementCircles(
                 svg,
                 xScale,
                 yScale
             );
-            const implementLines = circleUtils.implementLines(
+            const implementLines = plotGraphUtils.implementLines(
                 svg,
                 xScale,
                 yScale
@@ -93,7 +71,7 @@ export default function D3Plot(props: {
             for (let i = 0; i < plotData.timeseries.length; i++) {
                 const ts = plotData.timeseries[i];
                 if (ts.gas === props.gas) {
-                    const dataPoints = circleUtils.generateTimeseries(
+                    const dataPoints = plotGraphUtils.generateTimeseries(
                         plotData.hours,
                         ts.data
                     );
@@ -131,7 +109,7 @@ export default function D3Plot(props: {
             <svg
                 className='relative w-full no-selection'
                 ref={d3Container}
-                viewBox='0 0 1000 400'
+                viewBox={`0 0 ${constants.PLOT.width} ${constants.PLOT.height}`}
             />
         </div>
     );

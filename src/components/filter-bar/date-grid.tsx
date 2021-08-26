@@ -6,7 +6,7 @@ import { MONTH_LABEL } from '../../utils/constants';
 function getDaysInMonth(monthObject: { year: string; month: string }) {
     return new Date(
         parseInt(monthObject.year),
-        parseInt(monthObject.month) + 1,
+        parseInt(monthObject.month),
         0
     ).getDate();
 }
@@ -78,7 +78,7 @@ export default function DateGrid(props: {
                     const dayHasData = dayStrings.includes(dayString);
                     return (
                         <button
-                            style={day === 0 ? skipColStyles : {}}
+                            style={day === 1 ? skipColStyles : {}}
                             className={
                                 'w-6 h-4 rounded-sm font-medium ' +
                                 (dayHasData
@@ -91,7 +91,7 @@ export default function DateGrid(props: {
                             disabled={!dayHasData}
                             onClick={() => {
                                 if (dayHasData) {
-                                    props.setDisplayDay({
+                                    setDisplayDay({
                                         ...monthObject,
                                         day: day.toString().padStart(2, '0'),
                                     });

@@ -7,9 +7,44 @@ import {
     implementTimeDividers,
     implementTimeLabels,
 } from '../../utils/d3-elements/grid-and-labels';
+import ld from 'lodash';
 
 const paddingRight = 18;
 const paddingTop = 10;
+
+type plotDayData = {
+    hours: number[];
+    timeseries: {
+        gas: 'co2' | 'ch4';
+        location: string;
+        sensor: string;
+        data: number[];
+    }[];
+};
+
+const exampleData: plotDayData = {
+    hours: [8, 9, 10],
+    timeseries: [
+        {
+            gas: 'co2',
+            location: 'ROS',
+            sensor: 'mb86',
+            data: [410, 411, 410.75],
+        },
+        {
+            gas: 'ch4',
+            location: 'ROS',
+            sensor: 'mb86',
+            data: [1.9, 1.9091, 1.8914],
+        },
+    ],
+};
+
+export const generateTimeseries = (xs: number[], ys: number[]) =>
+    ld
+        .zip(xs, ys)
+        .map(d => ({ x: d[0], y: d[1] }))
+        .filter(e => e.y !== 0);
 
 export default function D3Plot(props: {
     plotAxisRange: {
@@ -23,6 +58,7 @@ export default function D3Plot(props: {
 }) {
     const d3Container = useRef(null);
     const { plotAxisRange: domains, gas } = props;
+    const plotData: plotDayData = exampleData;
 
     useEffect(() => {
         if (d3Container.current) {
@@ -43,6 +79,37 @@ export default function D3Plot(props: {
             implementConcentrationDividers(svg, domains[gas], yScale);
             implementConcentrationLabels(svg, domains[gas], yScale, gas);
             implementAxisTitles(svg);
+
+            for (let i = 0; i < plotData.timeseries.length; i++) {
+                const {
+                    gas,
+                    location,
+                    sensor,
+                    data: ys,
+                } = plotData.timeseries[i];
+                let circles: any = svg
+                    .selectAll(`.circle-${gas}-${location}-${sensor}`)
+                    .data(generateTimeseries(plotData.hours, ys));
+                circles
+                    .enter()
+                    .append('circle')
+                    .attr('fill', '#2A9D8F')
+                    .attr('class', `circle-${gas}-${location}-${sensor}`)
+
+                    // Keep all circles in sync with the data
+                    .merge(circles)
+                    .attr('r', 2.4)
+                    .attr('opacity', true ? '100%' : '0%')
+                    .attr('cx', (d: { x: number; y: number }, i: number) =>
+                        xScale(d.x)
+                    )
+                    .attr('cy', (d: { x: number; y: number }, i: number) =>
+                        yScale(d.y)
+                    );
+
+                // Remove old circle elements
+                circles.exit().remove();
+            }
         }
     }, [props.gas, d3Container.current]);
 

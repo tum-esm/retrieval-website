@@ -97,6 +97,7 @@ export default function Plot(props: {
                 <D3Plot
                     plotAxisRange={plotAxisRange}
                     gas={plotMeta.data.gases[gasIndex].name}
+                    plotDay={props.pageContext.displayDayObject}
                 />
             </main>
         </>

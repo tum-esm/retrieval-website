@@ -8,29 +8,33 @@ import constants from 'utils/constants';
 const GASES: types.gas[] = ['co2', 'ch4'];
 const LOCATIONS = ['ROS', 'HAW'];
 
-const exampleData: types.plotDayData = {
-    hours: [8, 9, 10],
-    timeseries: [
-        {
-            gas: 'co2',
-            location: 'ROS',
-            data: [410, 411, 410.75],
-        },
-        {
-            gas: 'ch4',
-            location: 'ROS',
-            data: [1.9, 1.9091, 1.8876],
-        },
-    ],
+const exampleData: types.plotDay = {
+    date: '20200404',
+    data: {
+        timeseries: [
+            {
+                gas: 'co2',
+                location: 'ROS',
+                count: 3,
+                data: { xs: [8, 9, 10], ys: [410, 411, 410.75] },
+            },
+            {
+                gas: 'ch4',
+                location: 'ROS',
+                count: 3,
+                data: { xs: [8, 9, 10], ys: [1.9, 1.9091, 1.8876] },
+            },
+        ],
+    },
 };
 
 export default function D3Plot(props: {
     plotAxisRange: types.plotDomain;
     gas: types.gas;
+    plotDay: types.plotDay;
 }) {
     const d3Container = useRef(null);
-    const { plotAxisRange: domains } = props;
-    const plotData: types.plotDayData = exampleData;
+    const { plotAxisRange: domains, plotDay } = props;
 
     useEffect(() => {
         if (d3Container.current) {
@@ -68,32 +72,34 @@ export default function D3Plot(props: {
                 yScale
             );
 
-            for (let i = 0; i < plotData.timeseries.length; i++) {
-                const ts = plotData.timeseries[i];
-                if (ts.gas === props.gas) {
-                    const dataPoints = plotGraphUtils.generateTimeseries(
-                        plotData.hours,
-                        ts.data
-                    );
-                    implementCircles(ts.gas, ts.location, dataPoints);
-                    implementLines(ts.gas, ts.location, dataPoints);
+            if (plotDay.data.timeseries !== undefined) {
+                for (let i = 0; i < plotDay.data.timeseries.length; i++) {
+                    const ts = plotDay.data.timeseries[i];
+                    if (ts.gas === props.gas) {
+                        const dataPoints = plotGraphUtils.generateTimeseries(
+                            ts.data.xs,
+                            ts.data.ys
+                        );
+                        implementCircles(ts.gas, ts.location, dataPoints);
+                        implementLines(ts.gas, ts.location, dataPoints);
+                    }
                 }
-            }
 
-            const locationsWithTimeseries = plotData.timeseries
-                .filter(t => t.gas === props.gas)
-                .map(d => d.location);
+                const locationsWithTimeseries = plotDay.data.timeseries
+                    .filter(t => t.gas === props.gas)
+                    .map(d => d.location);
 
-            for (let i = 0; i < GASES.length; i++) {
-                for (let j = 0; j < LOCATIONS.length; j++) {
-                    const gas = GASES[i];
-                    const location = LOCATIONS[j];
-                    if (
-                        gas !== props.gas ||
-                        !locationsWithTimeseries.includes(location)
-                    ) {
-                        implementCircles(gas, location, []);
-                        implementLines(gas, location, []);
+                for (let i = 0; i < GASES.length; i++) {
+                    for (let j = 0; j < LOCATIONS.length; j++) {
+                        const gas = GASES[i];
+                        const location = LOCATIONS[j];
+                        if (
+                            gas !== props.gas ||
+                            !locationsWithTimeseries.includes(location)
+                        ) {
+                            implementCircles(gas, location, []);
+                            implementLines(gas, location, []);
+                        }
                     }
                 }
             }

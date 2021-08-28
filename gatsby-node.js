@@ -1,5 +1,6 @@
 const path = require(`path`);
 const fetch = require('node-fetch');
+const lodash = require('lodash');
 
 const API_URL = process.env.API_URL || 'http://localhost:1337';
 
@@ -28,10 +29,21 @@ exports.createPages = async ({ graphql, actions }) => {
             `${API_URL}/plot-metas/${metas[i].strapiId}`
         );
         const metaObject = await metaResponse.json();
+
+        const displayDay =
+            metaObject.data.displayDay !== null
+                ? metaObject.data.displayDay
+                : lodash.last(lodash.sortBy(metaObject.data.days));
+
+        const displayDayResponse = await fetch(
+            `${API_URL}/plot-days?date=${displayDay}`
+        );
+        const displayDayObject = (await displayDayResponse.json())[0];
+
         createPage({
             path: `/${metas[i].campaignId}`,
             component: path.resolve(`./src/templates/plot.tsx`),
-            context: { metaObject },
+            context: { metaObject, displayDayObject },
         });
     }
     /*

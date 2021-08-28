@@ -25,6 +25,19 @@ namespace types {
     export type dayObject = { year: string; month: string; day: string };
     export type monthObject = { year: string; month: string };
     export type gasMeta = { name: gas; unit: string };
+    export type stationMeta = { location: string; sensor: string };
+
+    export type plotMeta = {
+        campaignId: string;
+        data: {
+            gases: gasMeta[];
+            stations: stationMeta[];
+            days: string[];
+            hiddenDays: [];
+            startDate: string;
+            displayDay: string;
+        };
+    };
 }
 
 export default types;

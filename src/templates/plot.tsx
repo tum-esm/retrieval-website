@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { graphql } from 'gatsby';
 import types from 'types';
-import { last } from 'lodash';
 import getDayObjectFromString from 'utils/get-day-object-from-string';
 import FilterBar from 'components/filter-bar/filter-bar';
 import D3Plot from 'components/d3-plot/d3-plot';
@@ -30,37 +28,17 @@ export default function Plot(props: {
         displayDayObject: types.plotDay;
     };
 }) {
-    return <main>{JSON.stringify(props.pageContext.displayDayObject)}</main>;
-    /*
-    const response = await fetch(url);
+    //return <main>{JSON.stringify(props.pageContext.displayDayObject)}</main>;
 
-    if (response.ok) { // if HTTP-status is 200-299
-        // get the response body (the method explained below)
-        const json = await response.json();
-    } else {
-        alert("HTTP-Error: " + response.status);
-        return "server error"
-    }
-    
-    const plotMeta: types.plotMeta = props.data.strapiPlotMeta;
+    const plotMeta: types.plotMeta = props.pageContext.metaObject;
     const sortedDayStrings = plotMeta.data.days.sort();
 
-    // TODO: build pretty empty page
-    if (sortedDayStrings.length === 0) {
-        return <div>Nothing here</div>;
-    }
-
-    const displayDayString: any =
-        plotMeta.data.displayDay !== null
-            ? plotMeta.data.displayDay
-            : last(sortedDayStrings);
-
     const [displayDay, setDisplayDay] = useState<types.dayObject>(
-        getDayObjectFromString(displayDayString)
+        getDayObjectFromString(props.pageContext.displayDayObject.date)
     );
 
     const [dayIndex, setDayIndex] = useState(
-        sortedDayStrings.indexOf(displayDayString)
+        sortedDayStrings.indexOf(props.pageContext.displayDayObject.date)
     );
     const [gasIndex, setGasIndex] = useState(0);
     const [filterData, setFilterData] = useState(true);
@@ -122,5 +100,5 @@ export default function Plot(props: {
                 />
             </main>
         </>
-    );*/
+    );
 }

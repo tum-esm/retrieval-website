@@ -38,6 +38,33 @@ namespace types {
             displayDay: string;
         };
     };
+
+    export type plotDay = {
+        date: string;
+        data: {
+            timeseries?: gasTimeseries[];
+            rawTimeseries?: gasTimeseries[];
+            flagTimeseries?: flagTimeseries[];
+        };
+    };
+
+    export type gasTimeseries = {
+        gas: string;
+        location: string;
+        count: number;
+        data: timeseriesData;
+    };
+
+    export type flagTimeseries = {
+        location: string;
+        count: number;
+        data: timeseriesData;
+    };
+
+    export type timeseriesData = {
+        xs: number[];
+        ys: number[];
+    };
 }
 
 export default types;

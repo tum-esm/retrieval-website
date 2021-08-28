@@ -24,8 +24,13 @@ const plotAxisRange = {
     },
 };
 
-export default function Plot(props: { pageContext: any }) {
-    return <main>{JSON.stringify(props)}</main>;
+export default function Plot(props: {
+    pageContext: {
+        metaObject: types.plotMeta;
+        displayDayObject: types.plotDay;
+    };
+}) {
+    return <main>{JSON.stringify(props.pageContext.displayDayObject)}</main>;
     /*
     const response = await fetch(url);
 

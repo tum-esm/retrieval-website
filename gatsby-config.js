@@ -1,3 +1,5 @@
+require('dotenv').config({ path: `.env` });
+
 module.exports = {
     siteMetadata: {
         siteUrl: 'https://www.yourdomain.tld',
@@ -15,6 +17,14 @@ module.exports = {
                 path: './src/pages/',
             },
             __key: 'pages',
+        },
+        {
+            resolve: 'gatsby-source-strapi',
+            options: {
+                apiURL: process.env.API_URL || 'http://localhost:1337',
+                collectionTypes: ['plot-meta', 'plot-day'],
+                queryLimit: 1000,
+            },
         },
     ],
 };

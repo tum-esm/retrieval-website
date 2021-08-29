@@ -9,9 +9,9 @@ export default function DisplayDay(props: {
     prevDay(): void;
     nextDay(): void;
 
-    displayDay: types.dayObject;
+    dayObject: types.dayObject;
 }) {
-    const { displayDay, isFirstDay, isLastDay, prevDay, nextDay } = props;
+    const { dayObject, isFirstDay, isLastDay, prevDay, nextDay } = props;
     return (
         <div className='flex-col-center'>
             <div className='p-1 mb-2 bg-green-100 rounded flex-col-center'>
@@ -19,8 +19,8 @@ export default function DisplayDay(props: {
                     displayed day
                 </div>
                 <div className='w-40 px-2 text-xl font-semibold text-green-900 h-7 flex-row-center'>
-                    {constants.MONTH_LABEL[displayDay.month]}{' '}
-                    {parseInt(displayDay.day)} {displayDay.year}
+                    {constants.MONTH_LABEL[dayObject.month]}{' '}
+                    {parseInt(dayObject.day)} {dayObject.year}
                 </div>
             </div>
             <span className='relative z-0 inline-flex rounded-md shadow-sm'>

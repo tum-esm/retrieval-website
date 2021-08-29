@@ -5,6 +5,7 @@ import * as plotGraphUtils from 'utils/d3-elements/circles-and-lines';
 import types from 'types';
 import constants from 'utils/constants';
 import buildTimeseriesData from 'utils/build-timeseries-data';
+import { dayObject } from '../../types';
 
 export default function D3Plot(props: {
     domains: types.plotDomain;
@@ -12,6 +13,7 @@ export default function D3Plot(props: {
     gases: types.gasMeta[];
     stations: types.stationMeta[];
     plotDay: types.plotDay;
+    setIsLoading(l: boolean): void;
 }) {
     const d3Container = useRef(null);
 
@@ -20,6 +22,14 @@ export default function D3Plot(props: {
 
     const [timeseries, setTimeseries] = useState(initialTS);
     const [rawTimeseries, setRawTimeseries] = useState(initialRTS);
+
+    useEffect(() => {
+        const { timeseries: newTS, rawTimeseries: newRTS } =
+            buildTimeseriesData(props.gases, props.stations, props.plotDay);
+        setTimeseries(newTS);
+        setRawTimeseries(initialRTS);
+        props.setIsLoading(false);
+    }, [props.plotDay]);
 
     useEffect(() => {
         if (d3Container.current) {

@@ -43,7 +43,7 @@ exports.createPages = async ({ graphql, actions }) => {
         createPage({
             path: `/${metas[i].campaignId}`,
             component: path.resolve(`./src/templates/plot.tsx`),
-            context: { metaObject, displayDayObject },
+            context: { metaObject, displayDayObject, apiURL: API_URL },
         });
     }
     /*

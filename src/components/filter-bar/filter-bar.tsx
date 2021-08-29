@@ -10,8 +10,8 @@ export default function FilterBar(props: {
     prevDay(): void;
     nextDay(): void;
 
-    displayDay: types.dayObject;
-    setDisplayDay(d: types.dayObject): void;
+    dayObject: types.dayObject;
+    setDayObject(d: types.dayObject): void;
 
     dayStrings: string[];
     gases: { name: types.gas; unit: string }[];

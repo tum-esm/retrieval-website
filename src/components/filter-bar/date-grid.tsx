@@ -21,23 +21,23 @@ function getFirstWeekday(monthObject: types.monthObject) {
 }
 
 export default function DateGrid(props: {
-    displayDay: types.dayObject;
-    setDisplayDay(d: types.dayObject): void;
+    dayObject: types.dayObject;
+    setDayObject(d: types.dayObject): void;
     dayStrings: string[];
 }) {
-    const { displayDay, setDisplayDay, dayStrings } = props;
+    const { dayObject, setDayObject, dayStrings } = props;
 
     const [monthObject, setMonthObject] = useState<types.monthObject>({
-        year: displayDay.year,
-        month: displayDay.month,
+        year: dayObject.year,
+        month: dayObject.month,
     });
 
     useEffect(() => {
         setMonthObject({
-            year: displayDay.year,
-            month: displayDay.month,
+            year: dayObject.year,
+            month: dayObject.month,
         });
-    }, [displayDay]);
+    }, [dayObject]);
 
     const daysInMonth = getDaysInMonth(monthObject);
     const skipColStyles = {
@@ -74,7 +74,7 @@ export default function DateGrid(props: {
                     const dayString = `${monthObject.year}${
                         monthObject.month
                     }${day.toString().padStart(2, '0')}`;
-                    const displayDayString = `${displayDay.year}${displayDay.month}${displayDay.day}`;
+                    const displayDayString = `${dayObject.year}${dayObject.month}${dayObject.day}`;
 
                     const dayHasData = dayStrings.includes(dayString);
                     return (
@@ -92,7 +92,7 @@ export default function DateGrid(props: {
                             disabled={!dayHasData}
                             onClick={() => {
                                 if (dayHasData) {
-                                    setDisplayDay({
+                                    setDayObject({
                                         ...monthObject,
                                         day: day.toString().padStart(2, '0'),
                                     });

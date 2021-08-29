@@ -26,22 +26,30 @@ export default function Plot(props: {
     pageContext: {
         metaObject: types.plotMeta;
         displayDayObject: types.plotDay;
+        apiURL: string;
     };
 }) {
     //return <main>{JSON.stringify(props.pageContext.displayDayObject)}</main>;
-
+    console.log({ apiUrl: props.pageContext.apiURL });
     const plotMeta: types.plotMeta = props.pageContext.metaObject;
     const sortedDayStrings = plotMeta.data.days.sort();
 
-    const [displayDay, setDisplayDay] = useState<types.dayObject>(
-        getDayObjectFromString(props.pageContext.displayDayObject.date)
-    );
+    const [displayDay, setDisplayDay] = useState<{
+        dayObject: types.dayObject;
+        plotDay: types.plotDay;
+    }>({
+        dayObject: getDayObjectFromString(
+            props.pageContext.displayDayObject.date
+        ),
+        plotDay: props.pageContext.displayDayObject,
+    });
 
     const [dayIndex, setDayIndex] = useState(
         sortedDayStrings.indexOf(props.pageContext.displayDayObject.date)
     );
     const [gasIndex, setGasIndex] = useState(0);
     const [filterData, setFilterData] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const isFirstDay = () => dayIndex === 0;
     const isLastDay = () => dayIndex === sortedDayStrings.length - 1;
@@ -59,12 +67,27 @@ export default function Plot(props: {
     }
 
     useEffect(() => {
-        setDisplayDay(getDayObjectFromString(sortedDayStrings[dayIndex]));
-    }, [dayIndex]);
+        console.log(props.pageContext.apiURL);
+        const newDayString = sortedDayStrings[dayIndex];
 
-    if (displayDay === undefined) {
-        return <div />;
-    }
+        async function fetchDay(daystring: string) {
+            // TODO: error handling (show message if data could not be fetched)
+
+            setIsLoading(true);
+            const displayDayResponse = await fetch(
+                `${props.pageContext.apiURL}/plot-days?date=${newDayString}`
+            );
+            setDisplayDay({
+                dayObject: getDayObjectFromString(newDayString),
+                plotDay: (await displayDayResponse.json())[0],
+            });
+            // isLoading will be set to false from within the D3 plot
+        }
+
+        if (displayDay.plotDay.date !== newDayString) {
+            fetchDay(newDayString);
+        }
+    }, [dayIndex]);
 
     return (
         <>
@@ -74,9 +97,9 @@ export default function Plot(props: {
                     {...{
                         dayStrings: sortedDayStrings,
                         gases: plotMeta.data.gases,
-                        displayDay,
+                        dayObject: displayDay.dayObject,
                     }}
-                    setDisplayDay={d => {
+                    setDayObject={d => {
                         setDayIndex(
                             sortedDayStrings.indexOf(
                                 `${d.year}${d.month}${d.day}`
@@ -99,7 +122,8 @@ export default function Plot(props: {
                     selectedGas={plotMeta.data.gases[gasIndex].name}
                     gases={plotMeta.data.gases}
                     stations={plotMeta.data.stations}
-                    plotDay={props.pageContext.displayDayObject}
+                    plotDay={displayDay.plotDay}
+                    setIsLoading={setIsLoading}
                 />
             </main>
         </>

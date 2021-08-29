@@ -2,6 +2,21 @@ import ld from 'lodash';
 import * as d3 from 'd3';
 import types from 'types';
 
+function getLocationColor(location: string) {
+    switch (location) {
+        case 'ROS':
+            return '#2A9D8F';
+        case 'HAW':
+            return '#FF0000';
+        case 'JOR':
+            return '#00FF00';
+        case 'GEO':
+            return '#0000FF';
+        default:
+            return '#888888';
+    }
+}
+
 export const generateTimeseries = (xs: number[], ys: number[]): any =>
     ld
         .zip(xs, ys)
@@ -69,7 +84,7 @@ const separateDataLines = (xs: types.dataPoint[]): types.dataPoint[][] => {
     return out;
 };
 
-export const implementCircles =
+export const implementCirclesAndLines =
     (svg: any, xScale: (n: number) => number, yScale: (n: number) => number) =>
     (
         gas: string,
@@ -86,13 +101,13 @@ export const implementCircles =
             .enter()
             .append('circle')
             // TODO: Use a different color for each station
-            .attr('fill', '#2A9D8F')
+            .attr('fill', getLocationColor(location))
             .attr('class', `circle-${gas}-${location}`)
 
             // Keep all circles in sync with the data
             .merge(circles)
             // TODO: Vary circle size for raw vs. filtered data
-            .attr('r', 2.4)
+            .attr('r', 1)
             // TODO: Only show circle on respective settings
             .attr('opacity', true ? '100%' : '0%')
             .attr('cx', (d: { x: number; y: number }, i: number) => xScale(d.x))
@@ -102,33 +117,22 @@ export const implementCircles =
 
         // Remove old circle elements
         circles.exit().remove();
-    };
 
-export const implementLines =
-    (svg: any, xScale: (n: number) => number, yScale: (n: number) => number) =>
-    (
-        gas: string,
-        location: string,
-        dataPoints: {
-            x: number;
-            y: number;
-        }[]
-    ) => {
         let line: any = svg.selectAll(`.line-${gas}-${location}`);
         if (line.empty()) {
             line = svg
                 .append('path')
                 .attr('class', `line-${gas}-${location} pointer-events-none`)
                 // TODO: Use a different color for each station
-                .style('stroke', '#2A9D8F')
-                .style('stroke-width', 2.4)
+                .style('stroke', getLocationColor(location))
+                .style('stroke-width', 1)
                 .style('stroke-linecap', 'round')
                 .style('stroke-linejoin', 'round')
-                //.style('stroke-dasharray', '5,7.5')
-                .style('fill', 'none');
+                .style('fill', 'none')
+                // TODO: Vary line thickness for raw vs. filtered data
+                .style('stroke-width', 2);
         }
-        // TODO: Vary line thickness for raw vs. filtered data
-        line.style('stroke-width', 4.8)
+        line
             // TODO: Only show circle on respective settings
             .attr('opacity', true ? '30%' : '0%')
             .attr('d', generateLines(xScale, yScale)(dataPoints));

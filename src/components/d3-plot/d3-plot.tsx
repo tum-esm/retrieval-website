@@ -58,12 +58,9 @@ export default function D3Plot(props: {
                 props.selectedGas
             );
 
-            const implementCircles = plotGraphUtils.implementCircles(
-                svg,
-                xScale,
-                yScale
-            );
-            const implementLines = plotGraphUtils.implementLines(
+            const implementCirclesAndLines =
+                plotGraphUtils.implementCirclesAndLines(svg, xScale, yScale);
+            const implementLines = plotGraphUtils.implementCirclesAndLines(
                 svg,
                 xScale,
                 yScale
@@ -78,8 +75,7 @@ export default function D3Plot(props: {
                     ts.data.xs,
                     ts.data.ys
                 );
-                implementCircles(ts.gas, ts.location, dataPoints);
-                implementLines(ts.gas, ts.location, dataPoints);
+                implementCirclesAndLines(ts.gas, ts.location, dataPoints);
             }
             for (let i = 0; i < rawTimeseries.length; i++) {
                 const ts = rawTimeseries[i];
@@ -87,8 +83,7 @@ export default function D3Plot(props: {
                     ts.data.xs,
                     ts.data.ys
                 );
-                implementCircles(ts.gas, ts.location, dataPoints);
-                implementLines(ts.gas, ts.location, dataPoints);
+                implementCirclesAndLines(ts.gas, ts.location, dataPoints);
             }
             props.setIsLoading(false);
         }

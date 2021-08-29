@@ -96,7 +96,9 @@ export default function Plot(props: {
             >
                 <D3Plot
                     plotAxisRange={plotAxisRange}
-                    gas={plotMeta.data.gases[gasIndex].name}
+                    selectedGas={plotMeta.data.gases[gasIndex].name}
+                    gases={plotMeta.data.gases}
+                    stations={plotMeta.data.stations}
                     plotDay={props.pageContext.displayDayObject}
                 />
             </main>

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import * as plotGridUtils from 'utils/d3-elements/grid-and-labels';
 import * as plotGraphUtils from 'utils/d3-elements/circles-and-lines';
@@ -28,13 +28,70 @@ const exampleData: types.plotDay = {
     },
 };
 
+function buildTimeseriesData(
+    gases: types.gasMeta[],
+    stations: types.stationMeta[],
+    plotDay: types.plotDay
+) {
+    let timeseries: types.gasTimeseries[] = [];
+    let rawTimeseries: types.gasTimeseries[] = [];
+    for (let i = 0; i < gases.length; i++) {
+        for (let j = 0; j < stations.length; j++) {
+            const gas = gases[i].name;
+            const location = stations[j].location;
+            let tsAdded = false;
+
+            if (plotDay.data.timeseries !== undefined) {
+                const existingTss = plotDay.data?.timeseries
+                    .filter(t => t.gas === gas)
+                    .filter(t => t.location === location);
+                if (existingTss.length !== 0) {
+                    timeseries.push(existingTss[0]);
+                    tsAdded = true;
+                }
+            }
+            if (!tsAdded) {
+                timeseries.push({
+                    gas,
+                    location,
+                    count: 0,
+                    data: { xs: [], ys: [] },
+                });
+            }
+            if (plotDay.data.rawTimeseries !== undefined) {
+                const existingTss = plotDay.data?.rawTimeseries
+                    .filter(t => t.gas === gas)
+                    .filter(t => t.location === location);
+                if (existingTss.length !== 0) {
+                    rawTimeseries.push(existingTss[0]);
+                    continue;
+                }
+            }
+            rawTimeseries.push({
+                gas,
+                location,
+                count: 0,
+                data: { xs: [], ys: [] },
+            });
+        }
+    }
+    return { timeseries, rawTimeseries };
+}
+
 export default function D3Plot(props: {
     plotAxisRange: types.plotDomain;
-    gas: types.gas;
+    selectedGas: types.gas;
+    gases: types.gasMeta[];
+    stations: types.stationMeta[];
     plotDay: types.plotDay;
 }) {
     const d3Container = useRef(null);
     const { plotAxisRange: domains, plotDay } = props;
+
+    const { timeseries: initialTS, rawTimeseries: initialRTS } =
+        buildTimeseriesData(props.gases, props.stations, props.plotDay);
+    const [timeseries, setTimeseries] = useState(initialTS);
+    const [rawTimeseries, setRawTimeseries] = useState(initialRTS);
 
     useEffect(() => {
         if (d3Container.current) {
@@ -48,7 +105,10 @@ export default function D3Plot(props: {
 
             const yScale = d3
                 .scaleLinear()
-                .domain([domains[props.gas].from, domains[props.gas].to])
+                .domain([
+                    domains[props.selectedGas].from,
+                    domains[props.selectedGas].to,
+                ])
                 .range([350, constants.PLOT.paddingTop]);
 
             const svg = d3.select(d3Container.current);
@@ -58,7 +118,7 @@ export default function D3Plot(props: {
                 domains,
                 xScale,
                 yScale,
-                props.gas
+                props.selectedGas
             );
 
             const implementCircles = plotGraphUtils.implementCircles(
@@ -72,39 +132,29 @@ export default function D3Plot(props: {
                 yScale
             );
 
-            if (plotDay.data.timeseries !== undefined) {
-                for (let i = 0; i < plotDay.data.timeseries.length; i++) {
-                    const ts = plotDay.data.timeseries[i];
-                    if (ts.gas === props.gas) {
-                        const dataPoints = plotGraphUtils.generateTimeseries(
-                            ts.data.xs,
-                            ts.data.ys
-                        );
-                        implementCircles(ts.gas, ts.location, dataPoints);
-                        implementLines(ts.gas, ts.location, dataPoints);
-                    }
-                }
-
-                const locationsWithTimeseries = plotDay.data.timeseries
-                    .filter(t => t.gas === props.gas)
-                    .map(d => d.location);
-
-                for (let i = 0; i < GASES.length; i++) {
-                    for (let j = 0; j < LOCATIONS.length; j++) {
-                        const gas = GASES[i];
-                        const location = LOCATIONS[j];
-                        if (
-                            gas !== props.gas ||
-                            !locationsWithTimeseries.includes(location)
-                        ) {
-                            implementCircles(gas, location, []);
-                            implementLines(gas, location, []);
-                        }
-                    }
-                }
+            // TODO: pass selected gas and selected filter/raw
+            // TODO: pass raw vs. filtered (circle size)
+            // TODO: pass visible locations
+            for (let i = 0; i < timeseries.length; i++) {
+                const ts = timeseries[i];
+                const dataPoints = plotGraphUtils.generateTimeseries(
+                    ts.data.xs,
+                    ts.data.ys
+                );
+                implementCircles(ts.gas, ts.location, dataPoints);
+                implementLines(ts.gas, ts.location, dataPoints);
+            }
+            for (let i = 0; i < rawTimeseries.length; i++) {
+                const ts = rawTimeseries[i];
+                const dataPoints = plotGraphUtils.generateTimeseries(
+                    ts.data.xs,
+                    ts.data.ys
+                );
+                implementCircles(ts.gas, ts.location, dataPoints);
+                implementLines(ts.gas, ts.location, dataPoints);
             }
         }
-    }, [props.gas, d3Container.current]);
+    }, [props.selectedGas, d3Container.current, timeseries, rawTimeseries]);
 
     return (
         <div

@@ -85,12 +85,15 @@ export const implementCircles =
         circles
             .enter()
             .append('circle')
+            // TODO: Use a different color for each station
             .attr('fill', '#2A9D8F')
             .attr('class', `circle-${gas}-${location}`)
 
             // Keep all circles in sync with the data
             .merge(circles)
+            // TODO: Vary circle size for raw vs. filtered data
             .attr('r', 2.4)
+            // TODO: Only show circle on respective settings
             .attr('opacity', true ? '100%' : '0%')
             .attr('cx', (d: { x: number; y: number }, i: number) => xScale(d.x))
             .attr('cy', (d: { x: number; y: number }, i: number) =>
@@ -116,6 +119,7 @@ export const implementLines =
             line = svg
                 .append('path')
                 .attr('class', `line-${gas}-${location} pointer-events-none`)
+                // TODO: Use a different color for each station
                 .style('stroke', '#2A9D8F')
                 .style('stroke-width', 2.4)
                 .style('stroke-linecap', 'round')
@@ -123,7 +127,9 @@ export const implementLines =
                 //.style('stroke-dasharray', '5,7.5')
                 .style('fill', 'none');
         }
+        // TODO: Vary line thickness for raw vs. filtered data
         line.style('stroke-width', 4.8)
+            // TODO: Only show circle on respective settings
             .attr('opacity', true ? '30%' : '0%')
             .attr('d', generateLines(xScale, yScale)(dataPoints));
     };

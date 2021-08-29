@@ -28,7 +28,6 @@ export default function D3Plot(props: {
             buildTimeseriesData(props.gases, props.stations, props.plotDay);
         setTimeseries(newTS);
         setRawTimeseries(initialRTS);
-        props.setIsLoading(false);
     }, [props.plotDay]);
 
     useEffect(() => {
@@ -91,6 +90,7 @@ export default function D3Plot(props: {
                 implementCircles(ts.gas, ts.location, dataPoints);
                 implementLines(ts.gas, ts.location, dataPoints);
             }
+            props.setIsLoading(false);
         }
     }, [props.selectedGas, d3Container.current, timeseries, rawTimeseries]);
 

@@ -73,14 +73,31 @@ export default function Plot(props: {
         async function fetchDay(daystring: string) {
             // TODO: error handling (show message if data could not be fetched)
 
+            const { metaObject, apiURL } = props.pageContext;
+
             setIsLoading(true);
-            const displayDayResponse = await fetch(
-                `${props.pageContext.apiURL}/plot-days?date=${newDayString}`
+            const plotDayInLocalStorage: any = localStorage.getItem(
+                `plot-day-${metaObject.campaignId}-${newDayString}`
             );
-            setDisplayDay({
-                dayObject: getDayObjectFromString(newDayString),
-                plotDay: (await displayDayResponse.json())[0],
-            });
+            if (typeof plotDayInLocalStorage === 'string') {
+                setDisplayDay({
+                    dayObject: getDayObjectFromString(newDayString),
+                    plotDay: JSON.parse(plotDayInLocalStorage),
+                });
+            } else {
+                const plotDayResponse = await fetch(
+                    `${apiURL}/plot-days?date=${newDayString}`
+                );
+                const newPlotDay = (await plotDayResponse.json())[0];
+                localStorage.setItem(
+                    `plot-day-${metaObject.campaignId}-${newDayString}`,
+                    JSON.stringify(newPlotDay)
+                );
+                setDisplayDay({
+                    dayObject: getDayObjectFromString(newDayString),
+                    plotDay: newPlotDay,
+                });
+            }
             // isLoading will be set to false from within the D3 plot
         }
 

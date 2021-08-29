@@ -5,7 +5,6 @@ import * as plotGraphUtils from 'utils/d3-elements/circles-and-lines';
 import types from 'types';
 import constants from 'utils/constants';
 import buildTimeseriesData from 'utils/build-timeseries-data';
-import { dayObject } from '../../types';
 
 export default function D3Plot(props: {
     domains: types.plotDomain;
@@ -13,6 +12,7 @@ export default function D3Plot(props: {
     gases: types.gasMeta[];
     stations: types.stationMeta[];
     plotDay: types.plotDay;
+    isLoading: boolean;
     setIsLoading(l: boolean): void;
 }) {
     const d3Container = useRef(null);
@@ -100,8 +100,18 @@ export default function D3Plot(props: {
                 'relative w-full p-2 flex-row-center text-gray-900 bg-white shadow rounded'
             }
         >
+            <div className='absolute top-0 left-0 z-10 w-full h-full flex-row-center'>
+                <div
+                    className={
+                        'px-2.5 py-1 text-sm font-semibold bg-blue-900 rounded text-blue-50 ' +
+                        (props.isLoading ? 'opacity-100 ' : 'opacity-0 ')
+                    }
+                >
+                    loading data ...
+                </div>
+            </div>
             <svg
-                className='relative w-full no-selection'
+                className='relative z-0 w-full no-selection'
                 ref={d3Container}
                 viewBox={`0 0 ${constants.PLOT.width} ${constants.PLOT.height}`}
             />

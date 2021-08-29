@@ -141,6 +141,7 @@ export default function Plot(props: {
                     stations={plotMeta.data.stations}
                     plotDay={displayDay.plotDay}
                     setIsLoading={setIsLoading}
+                    isLoading={isLoading}
                 />
             </main>
         </>

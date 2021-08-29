@@ -6,14 +6,14 @@ import D3Plot from 'components/d3-plot/d3-plot';
 
 const domains = {
     time: {
-        from: 7,
+        from: 5,
         to: 19,
         step: 1,
     },
     co2: {
-        from: 407,
-        to: 417,
-        step: 1,
+        from: 400, //407,
+        to: 420, //417,
+        step: 2,
     },
     ch4: {
         from: 1.86,

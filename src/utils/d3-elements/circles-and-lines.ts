@@ -1,4 +1,4 @@
-import ld from 'lodash';
+import { zip, reduce } from 'lodash';
 import * as d3 from 'd3';
 import types from 'types';
 
@@ -17,13 +17,6 @@ function getLocationColor(location: string) {
     }
 }
 
-export const generateTimeseries = (xs: number[], ys: number[]): any =>
-    ld
-        .zip(xs, ys)
-        .filter(d => !d.includes(undefined) && d.length === 2)
-        .map(d => ({ x: d[0], y: d[1] }))
-        .filter(e => e.y !== 0);
-
 export const generateLine = (
     xScale: (x: number) => number,
     yScale: (y: number) => number
@@ -31,20 +24,22 @@ export const generateLine = (
     d3
         .line()
         // @ts-ignore
-        .x((d: any) => xScale(d.x))
+        .x((d: number[]) => xScale(d[0]))
         // @ts-ignore
-        .y((d: types.dataPoint) => yScale(d.y))
+        .y((d: number[]) => yScale(d[1]))
         .curve(d3.curveCatmullRom.alpha(0.5));
 
 export const generateLines =
     (xScale: (x: number) => number, yScale: (y: number) => number) =>
-    (xs: types.dataPoint[]) => {
-        if (xs.length == 0) {
+    (zippedData: number[][]) => {
+        if (zippedData.length == 0) {
             return '';
         }
-        return ld.reduce(
-            separateDataLines(xs),
-            (acc: string, next: types.dataPoint[]) => {
+
+        return reduce(
+            // @ts-ignore
+            separateDataLines(zippedData),
+            (acc: string, next: number[][]) => {
                 // @ts-ignore
                 return acc + ' ' + generateLine(xScale, yScale)(next);
             },
@@ -67,17 +62,17 @@ export const generateLines =
     );
 };*/
 
-const separateDataLines = (xs: types.dataPoint[]): types.dataPoint[][] => {
-    let out: types.dataPoint[][] = [];
-    let runningLine: types.dataPoint[] = [xs[0]];
-    for (let i = 1; i < xs.length; i++) {
-        if (xs[i].x - xs[i - 1].x <= 1800) {
+const separateDataLines = (ts: number[][]): number[][][] => {
+    let out: number[][][] = [];
+    let runningLine: number[][] = [ts[0]];
+    for (let i = 1; i < ts.length; i++) {
+        if (ts[i][0] - ts[i - 1][0] <= 1800) {
             // append to running line
-            runningLine.push(xs[i]);
+            runningLine.push(ts[i]);
         } else {
             // start a new line after gaps of > 30 minutes
             out.push(runningLine);
-            runningLine = [xs[i]];
+            runningLine = [ts[i]];
         }
     }
     out.push(runningLine);
@@ -86,44 +81,40 @@ const separateDataLines = (xs: types.dataPoint[]): types.dataPoint[][] => {
 
 export const implementCirclesAndLines =
     (svg: any, xScale: (n: number) => number, yScale: (n: number) => number) =>
-    (
-        gas: string,
-        location: string,
-        dataPoints: {
-            x: number;
-            y: number;
-        }[]
-    ) => {
+    (timeseries: types.gasTimeseries) => {
+        const { gas, location, data } = timeseries;
+
+        const circleClassName = `circle-${gas}-${location}`;
+        const lineClassName = `line-${gas}-${location}`;
+        const zippedData: any[][] = zip(data.xs, data.ys);
+
         let circles: any = svg
-            .selectAll(`.circle-${gas}-${location}`)
-            .data(dataPoints);
+            .selectAll(`.${circleClassName}`)
+            .data(zippedData);
         circles
             .enter()
             .append('circle')
-            // TODO: Use a different color for each station
             .attr('fill', getLocationColor(location))
-            .attr('class', `circle-${gas}-${location}`)
+            .attr('class', circleClassName)
+            // TODO: Vary circle size for raw vs. filtered data
+            .attr('r', 1)
 
             // Keep all circles in sync with the data
             .merge(circles)
-            // TODO: Vary circle size for raw vs. filtered data
-            .attr('r', 1)
             // TODO: Only show circle on respective settings
             .attr('opacity', true ? '100%' : '0%')
-            .attr('cx', (d: { x: number; y: number }, i: number) => xScale(d.x))
-            .attr('cy', (d: { x: number; y: number }, i: number) =>
-                yScale(d.y)
-            );
+            .attr('cx', (d: number[], i: number) => xScale(d[0]))
+            .attr('cy', (d: number[], i: number) => yScale(d[1]));
 
         // Remove old circle elements
         circles.exit().remove();
-
-        let line: any = svg.selectAll(`.line-${gas}-${location}`);
+        /*
+        let line: any = svg.selectAll(`.${lineClassName}`);
+        const generateCurrentLines = generateLines(xScale, yScale);
         if (line.empty()) {
             line = svg
                 .append('path')
-                .attr('class', `line-${gas}-${location} pointer-events-none`)
-                // TODO: Use a different color for each station
+                .attr('class', `${lineClassName} pointer-events-none`)
                 .style('stroke', getLocationColor(location))
                 .style('stroke-width', 1)
                 .style('stroke-linecap', 'round')
@@ -135,5 +126,5 @@ export const implementCirclesAndLines =
         line
             // TODO: Only show circle on respective settings
             .attr('opacity', true ? '30%' : '0%')
-            .attr('d', generateLines(xScale, yScale)(dataPoints));
+            .attr('d', generateCurrentLines(zippedData));*/
     };

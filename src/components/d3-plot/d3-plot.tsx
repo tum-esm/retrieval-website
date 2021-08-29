@@ -60,30 +60,13 @@ export default function D3Plot(props: {
 
             const implementCirclesAndLines =
                 plotGraphUtils.implementCirclesAndLines(svg, xScale, yScale);
-            const implementLines = plotGraphUtils.implementCirclesAndLines(
-                svg,
-                xScale,
-                yScale
-            );
 
             // TODO: pass selected gas and selected filter/raw
             // TODO: pass raw vs. filtered (circle size)
             // TODO: pass visible locations
             for (let i = 0; i < timeseries.length; i++) {
-                const ts = timeseries[i];
-                const dataPoints = plotGraphUtils.generateTimeseries(
-                    ts.data.xs,
-                    ts.data.ys
-                );
-                implementCirclesAndLines(ts.gas, ts.location, dataPoints);
-            }
-            for (let i = 0; i < rawTimeseries.length; i++) {
-                const ts = rawTimeseries[i];
-                const dataPoints = plotGraphUtils.generateTimeseries(
-                    ts.data.xs,
-                    ts.data.ys
-                );
-                implementCirclesAndLines(ts.gas, ts.location, dataPoints);
+                implementCirclesAndLines(timeseries[i]);
+                implementCirclesAndLines(rawTimeseries[i]);
             }
             props.setIsLoading(false);
         }

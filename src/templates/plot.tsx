@@ -4,7 +4,7 @@ import getDayObjectFromString from 'utils/get-day-object-from-string';
 import FilterBar from 'components/filter-bar/filter-bar';
 import D3Plot from 'components/d3-plot/d3-plot';
 
-const plotAxisRange = {
+const domains = {
     time: {
         from: 7,
         to: 19,
@@ -95,7 +95,7 @@ export default function Plot(props: {
                 className={'bg-gray-100 w-screen min-h-screen pt-40 pb-8 px-4'}
             >
                 <D3Plot
-                    plotAxisRange={plotAxisRange}
+                    domains={domains}
                     selectedGas={plotMeta.data.gases[gasIndex].name}
                     gases={plotMeta.data.gases}
                     stations={plotMeta.data.stations}

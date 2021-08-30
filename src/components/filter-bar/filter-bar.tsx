@@ -10,16 +10,14 @@ export default function FilterBar(props: {
     prevDay(): void;
     nextDay(): void;
 
-    displayDay: types.dayObject;
-    setDisplayDay(d: types.dayObject): void;
+    dayObject: types.dayObject;
+    setDayObject(d: types.dayObject): void;
 
     dayStrings: string[];
     gases: { name: types.gas; unit: string }[];
 
     gasIndex: number;
     setGasIndex(i: number): void;
-    filterData: boolean;
-    setFilterData(b: boolean): void;
 }) {
     return (
         <div className={'w-full h-32 px-4 py-2 flex-row-center text-gray-900'}>

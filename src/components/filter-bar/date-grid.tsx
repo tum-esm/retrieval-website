@@ -21,23 +21,23 @@ function getFirstWeekday(monthObject: types.monthObject) {
 }
 
 export default function DateGrid(props: {
-    displayDay: types.dayObject;
-    setDisplayDay(d: types.dayObject): void;
+    dayObject: types.dayObject;
+    setDayObject(d: types.dayObject): void;
     dayStrings: string[];
 }) {
-    const { displayDay, setDisplayDay, dayStrings } = props;
+    const { dayObject, setDayObject, dayStrings } = props;
 
     const [monthObject, setMonthObject] = useState<types.monthObject>({
-        year: displayDay.year,
-        month: displayDay.month,
+        year: dayObject.year,
+        month: dayObject.month,
     });
 
     useEffect(() => {
         setMonthObject({
-            year: displayDay.year,
-            month: displayDay.month,
+            year: dayObject.year,
+            month: dayObject.month,
         });
-    }, [displayDay]);
+    }, [dayObject]);
 
     const daysInMonth = getDaysInMonth(monthObject);
     const skipColStyles = {
@@ -67,14 +67,14 @@ export default function DateGrid(props: {
             <div
                 className={
                     'grid grid-flow-row grid-cols-7 gap-1 ' +
-                    'text-xs text-center font-semibold'
+                    'text-xs text-center font-semibold flex-shrink-0'
                 }
             >
                 {range(1, daysInMonth + 1).map(day => {
                     const dayString = `${monthObject.year}${
                         monthObject.month
                     }${day.toString().padStart(2, '0')}`;
-                    const displayDayString = `${displayDay.year}${displayDay.month}${displayDay.day}`;
+                    const displayDayString = `${dayObject.year}${dayObject.month}${dayObject.day}`;
 
                     const dayHasData = dayStrings.includes(dayString);
                     return (
@@ -92,7 +92,7 @@ export default function DateGrid(props: {
                             disabled={!dayHasData}
                             onClick={() => {
                                 if (dayHasData) {
-                                    setDisplayDay({
+                                    setDayObject({
                                         ...monthObject,
                                         day: day.toString().padStart(2, '0'),
                                     });
@@ -104,7 +104,7 @@ export default function DateGrid(props: {
                     );
                 })}
             </div>
-            <div className='ml-2 flex-col-center'>
+            <div className='flex-shrink-0 ml-2 flex-col-center'>
                 <div className='p-1 mb-2 flex-col-center'>
                     <div className='h-4 px-2 mt-1 text-xs text-gray-500 flex-row-center'>
                         available days

@@ -1,4 +1,3 @@
-import { Switch } from '@headlessui/react';
 import React from 'react';
 import types from 'types';
 
@@ -6,44 +5,9 @@ export default function DataSelector(props: {
     gases: types.gasMeta[];
     gasIndex: number;
     setGasIndex(i: number): void;
-    filterData: boolean;
-    setFilterData(b: boolean): void;
 }) {
     return (
-        <div className='flex-col-center'>
-            <div className='flex-row-center'>
-                <Switch
-                    checked={props.filterData}
-                    onChange={props.setFilterData}
-                    className='relative inline-flex items-center justify-center flex-shrink-0 w-10 h-5 rounded-full cursor-pointer group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
-                >
-                    <span className='sr-only'>Use setting</span>
-                    <span
-                        aria-hidden='true'
-                        className='absolute w-full h-full bg-white rounded-md pointer-events-none'
-                    />
-                    <span
-                        aria-hidden='true'
-                        className={
-                            (props.filterData
-                                ? 'bg-green-700 '
-                                : 'bg-gray-200 ') +
-                            'pointer-events-none absolute h-4 w-9 mx-auto rounded-full transition-colors ease-in-out duration-200'
-                        }
-                    />
-                    <span
-                        aria-hidden='true'
-                        className={
-                            (props.filterData
-                                ? 'translate-x-5 '
-                                : 'translate-x-0 ') +
-                            'pointer-events-none absolute left-0 inline-block h-5 w-5 border border-gray-200 rounded-full bg-white shadow transform ring-0 transition-transform ease-in-out duration-200'
-                        }
-                    />
-                </Switch>
-                <div className='ml-3 text-sm font-medium'>Filter data</div>
-            </div>
-            <div className='w-full my-3 border-b border-gray-300' />
+        <div className='flex-shrink-0 flex-col-center'>
             <span className='relative z-0 inline-flex rounded-md shadow-sm'>
                 {props.gases.map((g, i) => (
                     <button

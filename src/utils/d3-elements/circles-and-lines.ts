@@ -1,13 +1,21 @@
-import ld from 'lodash';
+import { zip, reduce } from 'lodash';
 import * as d3 from 'd3';
 import types from 'types';
 
-export const generateTimeseries = (xs: number[], ys: number[]): any =>
-    ld
-        .zip(xs, ys)
-        .filter(d => !d.includes(undefined) && d.length === 2)
-        .map(d => ({ x: d[0], y: d[1] }))
-        .filter(e => e.y !== 0);
+function getLocationColor(location: string) {
+    switch (location) {
+        case 'ROS':
+            return '#F87171'; // red-400
+        case 'HAW':
+            return '#34D399'; // emerald-400
+        case 'JOR':
+            return '#60A5FA'; // blue-400
+        case 'GEO':
+            return '#FBBF24'; // amber-400
+        default:
+            return '#9CA3AF'; // coolGray-400
+    }
+}
 
 export const generateLine = (
     xScale: (x: number) => number,
@@ -16,20 +24,22 @@ export const generateLine = (
     d3
         .line()
         // @ts-ignore
-        .x((d: any) => xScale(d.x))
+        .x((d: number[]) => xScale(d[0]))
         // @ts-ignore
-        .y((d: types.dataPoint) => yScale(d.y))
+        .y((d: number[]) => yScale(d[1]))
         .curve(d3.curveCatmullRom.alpha(0.5));
 
 export const generateLines =
     (xScale: (x: number) => number, yScale: (y: number) => number) =>
-    (xs: types.dataPoint[]) => {
-        if (xs.length == 0) {
+    (zippedData: number[][]) => {
+        if (zippedData.length == 0) {
             return '';
         }
-        return ld.reduce(
-            separateDataLines(xs),
-            (acc: string, next: types.dataPoint[]) => {
+
+        return reduce(
+            // @ts-ignore
+            separateDataLines(zippedData),
+            (acc: string, next: number[][]) => {
                 // @ts-ignore
                 return acc + ' ' + generateLine(xScale, yScale)(next);
             },
@@ -52,78 +62,67 @@ export const generateLines =
     );
 };*/
 
-const separateDataLines = (xs: types.dataPoint[]): types.dataPoint[][] => {
-    let out: types.dataPoint[][] = [];
-    let runningLine: types.dataPoint[] = [xs[0]];
-    for (let i = 1; i < xs.length; i++) {
-        if (xs[i].x - xs[i - 1].x <= 1800) {
+const separateDataLines = (ts: number[][]): number[][][] => {
+    let out: number[][][] = [];
+    let runningLine: number[][] = [ts[0]];
+    for (let i = 1; i < ts.length; i++) {
+        if (ts[i][0] - ts[i - 1][0] <= 0.5) {
             // append to running line
-            runningLine.push(xs[i]);
+            runningLine.push(ts[i]);
         } else {
             // start a new line after gaps of > 30 minutes
             out.push(runningLine);
-            runningLine = [xs[i]];
+            runningLine = [ts[i]];
         }
     }
     out.push(runningLine);
     return out;
 };
 
-export const implementCircles =
+export const implementCirclesAndLines =
     (svg: any, xScale: (n: number) => number, yScale: (n: number) => number) =>
-    (
-        gas: string,
-        location: string,
-        dataPoints: {
-            x: number;
-            y: number;
-        }[]
-    ) => {
-        let circles: any = svg
-            .selectAll(`.circle-${gas}-${location}`)
-            .data(dataPoints);
+    (timeseries: types.localGasTimeseries, tsIsRaw: boolean) => {
+        const { gas, location, data } = timeseries;
+
+        const circleClassName = `circle-${gas}-${location}-${
+            tsIsRaw ? 'raw' : 'filtered'
+        }`;
+        const lineClassName = `line-${gas}-${location}-${
+            tsIsRaw ? 'raw' : 'filtered'
+        }`;
+
+        let circles: any = svg.selectAll(`.${circleClassName}`).data(data);
         circles
             .enter()
             .append('circle')
-            .attr('fill', '#2A9D8F')
-            .attr('class', `circle-${gas}-${location}`)
+            .attr('fill', getLocationColor(location))
+            .attr('class', circleClassName)
+            .attr('r', tsIsRaw ? 1 : 1.5)
+            .attr('opacity', tsIsRaw ? '35%' : '100%')
 
             // Keep all circles in sync with the data
             .merge(circles)
-            .attr('r', 2.4)
-            .attr('opacity', true ? '100%' : '0%')
-            .attr('cx', (d: { x: number; y: number }, i: number) => xScale(d.x))
-            .attr('cy', (d: { x: number; y: number }, i: number) =>
-                yScale(d.y)
-            );
+            .attr('cx', (d: number[], i: number) => xScale(d[0]))
+            .attr('cy', (d: number[], i: number) => yScale(d[1]));
 
         // Remove old circle elements
         circles.exit().remove();
-    };
 
-export const implementLines =
-    (svg: any, xScale: (n: number) => number, yScale: (n: number) => number) =>
-    (
-        gas: string,
-        location: string,
-        dataPoints: {
-            x: number;
-            y: number;
-        }[]
-    ) => {
-        let line: any = svg.selectAll(`.line-${gas}-${location}`);
-        if (line.empty()) {
-            line = svg
-                .append('path')
-                .attr('class', `line-${gas}-${location} pointer-events-none`)
-                .style('stroke', '#2A9D8F')
-                .style('stroke-width', 2.4)
-                .style('stroke-linecap', 'round')
-                .style('stroke-linejoin', 'round')
-                //.style('stroke-dasharray', '5,7.5')
-                .style('fill', 'none');
+        // Draw line elements
+        if (!tsIsRaw) {
+            let line: any = svg.selectAll(`.${lineClassName}`);
+            const generateCurrentLines = generateLines(xScale, yScale);
+            if (line.empty()) {
+                line = svg
+                    .append('path')
+                    .attr('class', `${lineClassName} pointer-events-none`)
+                    .style('stroke', getLocationColor(location))
+                    .style('stroke-width', tsIsRaw ? 2 : 3)
+                    .style('stroke-linecap', 'round')
+                    .style('stroke-linejoin', 'round')
+                    .style('fill', 'none')
+                    .attr('opacity', '70%');
+            }
+            line.attr('d', generateCurrentLines(data));
         }
-        line.style('stroke-width', 4.8)
-            .attr('opacity', true ? '30%' : '0%')
-            .attr('d', generateLines(xScale, yScale)(dataPoints));
     };

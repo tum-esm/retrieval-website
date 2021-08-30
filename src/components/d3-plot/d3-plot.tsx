@@ -1,42 +1,50 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import * as plotGridUtils from 'utils/d3-elements/grid-and-labels';
 import * as plotGraphUtils from 'utils/d3-elements/circles-and-lines';
 import types from 'types';
 import constants from 'utils/constants';
-
-const GASES: types.gas[] = ['co2', 'ch4'];
-const LOCATIONS = ['ROS', 'HAW'];
-
-const exampleData: types.plotDayData = {
-    hours: [8, 9, 10],
-    timeseries: [
-        {
-            gas: 'co2',
-            location: 'ROS',
-            data: [410, 411, 410.75],
-        },
-        {
-            gas: 'ch4',
-            location: 'ROS',
-            data: [1.9, 1.9091, 1.8876],
-        },
-    ],
-};
+import buildTimeseriesData from 'utils/build-timeseries-data';
 
 export default function D3Plot(props: {
-    plotAxisRange: types.plotDomain;
-    gas: types.gas;
+    domains: types.plotDomain;
+    selectedGas: types.gas;
+    gases: types.gasMeta[];
+    stations: types.stationMeta[];
+    plotDay: types.plotDay;
+    isLoading: boolean;
+    setIsLoading(l: boolean): void;
 }) {
     const d3Container = useRef(null);
-    const { plotAxisRange: domains } = props;
-    const plotData: types.plotDayData = exampleData;
+
+    const { timeseries: initialTS, rawTimeseries: initialRTS } =
+        buildTimeseriesData(
+            props.gases,
+            props.stations,
+            props.plotDay,
+            props.domains
+        );
+
+    const [timeseries, setTimeseries] = useState(initialTS);
+    const [rawTimeseries, setRawTimeseries] = useState(initialRTS);
+
+    useEffect(() => {
+        const { timeseries: newTS, rawTimeseries: newRTS } =
+            buildTimeseriesData(
+                props.gases,
+                props.stations,
+                props.plotDay,
+                props.domains
+            );
+        setTimeseries(newTS);
+        setRawTimeseries(newRTS);
+    }, [props.plotDay]);
 
     useEffect(() => {
         if (d3Container.current) {
             const xScale = d3
                 .scaleLinear()
-                .domain([domains.time.from, domains.time.to])
+                .domain([props.domains.time.from, props.domains.time.to])
                 .range([
                     80,
                     constants.PLOT.width - constants.PLOT.paddingRight,
@@ -44,61 +52,34 @@ export default function D3Plot(props: {
 
             const yScale = d3
                 .scaleLinear()
-                .domain([domains[props.gas].from, domains[props.gas].to])
+                .domain([
+                    props.domains[props.selectedGas].from,
+                    props.domains[props.selectedGas].to,
+                ])
                 .range([350, constants.PLOT.paddingTop]);
 
             const svg = d3.select(d3Container.current);
 
             plotGridUtils.implementPlotGrid(
                 svg,
-                domains,
+                props.domains,
                 xScale,
                 yScale,
-                props.gas
+                props.selectedGas
             );
 
-            const implementCircles = plotGraphUtils.implementCircles(
-                svg,
-                xScale,
-                yScale
-            );
-            const implementLines = plotGraphUtils.implementLines(
-                svg,
-                xScale,
-                yScale
-            );
+            const implementCirclesAndLines =
+                plotGraphUtils.implementCirclesAndLines(svg, xScale, yScale);
 
-            for (let i = 0; i < plotData.timeseries.length; i++) {
-                const ts = plotData.timeseries[i];
-                if (ts.gas === props.gas) {
-                    const dataPoints = plotGraphUtils.generateTimeseries(
-                        plotData.hours,
-                        ts.data
-                    );
-                    implementCircles(ts.gas, ts.location, dataPoints);
-                    implementLines(ts.gas, ts.location, dataPoints);
-                }
+            // TODO: pass selected gas
+            // TODO: pass visible locations
+            for (let i = 0; i < timeseries.length; i++) {
+                implementCirclesAndLines(timeseries[i], false);
+                implementCirclesAndLines(rawTimeseries[i], true);
             }
-
-            const locationsWithTimeseries = plotData.timeseries
-                .filter(t => t.gas === props.gas)
-                .map(d => d.location);
-
-            for (let i = 0; i < GASES.length; i++) {
-                for (let j = 0; j < LOCATIONS.length; j++) {
-                    const gas = GASES[i];
-                    const location = LOCATIONS[j];
-                    if (
-                        gas !== props.gas ||
-                        !locationsWithTimeseries.includes(location)
-                    ) {
-                        implementCircles(gas, location, []);
-                        implementLines(gas, location, []);
-                    }
-                }
-            }
+            props.setIsLoading(false);
         }
-    }, [props.gas, d3Container.current]);
+    }, [props.selectedGas, d3Container.current, timeseries, rawTimeseries]);
 
     return (
         <div
@@ -106,8 +87,18 @@ export default function D3Plot(props: {
                 'relative w-full p-2 flex-row-center text-gray-900 bg-white shadow rounded'
             }
         >
+            <div className='absolute top-0 left-0 z-10 w-full h-full flex-row-center'>
+                <div
+                    className={
+                        'px-2.5 py-1 text-sm font-medium bg-blue-900 rounded text-blue-50 ' +
+                        (props.isLoading ? 'opacity-100 ' : 'opacity-0 ')
+                    }
+                >
+                    loading data ...
+                </div>
+            </div>
             <svg
-                className='relative w-full no-selection'
+                className='relative z-0 w-full no-selection'
                 ref={d3Container}
                 viewBox={`0 0 ${constants.PLOT.width} ${constants.PLOT.height}`}
             />

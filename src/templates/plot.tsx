@@ -11,13 +11,13 @@ const domains = {
         step: 1,
     },
     co2: {
-        from: 406, //407,
+        from: 405, //407,
         to: 414, //417,
         step: 1,
     },
     ch4: {
-        from: 1.86,
-        to: 1.92,
+        from: 1.875,
+        to: 1.915,
         step: 0.005,
     },
 };

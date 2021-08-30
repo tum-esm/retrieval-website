@@ -1,12 +1,14 @@
+import { zip } from 'lodash';
 import types from 'types';
 
 export default function buildTimeseriesData(
     gases: types.gasMeta[],
     stations: types.stationMeta[],
-    plotDay: types.plotDay
+    plotDay: types.plotDay,
+    domains: types.plotDomain
 ) {
-    let timeseries: types.gasTimeseries[] = [];
-    let rawTimeseries: types.gasTimeseries[] = [];
+    let timeseries: types.localGasTimeseries[] = [];
+    let rawTimeseries: types.localGasTimeseries[] = [];
     for (let i = 0; i < gases.length; i++) {
         for (let j = 0; j < stations.length; j++) {
             const gas = gases[i].name;
@@ -18,7 +20,22 @@ export default function buildTimeseriesData(
                     .filter(t => t.gas === gas)
                     .filter(t => t.location === location);
                 if (existingTss.length !== 0) {
-                    timeseries.push(existingTss[0]);
+                    const newTs: any = {
+                        gas: gas,
+                        location: location,
+                        count: existingTss[0].count,
+                        data: zip(
+                            existingTss[0].data.xs,
+                            existingTss[0].data.ys
+                        ).filter(
+                            (d: any) =>
+                                d[0] > domains.time.from &&
+                                d[0] < domains.time.to &&
+                                d[1] < domains[gas].to &&
+                                d[1] < domains[gas].to
+                        ),
+                    };
+                    timeseries.push(newTs);
                     tsAdded = true;
                 }
             }
@@ -27,7 +44,7 @@ export default function buildTimeseriesData(
                     gas,
                     location,
                     count: 0,
-                    data: { xs: [], ys: [] },
+                    data: [],
                 });
             }
             if (plotDay.data.rawTimeseries !== undefined) {
@@ -35,7 +52,22 @@ export default function buildTimeseriesData(
                     .filter(t => t.gas === gas)
                     .filter(t => t.location === location);
                 if (existingTss.length !== 0) {
-                    rawTimeseries.push(existingTss[0]);
+                    const newTs: any = {
+                        gas: gas,
+                        location: location,
+                        count: existingTss[0].count,
+                        data: zip(
+                            existingTss[0].data.xs,
+                            existingTss[0].data.ys
+                        ).filter(
+                            (d: any) =>
+                                d[0] > domains.time.from &&
+                                d[0] < domains.time.to &&
+                                d[1] > domains[gas].from &&
+                                d[1] < domains[gas].to
+                        ),
+                    };
+                    rawTimeseries.push(newTs);
                     continue;
                 }
             }
@@ -43,7 +75,7 @@ export default function buildTimeseriesData(
                 gas,
                 location,
                 count: 0,
-                data: { xs: [], ys: [] },
+                data: [],
             });
         }
     }

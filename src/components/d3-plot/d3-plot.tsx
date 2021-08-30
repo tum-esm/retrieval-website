@@ -14,20 +14,31 @@ export default function D3Plot(props: {
     plotDay: types.plotDay;
     isLoading: boolean;
     setIsLoading(l: boolean): void;
+    filterData: boolean;
 }) {
     const d3Container = useRef(null);
 
     const { timeseries: initialTS, rawTimeseries: initialRTS } =
-        buildTimeseriesData(props.gases, props.stations, props.plotDay);
+        buildTimeseriesData(
+            props.gases,
+            props.stations,
+            props.plotDay,
+            props.domains
+        );
 
     const [timeseries, setTimeseries] = useState(initialTS);
     const [rawTimeseries, setRawTimeseries] = useState(initialRTS);
 
     useEffect(() => {
         const { timeseries: newTS, rawTimeseries: newRTS } =
-            buildTimeseriesData(props.gases, props.stations, props.plotDay);
+            buildTimeseriesData(
+                props.gases,
+                props.stations,
+                props.plotDay,
+                props.domains
+            );
         setTimeseries(newTS);
-        setRawTimeseries(initialRTS);
+        setRawTimeseries(newRTS);
     }, [props.plotDay]);
 
     useEffect(() => {
@@ -59,18 +70,37 @@ export default function D3Plot(props: {
             );
 
             const implementCirclesAndLines =
-                plotGraphUtils.implementCirclesAndLines(svg, xScale, yScale);
+                plotGraphUtils.implementCirclesAndLines(
+                    svg,
+                    xScale,
+                    yScale,
+                    props.domains
+                );
 
             // TODO: pass selected gas and selected filter/raw
             // TODO: pass raw vs. filtered (circle size)
             // TODO: pass visible locations
             for (let i = 0; i < timeseries.length; i++) {
-                implementCirclesAndLines(timeseries[i]);
-                implementCirclesAndLines(rawTimeseries[i]);
+                implementCirclesAndLines(
+                    timeseries[i],
+                    false,
+                    props.filterData
+                );
+                implementCirclesAndLines(
+                    rawTimeseries[i],
+                    true,
+                    props.filterData
+                );
             }
             props.setIsLoading(false);
         }
-    }, [props.selectedGas, d3Container.current, timeseries, rawTimeseries]);
+    }, [
+        props.selectedGas,
+        props.filterData,
+        d3Container.current,
+        timeseries,
+        rawTimeseries,
+    ]);
 
     return (
         <div

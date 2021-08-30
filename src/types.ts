@@ -48,6 +48,15 @@ namespace types {
         };
     };
 
+    export type localPlotDay = {
+        date: string;
+        data: {
+            timeseries?: localGasTimeseries[];
+            rawTimeseries?: localGasTimeseries[];
+            flagTimeseries?: localFlagTimeseries[];
+        };
+    };
+
     export type gasTimeseries = {
         gas: string;
         location: string;
@@ -65,6 +74,21 @@ namespace types {
         xs: number[];
         ys: number[];
     };
+
+    export type localGasTimeseries = {
+        gas: string;
+        location: string;
+        count: number;
+        data: localTimeseriesData;
+    };
+
+    export type localFlagTimeseries = {
+        location: string;
+        count: number;
+        data: localTimeseriesData;
+    };
+
+    export type localTimeseriesData = number[][];
 }
 
 export default types;

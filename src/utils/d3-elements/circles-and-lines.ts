@@ -5,15 +5,15 @@ import types from 'types';
 function getLocationColor(location: string) {
     switch (location) {
         case 'ROS':
-            return '#2A9D8F';
+            return '#F87171'; // red-400
         case 'HAW':
-            return '#FF0000';
+            return '#34D399'; // emerald-400
         case 'JOR':
-            return '#00FF00';
+            return '#60A5FA'; // blue-400
         case 'GEO':
-            return '#0000FF';
+            return '#FBBF24'; // amber-400
         default:
-            return '#888888';
+            return '#9CA3AF'; // coolGray-400
     }
 }
 
@@ -80,51 +80,61 @@ const separateDataLines = (ts: number[][]): number[][][] => {
 };
 
 export const implementCirclesAndLines =
-    (svg: any, xScale: (n: number) => number, yScale: (n: number) => number) =>
-    (timeseries: types.gasTimeseries) => {
+    (
+        svg: any,
+        xScale: (n: number) => number,
+        yScale: (n: number) => number,
+        domains: types.plotDomain
+    ) =>
+    (
+        timeseries: types.localGasTimeseries,
+        tsIsRaw: boolean,
+        filterData: boolean
+    ) => {
         const { gas, location, data } = timeseries;
 
-        const circleClassName = `circle-${gas}-${location}`;
-        const lineClassName = `line-${gas}-${location}`;
-        const zippedData: any[][] = zip(data.xs, data.ys);
+        const circleClassName = `circle-${gas}-${location}-${
+            tsIsRaw ? 'raw' : 'filtered'
+        }`;
+        const lineClassName = `line-${gas}-${location}-${
+            tsIsRaw ? 'raw' : 'filtered'
+        }`;
 
-        let circles: any = svg
-            .selectAll(`.${circleClassName}`)
-            .data(zippedData);
+        let circles: any = svg.selectAll(`.${circleClassName}`).data(data);
         circles
             .enter()
             .append('circle')
             .attr('fill', getLocationColor(location))
             .attr('class', circleClassName)
             // TODO: Vary circle size for raw vs. filtered data
-            .attr('r', 1)
+            .attr('r', tsIsRaw ? 1 : 1.5)
 
             // Keep all circles in sync with the data
             .merge(circles)
-            // TODO: Only show circle on respective settings
-            .attr('opacity', true ? '100%' : '0%')
+            .attr('opacity', filterData == !tsIsRaw ? '100%' : '0%')
             .attr('cx', (d: number[], i: number) => xScale(d[0]))
             .attr('cy', (d: number[], i: number) => yScale(d[1]));
 
         // Remove old circle elements
         circles.exit().remove();
-        /*
-        let line: any = svg.selectAll(`.${lineClassName}`);
-        const generateCurrentLines = generateLines(xScale, yScale);
-        if (line.empty()) {
-            line = svg
-                .append('path')
-                .attr('class', `${lineClassName} pointer-events-none`)
-                .style('stroke', getLocationColor(location))
-                .style('stroke-width', 1)
-                .style('stroke-linecap', 'round')
-                .style('stroke-linejoin', 'round')
-                .style('fill', 'none')
-                // TODO: Vary line thickness for raw vs. filtered data
-                .style('stroke-width', 2);
+
+        // Draw line elements
+        if (!tsIsRaw) {
+            let line: any = svg.selectAll(`.${lineClassName}`);
+            const generateCurrentLines = generateLines(xScale, yScale);
+            if (line.empty()) {
+                line = svg
+                    .append('path')
+                    .attr('class', `${lineClassName} pointer-events-none`)
+                    .style('stroke', getLocationColor(location))
+                    .style('stroke-width', tsIsRaw ? 2 : 3)
+                    .style('stroke-linecap', 'round')
+                    .style('stroke-linejoin', 'round')
+                    .style('fill', 'none');
+            }
+            line.attr('opacity', filterData == !tsIsRaw ? '30%' : '0%').attr(
+                'd',
+                generateCurrentLines(data)
+            );
         }
-        line
-            // TODO: Only show circle on respective settings
-            .attr('opacity', true ? '30%' : '0%')
-            .attr('d', generateCurrentLines(zippedData));*/
     };

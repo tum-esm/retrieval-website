@@ -13,7 +13,7 @@ export default function DisplayDay(props: {
 }) {
     const { dayObject, isFirstDay, isLastDay, prevDay, nextDay } = props;
     return (
-        <div className='flex-col-center'>
+        <div className='flex-shrink-0 flex-col-center'>
             <div className='p-1 mb-2 bg-green-100 rounded flex-col-center'>
                 <div className='h-4 px-2 mt-1 text-xs text-green-700 flex-row-center'>
                     displayed day

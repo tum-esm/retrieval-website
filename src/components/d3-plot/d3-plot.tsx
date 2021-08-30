@@ -14,7 +14,6 @@ export default function D3Plot(props: {
     plotDay: types.plotDay;
     isLoading: boolean;
     setIsLoading(l: boolean): void;
-    filterData: boolean;
 }) {
     const d3Container = useRef(null);
 
@@ -70,37 +69,17 @@ export default function D3Plot(props: {
             );
 
             const implementCirclesAndLines =
-                plotGraphUtils.implementCirclesAndLines(
-                    svg,
-                    xScale,
-                    yScale,
-                    props.domains
-                );
+                plotGraphUtils.implementCirclesAndLines(svg, xScale, yScale);
 
-            // TODO: pass selected gas and selected filter/raw
-            // TODO: pass raw vs. filtered (circle size)
+            // TODO: pass selected gas
             // TODO: pass visible locations
             for (let i = 0; i < timeseries.length; i++) {
-                implementCirclesAndLines(
-                    timeseries[i],
-                    false,
-                    props.filterData
-                );
-                implementCirclesAndLines(
-                    rawTimeseries[i],
-                    true,
-                    props.filterData
-                );
+                implementCirclesAndLines(timeseries[i], false);
+                implementCirclesAndLines(rawTimeseries[i], true);
             }
             props.setIsLoading(false);
         }
-    }, [
-        props.selectedGas,
-        props.filterData,
-        d3Container.current,
-        timeseries,
-        rawTimeseries,
-    ]);
+    }, [props.selectedGas, d3Container.current, timeseries, rawTimeseries]);
 
     return (
         <div
@@ -111,7 +90,7 @@ export default function D3Plot(props: {
             <div className='absolute top-0 left-0 z-10 w-full h-full flex-row-center'>
                 <div
                     className={
-                        'px-2.5 py-1 text-sm font-semibold bg-blue-900 rounded text-blue-50 ' +
+                        'px-2.5 py-1 text-sm font-medium bg-blue-900 rounded text-blue-50 ' +
                         (props.isLoading ? 'opacity-100 ' : 'opacity-0 ')
                     }
                 >

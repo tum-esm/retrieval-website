@@ -6,13 +6,13 @@ import D3Plot from 'components/d3-plot/d3-plot';
 
 const domains = {
     time: {
-        from: 7,
-        to: 18,
+        from: 5.5,
+        to: 17.5,
         step: 1,
     },
     co2: {
-        from: 405, //407,
-        to: 417, //417,
+        from: 406, //407,
+        to: 414, //417,
         step: 1,
     },
     ch4: {
@@ -48,8 +48,7 @@ export default function Plot(props: {
         sortedDayStrings.indexOf(props.pageContext.displayDayObject.date)
     );
     const [gasIndex, setGasIndex] = useState(0);
-    const [filterData, setFilterData] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const isFirstDay = () => dayIndex === 0;
     const isLastDay = () => dayIndex === sortedDayStrings.length - 1;
@@ -126,8 +125,6 @@ export default function Plot(props: {
                     {...{
                         gasIndex,
                         setGasIndex,
-                        filterData,
-                        setFilterData,
                     }}
                 />
             </header>
@@ -142,7 +139,6 @@ export default function Plot(props: {
                     plotDay={displayDay.plotDay}
                     setIsLoading={setIsLoading}
                     isLoading={isLoading}
-                    filterData={filterData}
                 />
             </main>
         </>

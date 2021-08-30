@@ -67,7 +67,7 @@ export default function DateGrid(props: {
             <div
                 className={
                     'grid grid-flow-row grid-cols-7 gap-1 ' +
-                    'text-xs text-center font-semibold'
+                    'text-xs text-center font-semibold flex-shrink-0'
                 }
             >
                 {range(1, daysInMonth + 1).map(day => {
@@ -104,7 +104,7 @@ export default function DateGrid(props: {
                     );
                 })}
             </div>
-            <div className='ml-2 flex-col-center'>
+            <div className='flex-shrink-0 ml-2 flex-col-center'>
                 <div className='p-1 mb-2 flex-col-center'>
                     <div className='h-4 px-2 mt-1 text-xs text-gray-500 flex-row-center'>
                         available days

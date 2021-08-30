@@ -66,7 +66,7 @@ const separateDataLines = (ts: number[][]): number[][][] => {
     let out: number[][][] = [];
     let runningLine: number[][] = [ts[0]];
     for (let i = 1; i < ts.length; i++) {
-        if (ts[i][0] - ts[i - 1][0] <= 1800) {
+        if (ts[i][0] - ts[i - 1][0] <= 0.5) {
             // append to running line
             runningLine.push(ts[i]);
         } else {
@@ -80,17 +80,8 @@ const separateDataLines = (ts: number[][]): number[][][] => {
 };
 
 export const implementCirclesAndLines =
-    (
-        svg: any,
-        xScale: (n: number) => number,
-        yScale: (n: number) => number,
-        domains: types.plotDomain
-    ) =>
-    (
-        timeseries: types.localGasTimeseries,
-        tsIsRaw: boolean,
-        filterData: boolean
-    ) => {
+    (svg: any, xScale: (n: number) => number, yScale: (n: number) => number) =>
+    (timeseries: types.localGasTimeseries, tsIsRaw: boolean) => {
         const { gas, location, data } = timeseries;
 
         const circleClassName = `circle-${gas}-${location}-${
@@ -106,12 +97,11 @@ export const implementCirclesAndLines =
             .append('circle')
             .attr('fill', getLocationColor(location))
             .attr('class', circleClassName)
-            // TODO: Vary circle size for raw vs. filtered data
             .attr('r', tsIsRaw ? 1 : 1.5)
+            .attr('opacity', tsIsRaw ? '35%' : '100%')
 
             // Keep all circles in sync with the data
             .merge(circles)
-            .attr('opacity', filterData == !tsIsRaw ? '100%' : '0%')
             .attr('cx', (d: number[], i: number) => xScale(d[0]))
             .attr('cy', (d: number[], i: number) => yScale(d[1]));
 
@@ -130,11 +120,9 @@ export const implementCirclesAndLines =
                     .style('stroke-width', tsIsRaw ? 2 : 3)
                     .style('stroke-linecap', 'round')
                     .style('stroke-linejoin', 'round')
-                    .style('fill', 'none');
+                    .style('fill', 'none')
+                    .attr('opacity', '70%');
             }
-            line.attr('opacity', filterData == !tsIsRaw ? '30%' : '0%').attr(
-                'd',
-                generateCurrentLines(data)
-            );
+            line.attr('d', generateCurrentLines(data));
         }
     };

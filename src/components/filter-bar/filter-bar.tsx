@@ -18,8 +18,6 @@ export default function FilterBar(props: {
 
     gasIndex: number;
     setGasIndex(i: number): void;
-    filterData: boolean;
-    setFilterData(b: boolean): void;
 }) {
     return (
         <div className={'w-full h-32 px-4 py-2 flex-row-center text-gray-900'}>

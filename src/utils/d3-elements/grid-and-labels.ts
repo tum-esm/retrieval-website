@@ -82,7 +82,13 @@ export function implementTimeLabels(
         .style('text-anchor', 'middle')
         .attr('y', 372)
         .attr('x', (x: number, i: number) => xScale(x))
-        .text((x: number, i: number) => x.toFixed(2).padStart(5, '0'));
+        .text((x: number, i: number) =>
+            x
+                .toFixed(2)
+                .padStart(5, '0')
+                .replace('.50', '.30')
+                .replace('.25', '.15')
+        );
 
     xAxisLabels.exit().remove();
 }

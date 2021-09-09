@@ -3,6 +3,7 @@ import types from 'types';
 import getDayObjectFromString from 'utils/get-day-object-from-string';
 import FilterBar from 'components/filter-bar/filter-bar';
 import D3Plot from 'components/d3-plot/d3-plot';
+import { stationMeta } from '../types';
 
 const domains = {
     time: {
@@ -49,6 +50,9 @@ export default function Plot(props: {
     );
     const [gasIndex, setGasIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [visibleStations, setVisibleStations] = useState(
+        plotMeta.data.stations.map(() => true)
+    );
 
     const isFirstDay = () => dayIndex === 0;
     const isLastDay = () => dayIndex === sortedDayStrings.length - 1;
@@ -114,6 +118,11 @@ export default function Plot(props: {
                         dayStrings: sortedDayStrings,
                         gases: plotMeta.data.gases,
                         dayObject: displayDay.dayObject,
+                        stations: plotMeta.data.stations,
+                    }}
+                    {...{
+                        visibleStations,
+                        setVisibleStations,
                     }}
                     setDayObject={d => {
                         setDayIndex(

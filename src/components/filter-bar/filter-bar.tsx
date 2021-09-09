@@ -3,6 +3,7 @@ import DateGrid from './date-grid';
 import DisplayDay from './display-day';
 import DataSelector from './data-selector';
 import types from 'types';
+import StationSelector from './station-selector';
 
 export default function FilterBar(props: {
     isFirstDay(): boolean;
@@ -15,6 +16,9 @@ export default function FilterBar(props: {
 
     dayStrings: string[];
     gases: { name: types.gas; unit: string }[];
+    stations: types.stationMeta[];
+    visibleStations: boolean[];
+    setVisibleStations(s: boolean[]): void;
 
     gasIndex: number;
     setGasIndex(i: number): void;
@@ -26,6 +30,8 @@ export default function FilterBar(props: {
             <DateGrid {...props} />
             <div className='h-full ml-2 mr-6 border-r border-gray-300' />
             <div className='flex-grow' />
+            <div className='h-full ml-2 mr-6 border-r border-gray-300' />
+            <StationSelector {...props} />
             <div className='h-full ml-2 mr-6 border-r border-gray-300' />
             <DataSelector {...props} />
         </div>

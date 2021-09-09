@@ -2,7 +2,7 @@ import { zip, reduce } from 'lodash';
 import * as d3 from 'd3';
 import types from 'types';
 
-function getLocationColor(location: string) {
+export function getLocationColor(location: string) {
     switch (location) {
         case 'ROS':
             return '#F87171'; // red-400
@@ -81,7 +81,11 @@ const separateDataLines = (ts: number[][]): number[][][] => {
 
 export const implementCirclesAndLines =
     (svg: any, xScale: (n: number) => number, yScale: (n: number) => number) =>
-    (timeseries: types.localGasTimeseries, tsIsRaw: boolean) => {
+    (
+        timeseries: types.localGasTimeseries,
+        tsIsRaw: boolean,
+        stationIsVisible: boolean
+    ) => {
         const { gas, location, data } = timeseries;
 
         const circleClassName = `circle-${gas}-${location}-${
@@ -98,10 +102,13 @@ export const implementCirclesAndLines =
             .attr('fill', getLocationColor(location))
             .attr('class', circleClassName)
             .attr('r', tsIsRaw ? 1 : 1.5)
-            .attr('opacity', tsIsRaw ? '35%' : '100%')
 
             // Keep all circles in sync with the data
             .merge(circles)
+            .attr(
+                'opacity',
+                stationIsVisible ? (tsIsRaw ? '35%' : '100%') : '0%'
+            )
             .attr('cx', (d: number[], i: number) => xScale(d[0]))
             .attr('cy', (d: number[], i: number) => yScale(d[1]));
 
@@ -120,9 +127,11 @@ export const implementCirclesAndLines =
                     .style('stroke-width', tsIsRaw ? 2 : 3)
                     .style('stroke-linecap', 'round')
                     .style('stroke-linejoin', 'round')
-                    .style('fill', 'none')
-                    .attr('opacity', '70%');
+                    .style('fill', 'none');
             }
-            line.attr('d', generateCurrentLines(data));
+            line.attr('d', generateCurrentLines(data)).attr(
+                'opacity',
+                stationIsVisible ? '70%' : '0%'
+            );
         }
     };

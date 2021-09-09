@@ -14,6 +14,7 @@ export default function D3Plot(props: {
     plotDay: types.plotDay;
     isLoading: boolean;
     setIsLoading(l: boolean): void;
+    visibleStations: boolean[];
 }) {
     const d3Container = useRef(null);
 
@@ -74,12 +75,33 @@ export default function D3Plot(props: {
             // TODO: pass selected gas
             // TODO: pass visible locations
             for (let i = 0; i < timeseries.length; i++) {
-                implementCirclesAndLines(timeseries[i], false);
-                implementCirclesAndLines(rawTimeseries[i], true);
+                const stationArrayIndex = props.stations.findIndex(
+                    s => s.location === timeseries[i].location
+                );
+                if (stationArrayIndex > -1) {
+                    const stationIsVisible =
+                        props.visibleStations[stationArrayIndex];
+                    implementCirclesAndLines(
+                        timeseries[i],
+                        false,
+                        stationIsVisible
+                    );
+                    implementCirclesAndLines(
+                        rawTimeseries[i],
+                        true,
+                        stationIsVisible
+                    );
+                }
             }
             props.setIsLoading(false);
         }
-    }, [props.selectedGas, d3Container.current, timeseries, rawTimeseries]);
+    }, [
+        props.selectedGas,
+        d3Container.current,
+        timeseries,
+        rawTimeseries,
+        props.visibleStations,
+    ]);
 
     return (
         <div

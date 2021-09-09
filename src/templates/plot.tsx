@@ -148,6 +148,7 @@ export default function Plot(props: {
                     plotDay={displayDay.plotDay}
                     setIsLoading={setIsLoading}
                     isLoading={isLoading}
+                    visibleStations={visibleStations}
                 />
             </main>
         </>

@@ -6,6 +6,13 @@
     font-family: ui-sans-serif, system-ui, sans-serif;
 }
 
+.no-selection {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .flex-row-center {
     @apply flex flex-row items-center justify-center;
 }

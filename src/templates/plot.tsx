@@ -99,7 +99,7 @@ export default function Plot(props: {
 
     return (
         <>
-            <header className='fixed top-0 left-0 z-10 w-screen bg-white shadow'>
+            <header className='fixed top-0 left-0 z-10 w-screen bg-white shadow pointer-events-auto'>
                 <FilterBar
                     {...{ isFirstDay, isLastDay, prevDay, nextDay }}
                     {...{
@@ -127,7 +127,7 @@ export default function Plot(props: {
             </header>
             <main
                 className={
-                    'bg-gray-100 w-screen min-h-screen pt-40 pb-8 px-4 z-0'
+                    'relative block bg-gray-100 w-screen min-h-screen pt-40 pb-8 px-4 z-0 pointer-events-none no-selection'
                 }
             >
                 <D3Plot

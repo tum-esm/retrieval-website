@@ -158,7 +158,6 @@ export function implementPlotGrid(
     yScales: ((x: number) => number)[],
     gases: types.gasMeta[]
 ) {
-    console.log({ xScale });
     implementTimeDividers(svg, domain.time, xScale);
     implementTimeLabels(svg, domain.time, xScale);
     implementAxisTitles(svg);

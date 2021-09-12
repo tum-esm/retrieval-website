@@ -71,8 +71,6 @@ export default function D3Plot(props: {
 
     // Draw grid once initially
     useEffect(() => {
-        console.log('GRID LINES AND LABELS');
-        console.log({ xScale, yScales });
         if (
             d3Container.current &&
             xScale !== undefined &&

@@ -88,12 +88,10 @@ export const implementCirclesAndLines =
     ) => {
         const { gas, location, data } = timeseries;
 
-        const circleClassName = `circle-${gas}-${location}-${
+        const circleClassName = `circle-${
             tsIsRaw ? 'raw' : 'filtered'
-        }`;
-        const lineClassName = `line-${gas}-${location}-${
-            tsIsRaw ? 'raw' : 'filtered'
-        }`;
+        }-${gas}-${location}`;
+        const lineClassName = `interpolation-${gas}-${location}`;
 
         let circles: any = svg.selectAll(`.${circleClassName}`).data(data);
         circles
@@ -105,7 +103,7 @@ export const implementCirclesAndLines =
 
             // Keep all circles in sync with the data
             .merge(circles)
-            .attr('opacity', tsIsRaw ? '35%' : '100%')
+            //.attr('opacity', tsIsRaw ? '35%' : '100%')
             .attr('cx', (d: number[], i: number) => xScale(d[0]))
             .attr('cy', (d: number[], i: number) => yScale(d[1]));
 
@@ -126,6 +124,6 @@ export const implementCirclesAndLines =
                     .style('stroke-linejoin', 'round')
                     .style('fill', 'none');
             }
-            line.attr('d', generateCurrentLines(data)).attr('opacity', '70%');
+            line.attr('d', generateCurrentLines(data)); //.attr('opacity', '70%');
         }
     };

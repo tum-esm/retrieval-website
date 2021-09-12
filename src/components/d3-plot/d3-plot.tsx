@@ -5,6 +5,7 @@ import * as plotGraphUtils from 'utils/d3-elements/circles-and-lines';
 import types from 'types';
 import constants from 'utils/constants';
 import buildTimeseriesData from 'utils/build-timeseries-data';
+import './plot-elements.css';
 
 export default function D3Plot(props: {
     domains: types.plotDomain;
@@ -124,7 +125,15 @@ export default function D3Plot(props: {
     return (
         <div
             className={
-                'relative w-full p-2 flex-row-center text-gray-900 bg-white shadow rounded'
+                'relative w-full p-2 flex-row-center text-gray-900 bg-white shadow rounded ' +
+                `plot-css-${props.selectedGas} ` +
+                props.stations
+                    .map((s, i) =>
+                        props.visibleStations[i]
+                            ? `plot-css-${props.selectedGas}-${s.location} `
+                            : ' '
+                    )
+                    .join(' ')
             }
         >
             <div className='absolute top-0 left-0 z-10 w-full h-full flex-row-center'>

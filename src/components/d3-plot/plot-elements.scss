@@ -1,0 +1,67 @@
+/*div[class^='plot-css'] {
+    [class^='circle-raw'],
+    [class^='circle-filtered'] {
+        opacity: 0%;
+    }
+    [class^='line'] {
+        opacity: 0%;
+    }
+}
+
+*/
+$gases: (
+    co2: 0,
+    ch4: 0,
+);
+
+$locations: (
+    HAW: 0,
+    GEO: 0,
+    JOR: 0,
+    ROS: 0,
+);
+
+@each $gas, $x in $gases {
+    @each $location, $y in $locations {
+        .plot-css-#{$gas}-#{$location} {
+            .circle-raw-#{$gas}-#{$location} {
+                opacity: 35% !important;
+            }
+            .circle-filtered-#{$gas}-#{$location} {
+                opacity: 100% !important;
+            }
+            .interpolation-#{$gas}-#{$location} {
+                opacity: 70% !important;
+            }
+        }
+    }
+}
+
+[class*='plot-css'] {
+    [class*='circle'],
+    [class*='interpolation'] {
+        opacity: 0%;
+    }
+}
+
+.plot-css-co2 {
+    [class*='ch4'] {
+        opacity: 0%;
+    }
+
+    .y-axis-label-co2,
+    .y-axis-line-co2 {
+        opacity: 100%;
+    }
+}
+
+.plot-css-ch4 {
+    [class*='co2'] {
+        opacity: 0%;
+    }
+
+    .y-axis-label-ch4,
+    .y-axis-line-ch4 {
+        opacity: 100%;
+    }
+}

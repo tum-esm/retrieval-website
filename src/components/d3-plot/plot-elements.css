@@ -1,0 +1,111 @@
+/*div[class^='plot-css'] {
+    [class^='circle-raw'],
+    [class^='circle-filtered'] {
+        opacity: 0%;
+    }
+    [class^='line'] {
+        opacity: 0%;
+    }
+}
+
+*/
+.plot-css-co2-HAW .circle-raw-co2-HAW {
+  opacity: 35% !important;
+}
+.plot-css-co2-HAW .circle-filtered-co2-HAW {
+  opacity: 100% !important;
+}
+.plot-css-co2-HAW .interpolation-co2-HAW {
+  opacity: 70% !important;
+}
+
+.plot-css-co2-GEO .circle-raw-co2-GEO {
+  opacity: 35% !important;
+}
+.plot-css-co2-GEO .circle-filtered-co2-GEO {
+  opacity: 100% !important;
+}
+.plot-css-co2-GEO .interpolation-co2-GEO {
+  opacity: 70% !important;
+}
+
+.plot-css-co2-JOR .circle-raw-co2-JOR {
+  opacity: 35% !important;
+}
+.plot-css-co2-JOR .circle-filtered-co2-JOR {
+  opacity: 100% !important;
+}
+.plot-css-co2-JOR .interpolation-co2-JOR {
+  opacity: 70% !important;
+}
+
+.plot-css-co2-ROS .circle-raw-co2-ROS {
+  opacity: 35% !important;
+}
+.plot-css-co2-ROS .circle-filtered-co2-ROS {
+  opacity: 100% !important;
+}
+.plot-css-co2-ROS .interpolation-co2-ROS {
+  opacity: 70% !important;
+}
+
+.plot-css-ch4-HAW .circle-raw-ch4-HAW {
+  opacity: 35% !important;
+}
+.plot-css-ch4-HAW .circle-filtered-ch4-HAW {
+  opacity: 100% !important;
+}
+.plot-css-ch4-HAW .interpolation-ch4-HAW {
+  opacity: 70% !important;
+}
+
+.plot-css-ch4-GEO .circle-raw-ch4-GEO {
+  opacity: 35% !important;
+}
+.plot-css-ch4-GEO .circle-filtered-ch4-GEO {
+  opacity: 100% !important;
+}
+.plot-css-ch4-GEO .interpolation-ch4-GEO {
+  opacity: 70% !important;
+}
+
+.plot-css-ch4-JOR .circle-raw-ch4-JOR {
+  opacity: 35% !important;
+}
+.plot-css-ch4-JOR .circle-filtered-ch4-JOR {
+  opacity: 100% !important;
+}
+.plot-css-ch4-JOR .interpolation-ch4-JOR {
+  opacity: 70% !important;
+}
+
+.plot-css-ch4-ROS .circle-raw-ch4-ROS {
+  opacity: 35% !important;
+}
+.plot-css-ch4-ROS .circle-filtered-ch4-ROS {
+  opacity: 100% !important;
+}
+.plot-css-ch4-ROS .interpolation-ch4-ROS {
+  opacity: 70% !important;
+}
+
+[class*=plot-css] [class*=circle],
+[class*=plot-css] [class*=interpolation] {
+  opacity: 0%;
+}
+
+.plot-css-co2 [class*=ch4] {
+  opacity: 0%;
+}
+.plot-css-co2 .y-axis-label-co2,
+.plot-css-co2 .y-axis-line-co2 {
+  opacity: 100%;
+}
+
+.plot-css-ch4 [class*=co2] {
+  opacity: 0%;
+}
+.plot-css-ch4 .y-axis-label-ch4,
+.plot-css-ch4 .y-axis-line-ch4 {
+  opacity: 100%;
+}

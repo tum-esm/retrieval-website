@@ -34,10 +34,12 @@ export function implementTimeDividers(
 export function implementConcentrationDividers(
     svg: any,
     axisDomain: types.plotAxisDomain,
-    yScale: (n: number) => number
+    yScale: (n: number) => number,
+    gas: 'co2' | 'ch4'
 ) {
+    const lineClassName = `y-axis-line-${gas}`;
     let yAxisLines: any = svg
-        .selectAll(`.y-axis-line`)
+        .selectAll(`.${lineClassName}`)
         .data(
             range(
                 axisDomain.from,
@@ -48,7 +50,7 @@ export function implementConcentrationDividers(
     yAxisLines
         .enter()
         .append('line')
-        .attr('class', 'y-axis-line')
+        .attr('class', lineClassName)
         .attr('x1', 65)
         .attr('x2', constants.PLOT.width - constants.PLOT.paddingRight)
         .attr('stroke', '#CBD5E1')
@@ -99,8 +101,9 @@ export function implementConcentrationLabels(
     yScale: (n: number) => number,
     gas: 'co2' | 'ch4'
 ) {
+    const labelClassName = `y-axis-label-${gas}`;
     let yAxisLabels: any = svg
-        .selectAll('.y-axis-label')
+        .selectAll(`.${labelClassName}`)
         .data(
             range(
                 axisDomain.from,
@@ -111,7 +114,7 @@ export function implementConcentrationLabels(
     yAxisLabels
         .enter()
         .append('text')
-        .attr('class', 'y-axis-label text-xs font-medium fill-gray-600')
+        .attr('class', `${labelClassName} text-xs font-medium fill-gray-600`)
         .style('dominant-baseline', 'middle')
         .style('text-anchor', 'end')
         .attr('x', 60)
@@ -151,13 +154,27 @@ export function implementAxisTitles(svg: any) {
 export function implementPlotGrid(
     svg: any,
     domain: types.plotDomain,
-    xScale: (n: number) => number,
-    yScale: (n: number) => number,
-    gas: types.gas
+    xScale: (x: number) => number,
+    yScales: ((x: number) => number)[],
+    gases: types.gasMeta[]
 ) {
+    console.log({ xScale });
     implementTimeDividers(svg, domain.time, xScale);
     implementTimeLabels(svg, domain.time, xScale);
-    implementConcentrationDividers(svg, domain[gas], yScale);
-    implementConcentrationLabels(svg, domain[gas], yScale, gas);
     implementAxisTitles(svg);
+    gases.forEach(gm => {
+        const gasArrayIndex = gases.findIndex(s => s.name === gm.name);
+        implementConcentrationDividers(
+            svg,
+            domain[gm.name],
+            yScales[gasArrayIndex],
+            gm.name
+        );
+        implementConcentrationLabels(
+            svg,
+            domain[gm.name],
+            yScales[gasArrayIndex],
+            gm.name
+        );
+    });
 }

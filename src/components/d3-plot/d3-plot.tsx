@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import * as d3 from 'd3';
 import * as plotGridUtils from 'utils/d3-elements/grid-and-labels';
 import * as plotGraphUtils from 'utils/d3-elements/circles-and-lines';
@@ -18,90 +18,108 @@ export default function D3Plot(props: {
 }) {
     const d3Container = useRef(null);
 
-    const { timeseries: initialTS, rawTimeseries: initialRTS } =
+    const [tsData, setTsData] = useState<{
+        timeseries: types.localGasTimeseries[];
+        rawTimeseries: types.localGasTimeseries[];
+    }>(
         buildTimeseriesData(
             props.gases,
             props.stations,
             props.plotDay,
             props.domains
-        );
+        )
+    );
 
-    const [timeseries, setTimeseries] = useState(initialTS);
-    const [rawTimeseries, setRawTimeseries] = useState(initialRTS);
+    useEffect(
+        () =>
+            setTsData(
+                buildTimeseriesData(
+                    props.gases,
+                    props.stations,
+                    props.plotDay,
+                    props.domains
+                )
+            ),
+        [props.plotDay]
+    );
 
-    useEffect(() => {
-        const { timeseries: newTS, rawTimeseries: newRTS } =
-            buildTimeseriesData(
-                props.gases,
-                props.stations,
-                props.plotDay,
-                props.domains
-            );
-        setTimeseries(newTS);
-        setRawTimeseries(newRTS);
-    }, [props.plotDay]);
-
-    useEffect(() => {
-        if (d3Container.current) {
-            const xScale = d3
+    const xScale: (x: number) => number = useMemo(
+        () =>
+            d3
                 .scaleLinear()
-                .domain([props.domains.time.from, props.domains.time.to])
+                .domain([props.domains['time'].from, props.domains['time'].to])
                 .range([
                     80,
                     constants.PLOT.width - constants.PLOT.paddingRight,
-                ]);
+                ]),
+        [props.domains]
+    );
+    const yScales: ((x: number) => number)[] = useMemo(
+        () =>
+            props.gases.map(g =>
+                d3
+                    .scaleLinear()
+                    .domain([
+                        props.domains[g.name].from,
+                        props.domains[g.name].to,
+                    ])
+                    .range([350, constants.PLOT.paddingTop])
+            ),
+        [props.gases, props.domains]
+    );
 
-            const yScale = d3
-                .scaleLinear()
-                .domain([
-                    props.domains[props.selectedGas].from,
-                    props.domains[props.selectedGas].to,
-                ])
-                .range([350, constants.PLOT.paddingTop]);
-
+    // Draw grid once initially
+    useEffect(() => {
+        console.log('GRID LINES AND LABELS');
+        console.log({ xScale, yScales });
+        if (
+            d3Container.current &&
+            xScale !== undefined &&
+            yScales !== undefined
+        ) {
             const svg = d3.select(d3Container.current);
-
             plotGridUtils.implementPlotGrid(
                 svg,
                 props.domains,
                 xScale,
-                yScale,
-                props.selectedGas
+                yScales,
+                props.gases
             );
+        }
+    }, [d3Container.current, xScale, yScales]);
+
+    // Draw data on every data change
+    useEffect(() => {
+        if (
+            d3Container.current &&
+            xScale !== undefined &&
+            yScales !== undefined
+        ) {
+            const svg = d3.select(d3Container.current);
 
             const implementCirclesAndLines =
-                plotGraphUtils.implementCirclesAndLines(svg, xScale, yScale);
+                plotGraphUtils.implementCirclesAndLines(svg, xScale);
 
-            // TODO: pass selected gas
-            // TODO: pass visible locations
-            for (let i = 0; i < timeseries.length; i++) {
-                const stationArrayIndex = props.stations.findIndex(
-                    s => s.location === timeseries[i].location
-                );
-                if (stationArrayIndex > -1) {
-                    const stationIsVisible =
-                        props.visibleStations[stationArrayIndex];
-                    implementCirclesAndLines(
-                        timeseries[i],
-                        false,
-                        stationIsVisible
+            [tsData.timeseries, tsData.rawTimeseries].forEach((gts, i) => {
+                for (let j = 0; j < gts.length; j++) {
+                    const stationArrayIndex = props.stations.findIndex(
+                        s => s.location === gts[j].location
                     );
-                    implementCirclesAndLines(
-                        rawTimeseries[i],
-                        true,
-                        stationIsVisible
+                    const gasArrayIndex = props.gases.findIndex(
+                        s => s.name === gts[j].gas
                     );
+                    if (stationArrayIndex !== -1 && gasArrayIndex !== -1) {
+                        implementCirclesAndLines(
+                            yScales[gasArrayIndex],
+                            gts[j],
+                            i === 1
+                        );
+                    }
                 }
-            }
+            });
             props.setIsLoading(false);
         }
-    }, [
-        props.selectedGas,
-        d3Container.current,
-        timeseries,
-        rawTimeseries,
-        props.visibleStations,
-    ]);
+    }, [d3Container.current, xScale, yScales, tsData]);
 
     return (
         <div
@@ -112,7 +130,7 @@ export default function D3Plot(props: {
             <div className='absolute top-0 left-0 z-10 w-full h-full flex-row-center'>
                 <div
                     className={
-                        'px-2.5 py-1 text-sm font-medium bg-blue-900 rounded text-blue-50 ' +
+                        'px-2.5 py-1 text-sm font-medium bg-gray-800 rounded text-blue-50 ' +
                         (props.isLoading ? 'opacity-100 ' : 'opacity-0 ')
                     }
                 >

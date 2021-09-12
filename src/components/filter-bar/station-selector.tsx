@@ -18,10 +18,14 @@ export default function StationSelector(props: {
     return (
         <fieldset className='flex-shrink-0 space-y-1'>
             {stations.map((s, i) => (
-                <div className='relative flex items-start px-2 bg-gray-700 rounded py-0.5'>
+                <div
+                    key={s.location}
+                    className='relative flex items-start px-2 bg-gray-700 rounded py-0.5'
+                >
                     <div className='flex items-center h-5'>
                         <input
                             checked={visibleStations[i]}
+                            onChange={handleClick(i)}
                             onClick={handleClick(i)}
                             type='checkbox'
                             className='w-4 h-4 border-gray-300 rounded focus:ring-green-500'

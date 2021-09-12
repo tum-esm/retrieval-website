@@ -3,7 +3,6 @@ import types from 'types';
 import getDayObjectFromString from 'utils/get-day-object-from-string';
 import FilterBar from 'components/filter-bar/filter-bar';
 import D3Plot from 'components/d3-plot/d3-plot';
-import { stationMeta } from '../types';
 
 const domains = {
     time: {
@@ -30,8 +29,6 @@ export default function Plot(props: {
         apiURL: string;
     };
 }) {
-    //return <main>{JSON.stringify(props.pageContext.displayDayObject)}</main>;
-    console.log({ apiUrl: props.pageContext.apiURL });
     const plotMeta: types.plotMeta = props.pageContext.metaObject;
     const sortedDayStrings = plotMeta.data.days.sort();
 
@@ -49,7 +46,7 @@ export default function Plot(props: {
         sortedDayStrings.indexOf(props.pageContext.displayDayObject.date)
     );
     const [gasIndex, setGasIndex] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [visibleStations, setVisibleStations] = useState(
         plotMeta.data.stations.map(() => true)
     );
@@ -70,7 +67,6 @@ export default function Plot(props: {
     }
 
     useEffect(() => {
-        console.log(props.pageContext.apiURL);
         const newDayString = sortedDayStrings[dayIndex];
 
         async function fetchDay(daystring: string) {

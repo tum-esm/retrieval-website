@@ -79,6 +79,7 @@ export default function DateGrid(props: {
                     const dayHasData = dayStrings.includes(dayString);
                     return (
                         <button
+                            key={dayString}
                             style={day === 1 ? skipColStyles : {}}
                             className={
                                 'w-6 h-4 rounded-sm font-medium ' +

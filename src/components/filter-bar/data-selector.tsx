@@ -11,6 +11,7 @@ export default function DataSelector(props: {
             <span className='relative z-0 inline-flex rounded-md shadow-sm'>
                 {props.gases.map((g, i) => (
                     <button
+                        key={g.name}
                         type='button'
                         onClick={() => props.setGasIndex(i)}
                         className={

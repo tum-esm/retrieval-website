@@ -46,7 +46,7 @@ export default function Plot(props: {
         sortedDayStrings.indexOf(props.pageContext.displayDayObject.date)
     );
     const [gasIndex, setGasIndex] = useState(0);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [visibleStations, setVisibleStations] = useState(
         plotMeta.data.stations.map(() => true)
     );
@@ -107,7 +107,7 @@ export default function Plot(props: {
 
     return (
         <>
-            <header className='fixed top-0 left-0 w-screen bg-white shadow'>
+            <header className='fixed top-0 left-0 z-10 w-screen bg-white shadow'>
                 <FilterBar
                     {...{ isFirstDay, isLastDay, prevDay, nextDay }}
                     {...{
@@ -134,7 +134,9 @@ export default function Plot(props: {
                 />
             </header>
             <main
-                className={'bg-gray-100 w-screen min-h-screen pt-40 pb-8 px-4'}
+                className={
+                    'bg-gray-100 w-screen min-h-screen pt-40 pb-8 px-4 z-0'
+                }
             >
                 <D3Plot
                     domains={domains}

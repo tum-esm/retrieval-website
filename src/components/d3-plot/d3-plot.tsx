@@ -139,7 +139,7 @@ export default function D3Plot(props: {
             <div className='absolute top-0 left-0 z-10 w-full h-full flex-row-center'>
                 <div
                     className={
-                        'px-2.5 py-1 text-sm font-medium bg-gray-800 rounded text-blue-50 ' +
+                        'px-2.5 py-1 text-sm font-medium bg-gray-700 rounded text-gray-50 ' +
                         (props.isLoading ? 'opacity-100 ' : 'opacity-0 ')
                     }
                 >

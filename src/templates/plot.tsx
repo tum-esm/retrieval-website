@@ -66,6 +66,15 @@ export default function Plot(props: {
         }
     }
 
+    // prefetch cms (fire up backend server on page load)
+    useEffect(() => {
+        async function prefetchCMS() {
+            const { metaObject, apiURL } = props.pageContext;
+            await fetch(`${apiURL}/plot-metas/${metaObject.id}`);
+        }
+        prefetchCMS();
+    }, []);
+
     useEffect(() => {
         const newDayString = sortedDayStrings[dayIndex];
 

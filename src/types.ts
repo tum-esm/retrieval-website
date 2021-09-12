@@ -28,6 +28,7 @@ namespace types {
     export type stationMeta = { location: string; sensor: string };
 
     export type plotMeta = {
+        id: number;
         campaignId: string;
         data: {
             gases: gasMeta[];

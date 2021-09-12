@@ -93,12 +93,18 @@ export const implementCirclesAndLines =
         }-${gas}-${location}`;
         const lineClassName = `interpolation-${gas}-${location}`;
 
-        let circles: any = svg.selectAll(`.${circleClassName}`).data(data);
+        let circleGroup: any = svg.selectAll(`.${circleClassName}`);
+        if (circleGroup.empty()) {
+            circleGroup = svg
+                .append('g')
+                .attr('class', `${circleClassName} pointer-events-none`);
+        }
+
+        let circles: any = circleGroup.selectAll(`circle`).data(data);
         circles
             .enter()
             .append('circle')
             .attr('fill', getLocationColor(location))
-            .attr('class', circleClassName)
             .attr('r', tsIsRaw ? 1 : 1.5)
 
             // Keep all circles in sync with the data

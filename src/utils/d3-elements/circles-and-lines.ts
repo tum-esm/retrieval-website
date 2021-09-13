@@ -97,14 +97,14 @@ export const implementCirclesAndLines =
         if (circleGroup.empty()) {
             circleGroup = svg
                 .append('g')
-                .attr('class', `${circleClassName} pointer-events-none`);
+                .attr('class', `${circleClassName} pointer-events-none`)
+                .attr('fill', getLocationColor(location));
         }
 
         let circles: any = circleGroup.selectAll(`circle`).data(data);
         circles
             .enter()
             .append('circle')
-            .attr('fill', getLocationColor(location))
             .attr('r', tsIsRaw ? 1 : 1.5)
 
             // Keep all circles in sync with the data
@@ -118,10 +118,15 @@ export const implementCirclesAndLines =
 
         // Draw line elements
         if (!tsIsRaw) {
-            let line: any = svg.selectAll(`.${lineClassName}`);
+            let lineGroup: any = svg.selectAll('.interpolated-lines');
+            if (lineGroup.empty()) {
+                lineGroup = svg.append('g').attr('class', `interpolated-lines`);
+            }
+
+            let line: any = lineGroup.selectAll(`.${lineClassName}`);
             const generateCurrentLines = generateLines(xScale, yScale);
             if (line.empty()) {
-                line = svg
+                line = lineGroup
                     .append('path')
                     .attr('class', `${lineClassName} pointer-events-none`)
                     .style('stroke', getLocationColor(location))

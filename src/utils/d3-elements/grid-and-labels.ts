@@ -7,8 +7,20 @@ export function implementTimeDividers(
     axisDomain: types.plotAxisDomain,
     xScale: (n: number) => number
 ) {
-    let xAxisLines = svg
-        .selectAll(`.x-axis-line`)
+    const lineClassName = `x-axis-line`;
+    let lineGroup: any = svg.selectAll(`.${lineClassName}`);
+    if (lineGroup.empty()) {
+        lineGroup = svg
+            .append('g')
+            .attr(
+                'class',
+                `${lineClassName} pointer-events-none text-xs font-medium ` +
+                    `fill-gray-600`
+            );
+    }
+
+    let lines = lineGroup
+        .selectAll('line')
         .data(
             range(
                 axisDomain.from,
@@ -16,7 +28,7 @@ export function implementTimeDividers(
                 axisDomain.step
             )
         );
-    xAxisLines
+    lines
         .enter()
         .append('line')
         .attr('class', 'x-axis-line')
@@ -28,7 +40,7 @@ export function implementTimeDividers(
         .attr('x1', (x: number, i: number) => xScale(x))
         .attr('x2', (x: number, i: number) => xScale(x));
 
-    xAxisLines.exit().remove();
+    lines.exit().remove();
 }
 
 export function implementConcentrationDividers(
@@ -38,8 +50,20 @@ export function implementConcentrationDividers(
     gas: 'co2' | 'ch4'
 ) {
     const lineClassName = `y-axis-line-${gas}`;
-    let yAxisLines: any = svg
-        .selectAll(`.${lineClassName}`)
+
+    let lineGroup: any = svg.selectAll(`.${lineClassName}`);
+    if (lineGroup.empty()) {
+        lineGroup = svg
+            .append('g')
+            .attr(
+                'class',
+                `${lineClassName} pointer-events-none text-xs font-medium ` +
+                    `fill-gray-600`
+            );
+    }
+
+    let lines = lineGroup
+        .selectAll('line')
         .data(
             range(
                 axisDomain.from,
@@ -47,20 +71,19 @@ export function implementConcentrationDividers(
                 axisDomain.step
             )
         );
-    yAxisLines
+    lines
         .enter()
         .append('line')
-        .attr('class', lineClassName)
         .attr('x1', 65)
         .attr('x2', constants.PLOT.width - constants.PLOT.paddingRight)
         .attr('stroke', '#CBD5E1')
         .attr('stroke-linecap', 'round')
         .attr('stroke-width', 1.4)
-        .merge(yAxisLines)
+        .merge(lines)
         .attr('y1', (y: number, i: number) => yScale(y))
         .attr('y2', (y: number, i: number) => yScale(y));
 
-    yAxisLines.exit().remove();
+    lines.exit().remove();
 }
 
 export function implementTimeLabels(
@@ -68,8 +91,21 @@ export function implementTimeLabels(
     axisDomain: types.plotAxisDomain,
     xScale: (n: number) => number
 ) {
-    let xAxisLabels = svg
-        .selectAll('.x-axis-label')
+    const labelClassName = `x-axis-label`;
+
+    let labelGroup: any = svg.selectAll(`.${labelClassName}`);
+    if (labelGroup.empty()) {
+        labelGroup = svg
+            .append('g')
+            .attr(
+                'class',
+                `${labelClassName} pointer-events-none text-xs font-medium ` +
+                    `fill-gray-600`
+            );
+    }
+
+    let labels = labelGroup
+        .selectAll('text')
         .data(
             range(
                 axisDomain.from,
@@ -77,10 +113,9 @@ export function implementTimeLabels(
                 axisDomain.step
             )
         );
-    xAxisLabels
+    labels
         .enter()
         .append('text')
-        .attr('class', 'x-axis-label text-xs font-medium fill-gray-600')
         .style('text-anchor', 'middle')
         .attr('y', 372)
         .attr('x', (x: number, i: number) => xScale(x))
@@ -92,7 +127,7 @@ export function implementTimeLabels(
                 .replace('.25', '.15')
         );
 
-    xAxisLabels.exit().remove();
+    labels.exit().remove();
 }
 
 export function implementConcentrationLabels(
@@ -102,8 +137,20 @@ export function implementConcentrationLabels(
     gas: 'co2' | 'ch4'
 ) {
     const labelClassName = `y-axis-label-${gas}`;
-    let yAxisLabels: any = svg
-        .selectAll(`.${labelClassName}`)
+
+    let labelGroup: any = svg.selectAll(`.${labelClassName}`);
+    if (labelGroup.empty()) {
+        labelGroup = svg
+            .append('g')
+            .attr(
+                'class',
+                `${labelClassName} pointer-events-none text-xs font-medium ` +
+                    `fill-gray-600`
+            );
+    }
+
+    let labels: any = labelGroup
+        .selectAll(`text`)
         .data(
             range(
                 axisDomain.from,
@@ -111,18 +158,17 @@ export function implementConcentrationLabels(
                 axisDomain.step
             )
         );
-    yAxisLabels
+    labels
         .enter()
         .append('text')
-        .attr('class', `${labelClassName} text-xs font-medium fill-gray-600`)
         .style('dominant-baseline', 'middle')
         .style('text-anchor', 'end')
         .attr('x', 60)
-        .merge(yAxisLabels)
+        .merge(labels)
         .attr('y', (y: number, i: number) => yScale(y))
         .text((y: number, i: number) => y.toFixed(gas === 'co2' ? 0 : 3));
 
-    yAxisLabels.exit().remove();
+    labels.exit().remove();
 }
 
 export function implementAxisTitles(svg: any) {

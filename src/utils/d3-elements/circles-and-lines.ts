@@ -110,8 +110,8 @@ export const implementCirclesAndLines =
             // Keep all circles in sync with the data
             .merge(circles)
             //.attr('opacity', tsIsRaw ? '35%' : '100%')
-            .attr('cx', (d: number[], i: number) => xScale(d[0]))
-            .attr('cy', (d: number[], i: number) => yScale(d[1]));
+            .attr('cx', (d: number[], i: number) => xScale(d[0]).toFixed(2))
+            .attr('cy', (d: number[], i: number) => yScale(d[1]).toFixed(2));
 
         // Remove old circle elements
         circles.exit().remove();

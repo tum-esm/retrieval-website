@@ -12,17 +12,17 @@ export default function buildTimeseriesData(
     for (let i = 0; i < gases.length; i++) {
         for (let j = 0; j < stations.length; j++) {
             const gas = gases[i].name;
-            const location = stations[j].location;
+            const sensor = stations[j].sensor;
             let tsAdded = false;
 
             if (plotDay.data.timeseries !== undefined) {
                 const existingTss = plotDay.data?.timeseries
                     .filter(t => t.gas === gas)
-                    .filter(t => t.location === location);
+                    .filter(t => t.sensor === sensor);
                 if (existingTss.length !== 0) {
                     const newTs: any = {
                         gas: gas,
-                        location: location,
+                        sensor: sensor,
                         count: existingTss[0].count,
                         data: zip(
                             existingTss[0].data.xs,
@@ -42,7 +42,7 @@ export default function buildTimeseriesData(
             if (!tsAdded) {
                 timeseries.push({
                     gas,
-                    location,
+                    sensor,
                     count: 0,
                     data: [],
                 });
@@ -50,11 +50,11 @@ export default function buildTimeseriesData(
             if (plotDay.data.rawTimeseries !== undefined) {
                 const existingTss = plotDay.data?.rawTimeseries
                     .filter(t => t.gas === gas)
-                    .filter(t => t.location === location);
+                    .filter(t => t.sensor === sensor);
                 if (existingTss.length !== 0) {
                     const newTs: any = {
                         gas: gas,
-                        location: location,
+                        sensor: sensor,
                         count: existingTss[0].count,
                         data: zip(
                             existingTss[0].data.xs,
@@ -73,7 +73,7 @@ export default function buildTimeseriesData(
             }
             rawTimeseries.push({
                 gas,
-                location,
+                sensor,
                 count: 0,
                 data: [],
             });

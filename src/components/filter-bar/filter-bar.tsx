@@ -17,6 +17,7 @@ export default function FilterBar(props: {
     dayStrings: string[];
     gases: { name: types.gas; unit: string }[];
     stations: types.stationMeta[];
+    calibrationDays: { [key: string]: string };
     visibleStations: boolean[];
     setVisibleStations(s: boolean[]): void;
 

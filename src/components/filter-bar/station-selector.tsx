@@ -5,6 +5,8 @@ import { getSensorColor } from 'utils/d3-elements/circles-and-lines';
 export default function StationSelector(props: {
     stations: types.stationMeta[];
     visibleStations: boolean[];
+    dayObject: types.dayObject;
+    calibrationDays: { [key: string]: string };
     setVisibleStations(s: boolean[]): void;
 }) {
     const { stations, visibleStations, setVisibleStations } = props;
@@ -14,6 +16,10 @@ export default function StationSelector(props: {
             visibleStations.map((c, i) => (i !== index ? c : !c))
         );
     };
+
+    const { year, month, day } = props.dayObject;
+    const isCalibrationDay =
+        props.calibrationDays[`${year}${month}${day}`] !== undefined;
 
     return (
         <fieldset className='flex-shrink-0 space-y-1'>
@@ -42,7 +48,13 @@ export default function StationSelector(props: {
                         </label>
                         <span id='comments-description' className='opacity-80'>
                             {' '}
-                            (typically at {s.location})
+                            (
+                            {isCalibrationDay
+                                ? props.calibrationDays[
+                                      `${year}${month}${day}`
+                                  ] + ' - calibration'
+                                : s.location}
+                            )
                         </span>
                     </div>
                 </div>

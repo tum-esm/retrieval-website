@@ -105,6 +105,7 @@ export default function Plot(props: {
                     {...{
                         dayStrings: sortedDayStrings,
                         gases: plotMeta.data.gases,
+                        calibrationDays: plotMeta.data.calibrationDays,
                         dayObject: displayDay.dayObject,
                         stations: plotMeta.data.stations,
                     }}

@@ -102,7 +102,7 @@ export default function D3Plot(props: {
             [tsData.timeseries, tsData.rawTimeseries].forEach((gts, i) => {
                 for (let j = 0; j < gts.length; j++) {
                     const stationArrayIndex = props.stations.findIndex(
-                        s => s.location === gts[j].location
+                        s => s.sensor === gts[j].sensor
                     );
                     const gasArrayIndex = props.gases.findIndex(
                         s => s.name === gts[j].gas
@@ -128,7 +128,7 @@ export default function D3Plot(props: {
                 props.stations
                     .map((s, i) =>
                         props.visibleStations[i]
-                            ? `plot-css-${props.selectedGas}-${s.location} `
+                            ? `plot-css-${props.selectedGas}-${s.sensor} `
                             : ' '
                     )
                     .join(' ')

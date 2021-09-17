@@ -1,15 +1,6 @@
 namespace types {
     export type dataPoint = { x: number; y: number };
 
-    export type plotDayData = {
-        hours: number[];
-        timeseries: {
-            gas: 'co2' | 'ch4';
-            location: string;
-            data: number[];
-        }[];
-    };
-
     export type plotAxisDomain = {
         from: number;
         to: number;
@@ -35,6 +26,9 @@ namespace types {
             stations: stationMeta[];
             days: string[];
             hiddenDays: [];
+            calibrationDays: {
+                [key: string]: string;
+            };
             startDate: string;
             displayDay: string;
         };
@@ -60,13 +54,13 @@ namespace types {
 
     export type gasTimeseries = {
         gas: string;
-        location: string;
+        sensor: string;
         count: number;
         data: timeseriesData;
     };
 
     export type flagTimeseries = {
-        location: string;
+        sensor: string;
         count: number;
         data: timeseriesData;
     };
@@ -78,13 +72,13 @@ namespace types {
 
     export type localGasTimeseries = {
         gas: string;
-        location: string;
+        sensor: string;
         count: number;
         data: localTimeseriesData;
     };
 
     export type localFlagTimeseries = {
-        location: string;
+        sensor: string;
         count: number;
         data: localTimeseriesData;
     };

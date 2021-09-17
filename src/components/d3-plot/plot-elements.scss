@@ -14,23 +14,23 @@ $gases: (
     ch4: 0,
 );
 
-$locations: (
-    HAW: 0,
-    GEO: 0,
-    JOR: 0,
-    ROS: 0,
+$sensors: (
+    mb86: 0,
+    mc15: 0,
+    md16: 0,
+    me17: 0,
 );
 
 @each $gas, $x in $gases {
-    @each $location, $y in $locations {
-        .plot-css-#{$gas}-#{$location} {
-            .circle-raw-#{$gas}-#{$location} {
+    @each $sensor, $y in $sensors {
+        .plot-css-#{$gas}-#{$sensor} {
+            .circle-raw-#{$gas}-#{$sensor} {
                 opacity: 35% !important;
             }
-            .circle-filtered-#{$gas}-#{$location} {
+            .circle-filtered-#{$gas}-#{$sensor} {
                 opacity: 100% !important;
             }
-            .interpolation-#{$gas}-#{$location} {
+            .interpolation-#{$gas}-#{$sensor} {
                 opacity: 70% !important;
             }
         }

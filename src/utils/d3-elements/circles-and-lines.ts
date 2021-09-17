@@ -2,18 +2,18 @@ import { zip, reduce } from 'lodash';
 import * as d3 from 'd3';
 import types from 'types';
 
-export function getLocationColor(location: string) {
-    switch (location) {
-        case 'ROS':
+export function getSensorColor(sensor: string) {
+    switch (sensor) {
+        case 'mb86':
             return '#F87171'; // red-400
-        case 'HAW':
+        case 'mc15':
             return '#34D399'; // emerald-400
-        case 'JOR':
+        case 'md16':
             return '#60A5FA'; // blue-400
-        case 'GEO':
+        case 'me17':
             return '#FBBF24'; // amber-400
         default:
-            return '#9CA3AF'; // coolGray-400
+            return '#9CA3AF'; // coolgray-400
     }
 }
 
@@ -86,19 +86,19 @@ export const implementCirclesAndLines =
         timeseries: types.localGasTimeseries,
         tsIsRaw: boolean
     ) => {
-        const { gas, location, data } = timeseries;
+        const { gas, sensor, data } = timeseries;
 
         const circleClassName = `circle-${
             tsIsRaw ? 'raw' : 'filtered'
-        }-${gas}-${location}`;
-        const lineClassName = `interpolation-${gas}-${location}`;
+        }-${gas}-${sensor}`;
+        const lineClassName = `interpolation-${gas}-${sensor}`;
 
         let circleGroup: any = svg.selectAll(`.${circleClassName}`);
         if (circleGroup.empty()) {
             circleGroup = svg
                 .append('g')
                 .attr('class', `${circleClassName} pointer-events-none`)
-                .attr('fill', getLocationColor(location));
+                .attr('fill', getSensorColor(sensor));
         }
 
         let circles: any = circleGroup.selectAll(`circle`).data(data);
@@ -129,7 +129,7 @@ export const implementCirclesAndLines =
                 line = lineGroup
                     .append('path')
                     .attr('class', `${lineClassName} pointer-events-none`)
-                    .style('stroke', getLocationColor(location))
+                    .style('stroke', getSensorColor(sensor))
                     .style('stroke-width', tsIsRaw ? 2 : 3)
                     .style('stroke-linecap', 'round')
                     .style('stroke-linejoin', 'round')

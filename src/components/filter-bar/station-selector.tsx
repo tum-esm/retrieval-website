@@ -1,6 +1,6 @@
 import React from 'react';
 import types from 'types';
-import { getLocationColor } from 'utils/d3-elements/circles-and-lines';
+import { getSensorColor } from 'utils/d3-elements/circles-and-lines';
 
 export default function StationSelector(props: {
     stations: types.stationMeta[];
@@ -19,7 +19,7 @@ export default function StationSelector(props: {
         <fieldset className='flex-shrink-0 space-y-1'>
             {stations.map((s, i) => (
                 <div
-                    key={s.location}
+                    key={s.sensor}
                     className='relative flex items-start px-2 bg-gray-700 rounded py-0.5'
                 >
                     <div className='flex items-center h-5'>
@@ -34,15 +34,15 @@ export default function StationSelector(props: {
                     <div
                         className='ml-3 text-sm'
                         style={{
-                            color: getLocationColor(s.location),
+                            color: getSensorColor(s.sensor),
                         }}
                     >
                         <label htmlFor='comments' className='font-medium'>
-                            {s.location}
+                            {s.sensor}
                         </label>
                         <span id='comments-description' className='opacity-80'>
                             {' '}
-                            ({s.sensor})
+                            (typically at {s.location})
                         </span>
                     </div>
                 </div>

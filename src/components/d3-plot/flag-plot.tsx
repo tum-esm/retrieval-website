@@ -5,6 +5,8 @@ import types from 'types';
 import constants from 'utils/constants';
 import buildFlagData from 'utils/build-flag-data';
 import './plot-elements.css';
+import { implementFlagCircles } from 'utils/d3-elements/flag-circles';
+import * as plotGraphUtils from 'utils/d3-elements/flag-circles';
 
 export default function FlagPlot(props: {
     domains: types.plotDomain;
@@ -58,7 +60,6 @@ export default function FlagPlot(props: {
             yScale !== undefined
         ) {
             const svg = d3.select(d3Container.current);
-            // TODO: implement flag grid
             // TODO: Use flag list from plot meta
             plotGridUtils.implementFlagGrid(
                 svg,
@@ -71,7 +72,7 @@ export default function FlagPlot(props: {
     }, [d3Container.current, xScale, yScale]);
 
     // Draw data on every data change
-    /*useEffect(() => {
+    useEffect(() => {
         if (
             d3Container.current &&
             xScale !== undefined &&
@@ -80,9 +81,25 @@ export default function FlagPlot(props: {
             const svg = d3.select(d3Container.current);
             // TODO: implement flag timeseries
 
+            const implementFlagCircles = plotGraphUtils.implementFlagCircles(
+                svg,
+                xScale,
+                yScale,
+                ['21', '8', '15', '33', '39', '37', '25', '24', '31']
+            );
+
+            for (let j = 0; j < tsData.flagTimeseries.length; j++) {
+                const stationArrayIndex = props.stations.findIndex(
+                    s => s.sensor === tsData.flagTimeseries[j].sensor
+                );
+                if (stationArrayIndex !== -1) {
+                    implementFlagCircles(tsData.flagTimeseries[j]);
+                }
+            }
+
             props.setIsLoading(false);
         }
-    }, [d3Container.current, xScale, yScale, tsData]);*/
+    }, [d3Container.current, xScale, yScale, tsData]);
 
     // TODO: fix css classes
 
@@ -92,9 +109,7 @@ export default function FlagPlot(props: {
                 'relative w-full p-2 flex-row-center text-gray-900 bg-white shadow rounded ' +
                 props.stations
                     .map((s, i) =>
-                        props.visibleStations[i]
-                            ? `plot-css-${props.selectedGas}-${s.sensor} `
-                            : ' '
+                        props.visibleStations[i] ? `plot-css-${s.sensor} ` : ' '
                     )
                     .join(' ')
             }

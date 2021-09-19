@@ -21,8 +21,8 @@ $sensors: (
     me17: 0,
 );
 
-@each $gas, $x in $gases {
-    @each $sensor, $y in $sensors {
+@each $sensor, $x in $sensors {
+    @each $gas, $y in $gases {
         .plot-css-#{$gas}-#{$sensor} {
             .circle-raw-#{$gas}-#{$sensor} {
                 opacity: 35% !important;
@@ -33,6 +33,11 @@ $sensors: (
             .interpolation-#{$gas}-#{$sensor} {
                 opacity: 70% !important;
             }
+        }
+    }
+    .plot-css-#{$sensor} {
+        .circle-#{$sensor} {
+            opacity: 100% !important;
         }
     }
 }

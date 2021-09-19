@@ -31,8 +31,7 @@ export function implementTimeDividers(
     lines
         .enter()
         .append('line')
-        .attr('class', 'x-axis-line')
-        .attr('y1', constants.PLOT.paddingTop)
+        .attr('y1', constants.PLOT.paddingTop - 1)
         .attr('y2', 354)
         .attr('stroke', '#CBD5E1')
         .attr('stroke-linecap', 'round')
@@ -43,47 +42,33 @@ export function implementTimeDividers(
     lines.exit().remove();
 }
 
-export function implementConcentrationDividers(
+export function implementFlagBars(
     svg: any,
-    axisDomain: types.plotAxisDomain,
     yScale: (n: number) => number,
-    gas: 'co2' | 'ch4'
+    flags: string[]
 ) {
-    const lineClassName = `y-axis-line-${gas}`;
+    const lineClassName = `y-axis-bar`;
 
-    let lineGroup: any = svg.selectAll(`.${lineClassName}`);
-    if (lineGroup.empty()) {
-        lineGroup = svg
+    let rectGroup: any = svg.selectAll(`.${lineClassName}`);
+    if (rectGroup.empty()) {
+        rectGroup = svg
             .append('g')
-            .attr(
-                'class',
-                `${lineClassName} pointer-events-none text-xs font-medium ` +
-                    `fill-gray-600`
-            );
+            .attr('class', `${lineClassName} pointer-events-none`);
     }
 
-    let lines = lineGroup
-        .selectAll('line')
-        .data(
-            range(
-                axisDomain.from,
-                axisDomain.to + axisDomain.step,
-                axisDomain.step
-            )
-        );
-    lines
+    let rects = rectGroup.selectAll('rect').data(range(0, flags.length));
+    rects
         .enter()
-        .append('line')
-        .attr('x1', 65)
-        .attr('x2', constants.PLOT.width - constants.PLOT.paddingRight)
-        .attr('stroke', '#CBD5E1')
-        .attr('stroke-linecap', 'round')
-        .attr('stroke-width', 1.4)
-        .merge(lines)
-        .attr('y1', (y: number, i: number) => yScale(y))
-        .attr('y2', (y: number, i: number) => yScale(y));
+        .append('rect')
+        .attr('width', constants.PLOT.width - 80 - constants.PLOT.paddingRight)
+        .attr('height', yScale(1) - yScale(0))
+        .attr('x', 80)
+        .attr('class', (value: number, i: number) =>
+            i % 2 === 0 ? 'fill-gray-100' : 'text-transparent fill-current'
+        )
+        .attr('y', (value: number, i: number) => yScale(value - 0.5));
 
-    lines.exit().remove();
+    rects.exit().remove();
 }
 
 export function implementTimeLabels(
@@ -130,13 +115,12 @@ export function implementTimeLabels(
     labels.exit().remove();
 }
 
-export function implementConcentrationLabels(
+export function implementFlagLabels(
     svg: any,
-    axisDomain: types.plotAxisDomain,
     yScale: (n: number) => number,
-    gas: 'co2' | 'ch4'
+    flags: string[]
 ) {
-    const labelClassName = `y-axis-label-${gas}`;
+    const labelClassName = `y-axis-label`;
 
     let labelGroup: any = svg.selectAll(`.${labelClassName}`);
     if (labelGroup.empty()) {
@@ -151,13 +135,7 @@ export function implementConcentrationLabels(
 
     let labels: any = labelGroup
         .selectAll(`text`)
-        .data(
-            range(
-                axisDomain.from,
-                axisDomain.to + axisDomain.step,
-                axisDomain.step
-            )
-        );
+        .data(flags.map((f, i) => [f, i]));
     labels
         .enter()
         .append('text')
@@ -165,8 +143,8 @@ export function implementConcentrationLabels(
         .style('text-anchor', 'end')
         .attr('x', 60)
         .merge(labels)
-        .attr('y', (y: number, i: number) => yScale(y))
-        .text((y: number, i: number) => y.toFixed(gas === 'co2' ? 0 : 3));
+        .attr('y', (value: any[], i: number) => yScale(value[1]))
+        .text((value: any[], i: number) => value[0]);
 
     labels.exit().remove();
 }
@@ -190,36 +168,23 @@ export function implementAxisTitles(svg: any) {
                 'transform',
                 `rotate(-90) translate(-${
                     (constants.PLOT.height - 35) / 2
-                }, 14)`
+                }, 22)`
             )
             .style('text-anchor', 'middle')
-            .text(`concentration [ppm]`);
+            .text(`flag from gfit retrieval`);
     }
 }
 
-export function implementPlotGrid(
+export function implementFlagGrid(
     svg: any,
     domain: types.plotDomain,
     xScale: (x: number) => number,
-    yScales: ((x: number) => number)[],
-    gases: types.gasMeta[]
+    yScale: (x: number) => number,
+    flags: string[]
 ) {
+    implementFlagBars(svg, yScale, flags);
+    implementFlagLabels(svg, yScale, flags);
     implementTimeDividers(svg, domain.time, xScale);
     implementTimeLabels(svg, domain.time, xScale);
     implementAxisTitles(svg);
-    gases.forEach(gm => {
-        const gasArrayIndex = gases.findIndex(s => s.name === gm.name);
-        implementConcentrationDividers(
-            svg,
-            domain[gm.name],
-            yScales[gasArrayIndex],
-            gm.name
-        );
-        implementConcentrationLabels(
-            svg,
-            domain[gm.name],
-            yScales[gasArrayIndex],
-            gm.name
-        );
-    });
 }

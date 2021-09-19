@@ -19,36 +19,6 @@
   opacity: 70% !important;
 }
 
-.plot-css-co2-mc15 .circle-raw-co2-mc15 {
-  opacity: 35% !important;
-}
-.plot-css-co2-mc15 .circle-filtered-co2-mc15 {
-  opacity: 100% !important;
-}
-.plot-css-co2-mc15 .interpolation-co2-mc15 {
-  opacity: 70% !important;
-}
-
-.plot-css-co2-md16 .circle-raw-co2-md16 {
-  opacity: 35% !important;
-}
-.plot-css-co2-md16 .circle-filtered-co2-md16 {
-  opacity: 100% !important;
-}
-.plot-css-co2-md16 .interpolation-co2-md16 {
-  opacity: 70% !important;
-}
-
-.plot-css-co2-me17 .circle-raw-co2-me17 {
-  opacity: 35% !important;
-}
-.plot-css-co2-me17 .circle-filtered-co2-me17 {
-  opacity: 100% !important;
-}
-.plot-css-co2-me17 .interpolation-co2-me17 {
-  opacity: 70% !important;
-}
-
 .plot-css-ch4-mb86 .circle-raw-ch4-mb86 {
   opacity: 35% !important;
 }
@@ -56,6 +26,20 @@
   opacity: 100% !important;
 }
 .plot-css-ch4-mb86 .interpolation-ch4-mb86 {
+  opacity: 70% !important;
+}
+
+.plot-css-mb86 .circle-mb86 {
+  opacity: 85% !important;
+}
+
+.plot-css-co2-mc15 .circle-raw-co2-mc15 {
+  opacity: 35% !important;
+}
+.plot-css-co2-mc15 .circle-filtered-co2-mc15 {
+  opacity: 100% !important;
+}
+.plot-css-co2-mc15 .interpolation-co2-mc15 {
   opacity: 70% !important;
 }
 
@@ -69,6 +53,20 @@
   opacity: 70% !important;
 }
 
+.plot-css-mc15 .circle-mc15 {
+  opacity: 85% !important;
+}
+
+.plot-css-co2-md16 .circle-raw-co2-md16 {
+  opacity: 35% !important;
+}
+.plot-css-co2-md16 .circle-filtered-co2-md16 {
+  opacity: 100% !important;
+}
+.plot-css-co2-md16 .interpolation-co2-md16 {
+  opacity: 70% !important;
+}
+
 .plot-css-ch4-md16 .circle-raw-ch4-md16 {
   opacity: 35% !important;
 }
@@ -76,6 +74,20 @@
   opacity: 100% !important;
 }
 .plot-css-ch4-md16 .interpolation-ch4-md16 {
+  opacity: 70% !important;
+}
+
+.plot-css-md16 .circle-md16 {
+  opacity: 85% !important;
+}
+
+.plot-css-co2-me17 .circle-raw-co2-me17 {
+  opacity: 35% !important;
+}
+.plot-css-co2-me17 .circle-filtered-co2-me17 {
+  opacity: 100% !important;
+}
+.plot-css-co2-me17 .interpolation-co2-me17 {
   opacity: 70% !important;
 }
 
@@ -87,6 +99,10 @@
 }
 .plot-css-ch4-me17 .interpolation-ch4-me17 {
   opacity: 70% !important;
+}
+
+.plot-css-me17 .circle-me17 {
+  opacity: 85% !important;
 }
 
 [class*=plot-css] [class*=circle],

@@ -3,6 +3,7 @@ import types from 'types';
 import getDayObjectFromString from 'utils/get-day-object-from-string';
 import FilterBar from 'components/filter-bar/filter-bar';
 import D3Plot from 'components/d3-plot/d3-plot';
+import FlagPlot from 'src/components/d3-plot/flag-plot';
 
 const domains = {
     time: {
@@ -128,7 +129,9 @@ export default function Plot(props: {
             </header>
             <main
                 className={
-                    'relative block bg-gray-100 w-screen min-h-screen pt-40 pb-8 px-4 z-0 pointer-events-none no-selection'
+                    'relative block bg-gray-100 w-screen min-h-screen ' +
+                    'pt-40 pb-8 px-4 z-0 pointer-events-none no-selection ' +
+                    'flex-col-center gap-y-4'
                 }
             >
                 <D3Plot
@@ -137,6 +140,17 @@ export default function Plot(props: {
                     gases={plotMeta.data.gases}
                     stations={plotMeta.data.stations}
                     plotDay={displayDay.plotDay}
+                    setIsLoading={setIsLoading}
+                    isLoading={isLoading}
+                    visibleStations={visibleStations}
+                />
+                <FlagPlot
+                    domains={domains}
+                    selectedGas={plotMeta.data.gases[gasIndex].name}
+                    gases={plotMeta.data.gases}
+                    stations={plotMeta.data.stations}
+                    plotDay={displayDay.plotDay}
+                    flags={plotMeta.data.flags}
                     setIsLoading={setIsLoading}
                     isLoading={isLoading}
                     visibleStations={visibleStations}

@@ -150,6 +150,7 @@ export default function Plot(props: {
                     gases={plotMeta.data.gases}
                     stations={plotMeta.data.stations}
                     plotDay={displayDay.plotDay}
+                    flags={plotMeta.data.flags}
                     setIsLoading={setIsLoading}
                     isLoading={isLoading}
                     visibleStations={visibleStations}

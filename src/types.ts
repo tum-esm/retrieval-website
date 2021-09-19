@@ -24,6 +24,7 @@ namespace types {
         data: {
             gases: gasMeta[];
             stations: stationMeta[];
+            flags: number[];
             days: string[];
             hiddenDays: [];
             calibrationDays: {

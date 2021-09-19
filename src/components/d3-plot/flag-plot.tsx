@@ -13,6 +13,7 @@ export default function FlagPlot(props: {
     selectedGas: types.gas;
     gases: types.gasMeta[];
     stations: types.stationMeta[];
+    flags: number[];
     plotDay: types.plotDay;
     isLoading: boolean;
     setIsLoading(l: boolean): void;
@@ -66,7 +67,7 @@ export default function FlagPlot(props: {
                 props.domains,
                 xScale,
                 yScale,
-                ['21', '8', '15', '33', '39', '37', '25', '24', '31']
+                props.flags.map(n => n.toString())
             );
         }
     }, [d3Container.current, xScale, yScale]);
@@ -85,7 +86,7 @@ export default function FlagPlot(props: {
                 svg,
                 xScale,
                 yScale,
-                ['21', '8', '15', '33', '39', '37', '25', '24', '31'],
+                props.flags.map(n => n.toString()),
                 props.stations.map(s => s.sensor)
             );
 

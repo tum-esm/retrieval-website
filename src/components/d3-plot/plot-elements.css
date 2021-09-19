@@ -30,7 +30,7 @@
 }
 
 .plot-css-mb86 .circle-mb86 {
-  opacity: 100% !important;
+  opacity: 85% !important;
 }
 
 .plot-css-co2-mc15 .circle-raw-co2-mc15 {
@@ -54,7 +54,7 @@
 }
 
 .plot-css-mc15 .circle-mc15 {
-  opacity: 100% !important;
+  opacity: 85% !important;
 }
 
 .plot-css-co2-md16 .circle-raw-co2-md16 {
@@ -78,7 +78,7 @@
 }
 
 .plot-css-md16 .circle-md16 {
-  opacity: 100% !important;
+  opacity: 85% !important;
 }
 
 .plot-css-co2-me17 .circle-raw-co2-me17 {
@@ -102,7 +102,7 @@
 }
 
 .plot-css-me17 .circle-me17 {
-  opacity: 100% !important;
+  opacity: 85% !important;
 }
 
 [class*=plot-css] [class*=circle],

@@ -190,7 +190,7 @@ export function implementAxisTitles(svg: any) {
                 'transform',
                 `rotate(-90) translate(-${
                     (constants.PLOT.height - 35) / 2
-                }, 12)`
+                }, 14)`
             )
             .style('text-anchor', 'middle')
             .text(`concentration [ppm]`);

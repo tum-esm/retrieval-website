@@ -48,7 +48,7 @@ export default function FlagPlot(props: {
             d3
                 .scaleLinear()
                 .domain([-0.5, 8.5])
-                .range([350, constants.PLOT.paddingTop]),
+                .range([constants.PLOT.paddingTop, 350]),
         [props.domains]
     );
 
@@ -85,7 +85,8 @@ export default function FlagPlot(props: {
                 svg,
                 xScale,
                 yScale,
-                ['21', '8', '15', '33', '39', '37', '25', '24', '31']
+                ['21', '8', '15', '33', '39', '37', '25', '24', '31'],
+                props.stations.map(s => s.sensor)
             );
 
             for (let j = 0; j < tsData.flagTimeseries.length; j++) {

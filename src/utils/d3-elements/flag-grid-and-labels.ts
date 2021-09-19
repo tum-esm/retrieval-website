@@ -56,19 +56,17 @@ export function implementFlagBars(
             .attr('class', `${lineClassName} pointer-events-none`);
     }
 
-    let rects = rectGroup
-        .selectAll('rect')
-        .data(range(flags.length - 1, -1, -1));
+    let rects = rectGroup.selectAll('rect').data(range(0, flags.length));
     rects
         .enter()
         .append('rect')
         .attr('width', constants.PLOT.width - 80 - constants.PLOT.paddingRight)
-        .attr('height', yScale(0) - yScale(1))
+        .attr('height', yScale(1) - yScale(0))
         .attr('x', 80)
         .attr('class', (value: number, i: number) =>
             i % 2 === 0 ? 'fill-gray-100' : 'text-transparent fill-current'
         )
-        .attr('y', (value: number, i: number) => yScale(value + 0.5));
+        .attr('y', (value: number, i: number) => yScale(value - 0.5));
 
     rects.exit().remove();
 }
@@ -170,10 +168,10 @@ export function implementAxisTitles(svg: any) {
                 'transform',
                 `rotate(-90) translate(-${
                     (constants.PLOT.height - 35) / 2
-                }, 12)`
+                }, 22)`
             )
             .style('text-anchor', 'middle')
-            .text(`concentration [ppm]`);
+            .text(`flag from gfit retrieval`);
     }
 }
 

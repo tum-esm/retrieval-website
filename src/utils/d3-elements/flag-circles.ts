@@ -20,10 +20,14 @@ export const implementFlagCircles =
         svg: any,
         xScale: (n: number) => number,
         yScale: (n: number) => number,
-        flags: string[]
+        flags: string[],
+        sensors: string[]
     ) =>
     (flagTimeseries: types.localFlagTimeseries) => {
         const { sensor, data } = flagTimeseries;
+
+        const sensorOffset =
+            1.5 - sensors.length * 2.5 + sensors.indexOf(sensor) * 5;
 
         let yLookup: { [key: number]: number } = {};
         flags.forEach((flag, i) => {
@@ -46,13 +50,16 @@ export const implementFlagCircles =
         circles
             .enter()
             .append('circle')
-            .attr('r', 1)
+            .attr('r', 1.5)
 
             // Keep all circles in sync with the data
             .merge(circles)
             //.attr('opacity', tsIsRaw ? '35%' : '100%')
             .attr('cx', (d: number[], i: number) => xScale(d[0]).toFixed(2))
-            .attr('cy', (d: number[], i: number) => yScale(yLookup[d[1]]));
+            .attr(
+                'cy',
+                (d: number[], i: number) => yScale(yLookup[d[1]]) + sensorOffset
+            );
 
         // Remove old circle elements
         circles.exit().remove();

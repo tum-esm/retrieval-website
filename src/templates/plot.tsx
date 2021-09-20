@@ -67,36 +67,45 @@ export default function Plot(props: {
         }
     }
 
+    const [prefetchSuccessful, setPrefetchSuccessful] = useState(false);
+
     // prefetch cms (fire up backend server on page load)
     useEffect(() => {
         async function prefetchCMS() {
             const { metaObject, apiURL } = props.pageContext;
-            await fetch(`${apiURL}/plot-metas/${metaObject.id}`);
+            const response = await fetch(
+                `${apiURL}/plot-metas/${metaObject.id}`
+            );
+            if (response.status === 200) {
+                console.log('backend prefetched successfully');
+                setPrefetchSuccessful(true);
+            } else {
+                console.error('backend could not be prefetched', response);
+            }
         }
         prefetchCMS();
     }, []);
 
     useEffect(() => {
-        const newDayString = sortedDayStrings[dayIndex];
-
         async function fetchDay(daystring: string) {
             // TODO: error handling (show message if data could not be fetched)
 
             setIsLoading(true);
             const plotDayResponse = await fetch(
-                `${props.pageContext.apiURL}/plot-days?date=${newDayString}`
+                `${props.pageContext.apiURL}/plot-days?date=${daystring}`
             );
             setDisplayDay({
-                dayObject: getDayObjectFromString(newDayString),
+                dayObject: getDayObjectFromString(daystring),
                 plotDay: (await plotDayResponse.json())[0],
             });
             // isLoading will be set to false from within the D3 plot
         }
 
-        if (displayDay.plotDay.date !== newDayString) {
+        const newDayString = sortedDayStrings[dayIndex];
+        if (displayDay.plotDay.date !== newDayString && prefetchSuccessful) {
             fetchDay(newDayString);
         }
-    }, [dayIndex]);
+    }, [dayIndex, prefetchSuccessful]);
 
     return (
         <>

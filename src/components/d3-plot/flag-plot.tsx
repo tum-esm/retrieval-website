@@ -108,7 +108,9 @@ export default function FlagPlot(props: {
     return (
         <div
             className={
-                'relative w-full p-2 flex-row-center text-gray-900 bg-white shadow rounded ' +
+                'relative w-full p-2 flex-row-center ' +
+                'text-gray-900 bg-white shadow rounded ' +
+                'plot-css ' +
                 props.stations
                     .map((s, i) =>
                         props.visibleStations[i] ? `plot-css-${s.sensor} ` : ' '

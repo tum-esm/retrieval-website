@@ -26,5 +26,16 @@ module.exports = {
                 queryLimit: 1000,
             },
         },
+        {
+            resolve: `gatsby-plugin-manifest`,
+            options: {
+                name: 'EM27 Retrieval Plots',
+                short_name: 'EM27 Retrieval Plots',
+                start_url: '/',
+                background_color: '#ffffff',
+                theme_color: '#f60948',
+                icon: 'src/assets/favicon.ico',
+            },
+        },
     ],
 };

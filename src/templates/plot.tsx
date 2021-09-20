@@ -4,6 +4,7 @@ import getDayObjectFromString from 'utils/get-day-object-from-string';
 import FilterBar from 'components/filter-bar/filter-bar';
 import D3Plot from 'components/d3-plot/d3-plot';
 import FlagPlot from 'src/components/d3-plot/flag-plot';
+import { Helmet } from 'react-helmet';
 
 const domains = {
     time: {
@@ -109,6 +110,7 @@ export default function Plot(props: {
 
     return (
         <>
+            <Helmet title='EM27 Retrieval' defer={false} />
             <header className='fixed top-0 left-0 z-10 w-screen bg-white shadow pointer-events-auto'>
                 <FilterBar
                     {...{ isFirstDay, isLastDay, prevDay, nextDay }}

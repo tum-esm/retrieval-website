@@ -27,7 +27,7 @@ export const implementFlagCircles =
         const { sensor, data } = flagTimeseries;
 
         const sensorOffset =
-            1.5 - sensors.length * 2.5 + sensors.indexOf(sensor) * 5;
+            (sensors.indexOf(sensor) - (sensors.length - 1) / 2) * 6;
 
         let yLookup: { [key: number]: number } = {};
         flags.forEach((flag, i) => {
@@ -44,9 +44,10 @@ export const implementFlagCircles =
                 .attr('fill', getSensorColor(sensor));
         }
 
+        const flagInts = flags.map(f => parseInt(f));
         let circles: any = circleGroup
             .selectAll(`circle`)
-            .data(data.filter((d: number[]) => d[1] !== 0));
+            .data(data.filter((d: number[]) => flagInts.includes(d[1])));
         circles
             .enter()
             .append('circle')

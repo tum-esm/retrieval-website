@@ -84,6 +84,7 @@ export default function Plot(props: {
                 console.error('backend could not be prefetched', response);
             }
         }
+        console.log('prefetching');
         prefetchCMS();
     }, []);
 
@@ -104,7 +105,10 @@ export default function Plot(props: {
 
         const newDayString = sortedDayStrings[dayIndex];
         if (displayDay.plotDay.date !== newDayString && prefetchSuccessful) {
+            console.log(`fetching ${newDayString}`);
             fetchDay(newDayString);
+        } else if (!prefetchSuccessful) {
+            console.log(`not fetching ${newDayString} - waiting for prefetch`);
         }
     }, [dayIndex, prefetchSuccessful]);
 

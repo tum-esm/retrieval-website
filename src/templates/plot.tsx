@@ -157,6 +157,7 @@ export default function Plot(props: {
                     plotDay={displayDay.plotDay}
                     setIsLoading={setIsLoading}
                     isLoading={isLoading}
+                    prefetchSuccessful={prefetchSuccessful}
                     visibleStations={visibleStations}
                 />
                 <FlagPlot
@@ -168,6 +169,7 @@ export default function Plot(props: {
                     flags={plotMeta.data.flags}
                     setIsLoading={setIsLoading}
                     isLoading={isLoading}
+                    prefetchSuccessful={prefetchSuccessful}
                     visibleStations={visibleStations}
                 />
             </main>

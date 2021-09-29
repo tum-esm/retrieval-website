@@ -14,6 +14,7 @@ export default function D3Plot(props: {
     stations: types.stationMeta[];
     plotDay: types.plotDay;
     isLoading: boolean;
+    prefetchSuccessful: boolean;
     setIsLoading(l: boolean): void;
     visibleStations: boolean[];
 }) {
@@ -138,10 +139,14 @@ export default function D3Plot(props: {
                 <div
                     className={
                         'px-2.5 py-1 text-sm font-medium bg-gray-700 rounded text-gray-50 ' +
-                        (props.isLoading ? 'opacity-100 ' : 'opacity-0 ')
+                        (props.isLoading || !props.prefetchSuccessful
+                            ? 'opacity-100 '
+                            : 'opacity-0 ')
                     }
                 >
-                    loading data ...
+                    {!props.prefetchSuccessful
+                        ? 'connecting to server ...'
+                        : 'loading data ...'}
                 </div>
             </div>
             <svg

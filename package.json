@@ -9,11 +9,9 @@
     },
     "scripts": {
         "develop": "gatsby develop",
-        "start": "gatsby develop",
-        "build": "gatsby build",
+        "build": "export GATSBY_COMMIT_SHA=\"$(git rev-parse --short --verify HEAD)\" && gatsby build",
         "serve": "gatsby serve",
-        "clean": "gatsby clean",
-        "test": "jest"
+        "clean": "gatsby clean"
     },
     "dependencies": {
         "@headlessui/react": "^1.4.0",

@@ -21,7 +21,14 @@ const Page = () => {
     return (
         <>
             <Helmet title='EM27 Retrieval' defer={false} />
-            <main className='w-screen min-h-screen px-4 py-8 bg-gray-100 flex-col-center'>
+            <main className='w-screen min-h-screen px-4 py-16 bg-gray-100 flex-col-center'>
+                <div className='absolute bottom-0 left-0 z-0 w-full flex-row-center'>
+                    <div className='py-1 text-sm text-gray-400 font-weight-500'>
+                        {process.env.GATSBY_COMMIT_SHA
+                            ? `version ${process.env.GATSBY_COMMIT_SHA}`
+                            : 'development'}
+                    </div>
+                </div>
                 <div className='max-w-full flex-col-center'>
                     <h2
                         className={`max-w-xs text-lg mb-2 text-green-700 font-regular ${headingClasses}`}

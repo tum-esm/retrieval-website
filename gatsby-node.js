@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { join, uniq } = require('lodash');
+const { join } = require('lodash');
 
 const API_URL = 'https://retrieval-cms.dostuffthatmatters.dev/api';
 

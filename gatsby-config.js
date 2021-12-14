@@ -10,7 +10,12 @@ module.exports = {
         {
             resolve: 'gatsby-plugin-manifest',
             options: {
-                icon: 'src/images/icon.png',
+                name: 'EM27 Retrieval Plots',
+                short_name: 'EM27 Retrieval Plots',
+                start_url: '/',
+                background_color: '#ffffff',
+                theme_color: '#f60948',
+                icon: 'src/assets/favicon.ico',
             },
         },
         'gatsby-plugin-mdx',

@@ -1,34 +1,39 @@
 {
-  "name": "retrieval-website-v2",
-  "version": "1.0.0",
-  "private": true,
-  "description": "retrieval-website-v2",
-  "author": "dostuffthatmatters",
-  "keywords": [
-    "gatsby"
-  ],
-  "scripts": {
-    "develop": "gatsby develop",
-    "start": "gatsby develop",
-    "build": "gatsby build",
-    "serve": "gatsby serve",
-    "clean": "gatsby clean"
-  },
-  "dependencies": {
-    "@mdx-js/mdx": "^1.6.22",
-    "@mdx-js/react": "^1.6.22",
-    "axios": "^0.24.0",
-    "gatsby": "^4.3.0",
-    "gatsby-plugin-manifest": "^4.4.0",
-    "gatsby-plugin-mdx": "^3.4.0",
-    "gatsby-plugin-postcss": "^5.4.0",
-    "gatsby-plugin-react-helmet": "^5.4.0",
-    "gatsby-plugin-sitemap": "^5.4.0",
-    "gatsby-source-filesystem": "^4.4.0",
-    "lodash": "^4.17.21",
-    "postcss": "^8.4.5",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-helmet": "^6.1.0"
-  }
+    "name": "retrieval-website",
+    "version": "0.2.0",
+    "private": true,
+    "description": "retrieval-website",
+    "author": {
+        "name": "Moritz Makowski",
+        "email": "moritz.makowski@tum.de"
+    },
+    "scripts": {
+        "develop": "gatsby develop",
+        "start": "gatsby develop",
+        "build": "gatsby build",
+        "serve": "gatsby serve",
+        "clean": "gatsby clean"
+    },
+    "dependencies": {
+        "@mdx-js/mdx": "^1.6.22",
+        "@mdx-js/react": "^1.6.22",
+        "@types/node": "^16.11.13",
+        "@types/react": "^17.0.37",
+        "@types/react-dom": "^17.0.11",
+        "axios": "^0.24.0",
+        "gatsby": "^4.3.0",
+        "gatsby-plugin-manifest": "^4.4.0",
+        "gatsby-plugin-mdx": "^3.4.0",
+        "gatsby-plugin-postcss": "^5.4.0",
+        "gatsby-plugin-react-helmet": "^5.4.0",
+        "gatsby-plugin-sitemap": "^5.4.0",
+        "gatsby-plugin-typescript": "^4.4.0",
+        "gatsby-source-filesystem": "^4.4.0",
+        "lodash": "^4.17.21",
+        "postcss": "^8.4.5",
+        "react": "^17.0.1",
+        "react-dom": "^17.0.1",
+        "react-helmet": "^6.1.0",
+        "typescript": "^4.5.4"
+    }
 }

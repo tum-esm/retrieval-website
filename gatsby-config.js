@@ -3,6 +3,7 @@ module.exports = {
         siteUrl: 'https://www.yourdomain.tld',
         title: 'retrieval-website-v2',
     },
+
     plugins: [
         'gatsby-plugin-postcss',
         'gatsby-plugin-react-helmet',
@@ -26,6 +27,14 @@ module.exports = {
                 path: './src/pages/',
             },
             __key: 'pages',
+        },
+        {
+            resolve: `gatsby-plugin-typescript`,
+            options: {
+                isTSX: true, // defaults to false
+                jsxPragma: `jsx`, // defaults to "React"
+                allExtensions: true, // defaults to false
+            },
         },
     ],
 };

@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { join } = require('lodash');
+const path = require('path');
 
 const API_URL = 'https://retrieval-cms.dostuffthatmatters.dev/api';
 
@@ -96,6 +97,32 @@ exports.sourceNodes = async ({
             });
 
             return;
+        })
+    );
+};
+
+exports.createPages = async ({ graphql, actions, reporter }) => {
+    const { createPage } = actions;
+    const result = await graphql(
+        `
+            {
+                allPlotPage {
+                    nodes {
+                        campaignIdentifier
+                        date
+                    }
+                }
+            }
+        `
+    );
+    result.data.allPlotPage.nodes.forEach(({ campaignIdentifier, date }) =>
+        createPage({
+            path: `/${campaignIdentifier}/${date}`,
+            component: path.resolve(`src/templates/plot.js`),
+            context: {
+                campaignIdentifier,
+                date,
+            },
         })
     );
 };

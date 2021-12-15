@@ -14,11 +14,27 @@ async function getCampaigns(options?: {
                 ? `&filters[listed][$eq]=${options.listed}`
                 : '')
     );
-    return campaignRequest.data.data.map((a: { attributes: any }) => ({
-        ...a.attributes,
-        locations: a.attributes['locations'].split(' '),
-        gases: a.attributes['gases'].split(' '),
-    }));
+    const campaigns: types.Campaign[] = campaignRequest.data.data.map(
+        (a: { attributes: any }) => ({
+            ...a.attributes,
+            locations: a.attributes['locations'].split(' '),
+            gases: a.attributes['gases'].split(' '),
+        })
+    );
+    let campaignsWithDays: types.Campaign[] = await Promise.all(
+        campaigns.map(async campaign => {
+            const latestDate = await getLatestCampaignDate(campaign);
+            let displayDate = undefined;
+            if (latestDate !== undefined) {
+                displayDate =
+                    campaign.displayDate === null
+                        ? latestDate
+                        : campaign.displayDate;
+            }
+            return { ...campaign, displayDate };
+        })
+    );
+    return campaignsWithDays;
 }
 
 async function getCampaignDates(
@@ -26,8 +42,8 @@ async function getCampaignDates(
 ): Promise<{ [key: string]: number }> {
     const dateRequest: any = await axios.get(
         `${API_URL}/sensor-days?` +
-            `filters[date][$ge]=${campaign.startDate}&` +
-            `filters[date][$le]=${campaign.endDate}&` +
+            `filters[date][$gte]=${campaign.startDate}&` +
+            `filters[date][$lte]=${campaign.endDate}&` +
             `fields=date,rawCount&` +
             `pagination[pageSize]=10000&` +
             join(
@@ -47,6 +63,29 @@ async function getCampaignDates(
         }
     }, {});
     return dates;
+}
+
+async function getLatestCampaignDate(
+    campaign: types.Campaign
+): Promise<string | undefined> {
+    const dateRequest: any = await axios.get(
+        `${API_URL}/sensor-days?` +
+            `filters[date][$gte]=${campaign.startDate}&` +
+            `filters[date][$lte]=${campaign.endDate}&` +
+            join(
+                campaign.locations.map(
+                    (l, i) => `filters[location][$in][${i}]=${l}`
+                ),
+                '&'
+            ) +
+            `&fields=date&` +
+            `sort=date:desc&` +
+            `pagination[pageSize]=1`
+    );
+    const records = dateRequest.data.data;
+    if (records.length === 1) {
+        return records[0].attributes.date;
+    }
 }
 
 const backend = {

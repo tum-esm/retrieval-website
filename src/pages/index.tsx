@@ -1,14 +1,24 @@
-import { Link } from 'gatsby';
+import { Link, useStaticQuery, graphql } from 'gatsby';
 import React from 'react';
 import types from '../types';
-import backend from '../utilities/backend';
 
-const SSRPage = (props: { serverData: { campaigns: types.Campaign[] } }) => {
+export default function Page() {
+    const data = useStaticQuery(graphql`
+        {
+            allCampaign {
+                nodes {
+                    displayDate
+                    identifier
+                }
+            }
+        }
+    `);
+
     return (
         <main>
             <h1>EM27 Retrieval Plots</h1>
             <ul>
-                {props.serverData.campaigns.map(c => (
+                {data.allCampaign.nodes.map((c: types.Campaign) => (
                     <li>
                         <Link to={`/${c.identifier}/${c.displayDate}`}>
                             {c.identifier.toUpperCase()}
@@ -18,12 +28,4 @@ const SSRPage = (props: { serverData: { campaigns: types.Campaign[] } }) => {
             </ul>
         </main>
     );
-};
-
-export default SSRPage;
-
-export async function getServerData() {
-    return {
-        props: { campaigns: await backend.getCampaigns({ listed: true }) },
-    };
 }

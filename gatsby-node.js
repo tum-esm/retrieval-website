@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { join } = require('lodash');
+const { join, last } = require('lodash');
 const path = require('path');
 
 const API_URL = 'https://retrieval-cms.dostuffthatmatters.dev/api';
@@ -83,29 +83,41 @@ exports.sourceNodes = async ({
     const campaigns = await getCampaigns();
     await Promise.all(
         campaigns.map(async campaign => {
-            const dates = await getCampaignDates(campaign);
+            const dateCounts = await getCampaignDates(campaign);
 
-            createNode({
-                ...campaign,
-                dateCounts: JSON.stringify(dates),
-                id: createNodeId(
-                    `${CAMPAIGN_NODE_TYPE}-${campaign.identifier}`
-                ),
-                parent: null,
-                children: [],
-                internal: {
-                    type: CAMPAIGN_NODE_TYPE,
-                    content: JSON.stringify(campaign),
-                    contentDigest: createContentDigest(campaign),
-                },
-            });
+            const latestDate = last(Object.keys(dateCounts).sort());
+            let displayDate = undefined;
+            if (latestDate !== undefined) {
+                displayDate =
+                    campaign.displayDate === null
+                        ? latestDate
+                        : campaign.displayDate;
+            }
+            campaignNode = { ...campaign, displayDate };
+
+            if (Object.keys(dateCounts).length > 0) {
+                createNode({
+                    ...campaignNode,
+                    dateCounts: JSON.stringify(dateCounts),
+                    id: createNodeId(
+                        `${CAMPAIGN_NODE_TYPE}-${campaign.identifier}`
+                    ),
+                    parent: null,
+                    children: [],
+                    internal: {
+                        type: CAMPAIGN_NODE_TYPE,
+                        content: JSON.stringify(campaignNode),
+                        contentDigest: createContentDigest(campaignNode),
+                    },
+                });
+            }
 
             await Promise.all(
-                Object.keys(dates).map(async date => {
+                Object.keys(dateCounts).map(async date => {
                     const content = {
                         campaign: campaign,
                         date,
-                        count: dates[date],
+                        count: dateCounts[date],
                         sensorDays: await getSensorDay(campaign, date),
                     };
                     createNode({

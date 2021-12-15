@@ -44,6 +44,7 @@ async function getCampaignDates(campaign) {
     return dates;
 }
 
+const CAMPAIGN_NODE_TYPE = 'Campaign';
 const PLOT_PAGE_NODE_TYPE = 'PlotPage';
 
 exports.sourceNodes = async ({
@@ -54,11 +55,24 @@ exports.sourceNodes = async ({
 }) => {
     const { createNode } = actions;
     const campaigns = await getCampaigns();
-    console.log({ campaigns });
     await Promise.all(
         campaigns.map(async campaign => {
             const dates = await getCampaignDates(campaign);
-            console.log({ campaign, dates });
+
+            createNode({
+                ...campaign,
+                dateCounts: JSON.stringify(dates),
+                id: createNodeId(
+                    `${CAMPAIGN_NODE_TYPE}-${campaign.identifier}`
+                ),
+                parent: null,
+                children: [],
+                internal: {
+                    type: CAMPAIGN_NODE_TYPE,
+                    content: JSON.stringify(campaign),
+                    contentDigest: createContentDigest(campaign),
+                },
+            });
 
             Object.keys(dates).forEach(date => {
                 const content = {

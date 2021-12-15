@@ -118,7 +118,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     result.data.allPlotPage.nodes.forEach(({ campaignIdentifier, date }) =>
         createPage({
             path: `/${campaignIdentifier}/${date}`,
-            component: path.resolve(`src/templates/plot.js`),
+            component: path.resolve(`src/templates/plot.tsx`),
             context: {
                 campaignIdentifier,
                 date,

@@ -88,9 +88,39 @@ async function getLatestCampaignDate(
     }
 }
 
+async function getSensorDay(
+    campaignIdentifier: string,
+    date: string
+): Promise<types.SensorDay[]> {
+    const campaign = (await getCampaigns()).filter(
+        c => c.identifier === campaignIdentifier
+    )[0];
+
+    const request: any = await axios.get(
+        `${API_URL}/sensor-days?` +
+            `filters[date][$eq]=${date}&` +
+            `pagination[pageSize]=10000&` +
+            join(
+                campaign.locations.map(
+                    (l, i) => `filters[location][$in][${i}]=${l}`
+                ),
+                '&'
+            ) +
+            '&' +
+            join(
+                campaign.gases.map((g, i) => `filters[gas][$in][${i}]=${g}`),
+                '&'
+            )
+    );
+    return request.data.data.map(
+        (record: { attributes: types.SensorDay }) => record.attributes
+    );
+}
+
 const backend = {
     getCampaigns,
     getCampaignDates,
+    getSensorDay,
 };
 
 export default backend;

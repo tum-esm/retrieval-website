@@ -44,12 +44,44 @@ async function getCampaignDates(campaign) {
     return dates;
 }
 
-exports.sourceNodes = async ({ actions }) => {
+const PLOT_PAGE_NODE_TYPE = 'PlotPage';
+
+exports.sourceNodes = async ({
+    actions,
+    createContentDigest,
+    createNodeId,
+    getNodesByType,
+}) => {
     const { createNode } = actions;
     const campaigns = await getCampaigns();
     console.log({ campaigns });
-    campaigns.forEach(async campaign => {
-        const dates = await getCampaignDates(campaign);
-        console.log({ campaign, dates });
-    });
+    await Promise.all(
+        campaigns.map(async campaign => {
+            const dates = await getCampaignDates(campaign);
+            console.log({ campaign, dates });
+
+            Object.keys(dates).forEach(date => {
+                const content = {
+                    campaignIdentifier: campaign.identifier,
+                    date,
+                    count: dates[date],
+                };
+                createNode({
+                    ...content,
+                    id: createNodeId(
+                        `${PLOT_PAGE_NODE_TYPE}-${campaign.identifier}-${date}`
+                    ),
+                    parent: null,
+                    children: [],
+                    internal: {
+                        type: PLOT_PAGE_NODE_TYPE,
+                        content: JSON.stringify(content),
+                        contentDigest: createContentDigest(content),
+                    },
+                });
+            });
+
+            return;
+        })
+    );
 };

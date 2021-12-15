@@ -31,6 +31,11 @@ async function getCampaignDates(campaign) {
                     (l, i) => `filters[location][$in][${i}]=${l}`
                 ),
                 '&'
+            ) +
+            '&' +
+            join(
+                campaign.gases.map((g, i) => `filters[gas][$in][${i}]=${g}`),
+                '&'
             )
     );
     const sensorDays = dateRequest.data.data;
@@ -43,6 +48,26 @@ async function getCampaignDates(campaign) {
         }
     }, {});
     return dates;
+}
+
+async function getSensorDay(campaign, date) {
+    const request = await axios.get(
+        `${API_URL}/sensor-days?` +
+            `filters[date][$eq]=${date}&` +
+            `pagination[pageSize]=10000&` +
+            join(
+                campaign.locations.map(
+                    (l, i) => `filters[location][$in][${i}]=${l}`
+                ),
+                '&'
+            ) +
+            '&' +
+            join(
+                campaign.gases.map((g, i) => `filters[gas][$in][${i}]=${g}`),
+                '&'
+            )
+    );
+    return request.data.data.map(record => record.attributes);
 }
 
 const CAMPAIGN_NODE_TYPE = 'Campaign';
@@ -75,26 +100,31 @@ exports.sourceNodes = async ({
                 },
             });
 
-            Object.keys(dates).forEach(date => {
-                const content = {
-                    campaignIdentifier: campaign.identifier,
-                    date,
-                    count: dates[date],
-                };
-                createNode({
-                    ...content,
-                    id: createNodeId(
-                        `${PLOT_PAGE_NODE_TYPE}-${campaign.identifier}-${date}`
-                    ),
-                    parent: null,
-                    children: [],
-                    internal: {
-                        type: PLOT_PAGE_NODE_TYPE,
-                        content: JSON.stringify(content),
-                        contentDigest: createContentDigest(content),
-                    },
-                });
-            });
+            await Promise.all(
+                Object.keys(dates).map(async date => {
+                    const content = {
+                        campaign: campaign,
+                        date,
+                        count: dates[date],
+                        sensorDays: await getSensorDay(campaign, date),
+                    };
+                    createNode({
+                        ...content,
+                        id: createNodeId(
+                            `${PLOT_PAGE_NODE_TYPE}-${campaign.identifier}-${date}`
+                        ),
+                        parent: null,
+                        children: [],
+                        internal: {
+                            type: PLOT_PAGE_NODE_TYPE,
+                            content: JSON.stringify(content),
+                            contentDigest: createContentDigest(content),
+                        },
+                    });
+
+                    return;
+                })
+            );
 
             return;
         })
@@ -108,20 +138,46 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
             {
                 allPlotPage {
                     nodes {
-                        campaignIdentifier
+                        sensorDays {
+                            rawTimeseries {
+                                xs
+                                ys
+                            }
+                            flagTimeseries {
+                                xs
+                                ys
+                            }
+                            filteredTimeseries {
+                                xs
+                                ys
+                            }
+                            filteredCount
+                            flagCount
+                            rawCount
+                            location
+                            gas
+                            date
+                            spectrometer
+                        }
                         date
+                        campaign {
+                            gases
+                            identifier
+                            locations
+                        }
                     }
                 }
             }
         `
     );
-    result.data.allPlotPage.nodes.forEach(({ campaignIdentifier, date }) =>
+    result.data.allPlotPage.nodes.forEach(({ campaign, date, sensorDays }) =>
         createPage({
-            path: `/${campaignIdentifier}/${date}`,
+            path: `/${campaign.identifier}/${date}`,
             component: path.resolve(`src/templates/plot.tsx`),
             context: {
-                campaignIdentifier,
+                campaign,
                 date,
+                sensorDays,
             },
         })
     );

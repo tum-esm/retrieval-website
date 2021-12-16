@@ -19,6 +19,13 @@ export default function Page(props: {
         useState(spectrometers);
     const [selectedGas, setSelectedGas] = useState(campaign.gases[0]);
 
+    // TODO: Implement spectrometer selector
+    // TODO: Implement gas selector
+    // TODO: Pass data to plot component
+    // TODO: Implement plot
+    // TODO: Connect selectors to plot (css classes)
+    // TODO: Implement flag plot
+
     return (
         <div
             className={

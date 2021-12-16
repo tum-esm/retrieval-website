@@ -46,7 +46,6 @@ export default function Page(props: {
             : campaign.spectrometers
     );
 
-    // TODO: Remove data points that are out of range
     // TODO: Implement flag plot
 
     return (

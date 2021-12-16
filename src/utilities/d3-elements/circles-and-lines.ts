@@ -2,6 +2,7 @@ import { zip, reduce } from 'lodash';
 import * as d3 from 'd3';
 import types from '../../types';
 import { getSpectrometerColor } from '../colors';
+import constants from '../constants';
 
 const generateLine = (
     xScale: (x: number) => number,
@@ -59,7 +60,11 @@ export const implementCirclesAndLines =
         timeseries: types.Timeseries,
         timeseriesIsRaw: boolean
     ) => {
-        const data = zip(timeseries.xs, timeseries.ys);
+        const data = zip(timeseries.xs, timeseries.ys).filter(
+            d =>
+                d[1] > constants.DOMAINS[gas].from &&
+                d[1] < constants.DOMAINS[gas].to
+        );
 
         const circleClassName = `circle-${
             timeseriesIsRaw ? 'raw' : 'filtered'

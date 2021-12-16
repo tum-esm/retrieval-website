@@ -18,15 +18,25 @@ namespace types {
         spectrometer: string;
         filteredCount: number;
         filteredTimeseries: Timeseries;
-        rawCount?: number;
-        rawTimeseries?: Timeseries;
-        flagCount?: number;
-        flagTimeseries?: Timeseries;
+        rawCount: number;
+        rawTimeseries: Timeseries;
+        flagCount: number;
+        flagTimeseries: Timeseries;
     };
 
     export type Timeseries = {
         xs: number[];
         ys: number[];
+    };
+
+    export type PlotAxisDomain = {
+        from: number;
+        to: number;
+        step: number;
+    };
+
+    export type PlotDomain = {
+        [key in 'time' | 'co2' | 'ch4']: PlotAxisDomain;
     };
 }
 

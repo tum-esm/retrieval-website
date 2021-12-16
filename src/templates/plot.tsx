@@ -27,11 +27,7 @@ export default function Page(props: {
     // TODO: Implement flag plot
 
     return (
-        <div
-            className={
-                'w-full h-40 px-4 py-2 flex-row-center text-gray-900 border-b border-gray-300'
-            }
-        >
+        <div>
             <FilterBar
                 date={date}
                 campaign={campaign}

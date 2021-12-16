@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import types from '../types';
 import FilterBar from '../components/filter-bar/filter-bar';
 import { first } from 'lodash';
+import D3DataPlot from '../components/plots/d3-data-plot';
 
 export default function Page(props: {
     pageContext: {
@@ -48,6 +49,14 @@ export default function Page(props: {
                 setSelectedSpectrometers={setSelectedSpectrometers}
                 selectedGas={selectedGas}
                 setSelectedGas={setSelectedGas}
+            />
+            <D3DataPlot
+                gases={campaign.gases}
+                locations={locations}
+                spectrometers={campaign.spectrometers}
+                sensorDays={sensorDays}
+                selectedGas={selectedGas}
+                selectedSpectrometers={selectedSpectrometers}
             />
         </div>
     );

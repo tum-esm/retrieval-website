@@ -36,7 +36,7 @@ namespace types {
     };
 
     export type PlotDomain = {
-        [key in 'time' | 'co2' | 'ch4']: PlotAxisDomain;
+        [key in 'time' | 'co2' | 'ch4' | 'co']: PlotAxisDomain;
     };
 }
 

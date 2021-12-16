@@ -15,6 +15,7 @@ $gases: (
 );
 
 $sensors: (
+    ma61: 0,
     mb86: 0,
     mc15: 0,
     md16: 0,
@@ -42,21 +43,16 @@ $sensors: (
     }
 }
 
-[class*='plot-css'] {
-    [class*='circle'],
-    [class*='interpolation'] {
-        opacity: 0%;
+@each $gas, $y in $gases {
+    .y-axis-label-#{$gas},
+    .y-axis-line-#{$gas} {
+        opacity: 100%;
     }
 }
 
 .plot-css-co2 {
-    [class*='ch4'] {
+    g[class*='ch4'] {
         opacity: 0%;
-    }
-
-    .y-axis-label-co2,
-    .y-axis-line-co2 {
-        opacity: 100%;
     }
 }
 
@@ -64,9 +60,11 @@ $sensors: (
     [class*='co2'] {
         opacity: 0%;
     }
+}
 
-    .y-axis-label-ch4,
-    .y-axis-line-ch4 {
-        opacity: 100%;
+[class*='plot-css'] {
+    [class*='circle'],
+    [class*='interpolation'] {
+        opacity: 0%;
     }
 }

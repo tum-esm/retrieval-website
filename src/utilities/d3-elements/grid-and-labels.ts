@@ -199,16 +199,25 @@ function implementAxisTitles(svg: any) {
 
 export function implementPlotGrid(
     svg: any,
-    domain: types.PlotDomain,
     xScale: (x: number) => number,
     yScales: ((x: number) => number)[],
     gases: string[]
 ) {
-    implementTimeDividers(svg, domain.time, xScale);
-    implementTimeLabels(svg, domain.time, xScale);
+    implementTimeDividers(svg, constants.DOMAINS.time, xScale);
+    implementTimeLabels(svg, constants.DOMAINS.time, xScale);
     implementAxisTitles(svg);
-    gases.forEach(gas => {
-        implementConcentrationDividers(svg, domain[gas], yScales[gas], gas);
-        implementConcentrationLabels(svg, domain[gas], yScales[gas], gas);
+    gases.forEach((gas, i) => {
+        implementConcentrationDividers(
+            svg,
+            constants.DOMAINS[gas],
+            yScales[i],
+            gas
+        );
+        implementConcentrationLabels(
+            svg,
+            constants.DOMAINS[gas],
+            yScales[i],
+            gas
+        );
     });
 }

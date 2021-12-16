@@ -51,19 +51,12 @@ export default function DateGrid(props: {
     }
 
     function getDayTileClasses(tileDay: number) {
-        let tileClasses: string = '';
-        if (
-            tileDay === day &&
-            calendarPage.month === month &&
-            calendarPage.year === year
-        ) {
-            tileClasses += 'ring-[2px] ring-blue-700 ';
-        }
+        let tileClasses: string = 'shadow ';
 
         const tileDayCount = dateCounts[getTileDayString(tileDay)];
 
         if (tileDayCount === undefined) {
-            tileClasses += 'bg-gray-100 text-gray-300 cursor-not-allowed';
+            tileClasses += 'bg-white text-gray-300 cursor-not-allowed';
         } else if (tileDayCount < 1000) {
             tileClasses += 'bg-green-100 text-green-600';
         } else if (tileDayCount < 7500) {
@@ -72,6 +65,14 @@ export default function DateGrid(props: {
             tileClasses += 'bg-green-300 text-green-800';
         } else {
             tileClasses += 'bg-green-400 text-green-900';
+        }
+
+        if (
+            tileDay === day &&
+            calendarPage.month === month &&
+            calendarPage.year === year
+        ) {
+            tileClasses += ' ring-[2px] ring-blue-700 ';
         }
 
         return tileClasses;
@@ -138,10 +139,10 @@ export default function DateGrid(props: {
                         {calendarPage.year}
                     </div>
                 </div>
-                <span className='relative z-0 inline-flex rounded-md shadow-sm'>
+                <span className='relative z-0 space-x-px bg-gray-300 rounded-md shadow flex-row-center'>
                     <button
                         type='button'
-                        className='relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'
+                        className='relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white rounded-l-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'
                         onClick={changeMonth({ forward: false })}
                     >
                         <span className='sr-only'>Previous</span>
@@ -152,7 +153,7 @@ export default function DateGrid(props: {
                     </button>
                     <button
                         type='button'
-                        className='relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'
+                        className='relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white rounded-r-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'
                         onClick={changeMonth({ forward: true })}
                     >
                         <span className='sr-only'>Next</span>

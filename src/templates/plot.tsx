@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import types from '../types';
 import FilterBar from '../components/filter-bar/filter-bar';
-import { first, uniq } from 'lodash';
+import { first } from 'lodash';
 
 export default function Page(props: {
     pageContext: {

@@ -2,6 +2,7 @@ namespace types {
     export type Campaign = {
         identifier: string;
         locations: string[];
+        spectrometers: string[];
         gases: string[];
         public: boolean;
         listed: boolean;

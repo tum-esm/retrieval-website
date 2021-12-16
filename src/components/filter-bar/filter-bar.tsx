@@ -8,6 +8,7 @@ export default function FilterBar(props: {
     campaign: types.Campaign;
     dateCounts: { [key: string]: number };
     spectrometers: string[];
+    locations: string[];
     selectedSpectrometers: string[];
     setSelectedSpectrometers(ss: string[]): void;
     selectedGas: string;
@@ -29,6 +30,10 @@ export default function FilterBar(props: {
                 campaign={props.campaign}
                 selectedGas={props.selectedGas}
                 setSelectedGas={props.setSelectedGas}
+                spectrometers={props.spectrometers}
+                locations={props.locations}
+                selectedSpectrometers={props.selectedSpectrometers}
+                setSelectedSpectrometers={props.setSelectedSpectrometers}
             />
         </div>
     );

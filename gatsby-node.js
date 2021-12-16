@@ -15,6 +15,7 @@ async function getCampaigns(options) {
     return campaignRequest.data.data.map(a => ({
         ...a.attributes,
         locations: a.attributes['locations'].split(' '),
+        spectrometers: a.attributes['spectrometers'].split(' '),
         gases: a.attributes['gases'].split(' '),
     }));
 }
@@ -175,6 +176,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
                             gases
                             identifier
                             locations
+                            spectrometers
                         }
                     }
                 }

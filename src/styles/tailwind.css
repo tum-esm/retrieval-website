@@ -17,6 +17,10 @@
     @apply flex flex-row items-center justify-center;
 }
 
+.flex-row-top {
+    @apply flex flex-row items-start justify-center;
+}
+
 .flex-col-center {
     @apply flex flex-col items-center justify-center;
 }

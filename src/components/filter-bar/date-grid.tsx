@@ -65,20 +65,20 @@ export default function DateGrid(props: {
         if (tileDayCount === undefined) {
             tileClasses += 'bg-gray-100 text-gray-300 cursor-not-allowed';
         } else if (tileDayCount < 1000) {
-            tileClasses += 'bg-green-100 text-green-500';
+            tileClasses += 'bg-green-100 text-green-600';
         } else if (tileDayCount < 7500) {
-            tileClasses += 'bg-green-200 text-green-600';
+            tileClasses += 'bg-green-200 text-green-700';
         } else if (tileDayCount < 15000) {
-            tileClasses += 'bg-green-300 text-green-700';
+            tileClasses += 'bg-green-300 text-green-800';
         } else {
-            tileClasses += 'bg-green-400 text-green-800';
+            tileClasses += 'bg-green-400 text-green-900';
         }
 
         return tileClasses;
     }
 
     return (
-        <>
+        <div className='flex-row-top h-[8.5rem]'>
             <div
                 className={
                     'grid grid-flow-row grid-cols-7 gap-1 font-weight-600 ' +
@@ -89,7 +89,7 @@ export default function DateGrid(props: {
                     <div
                         key={`${d}${i}`}
                         className={
-                            'w-8 h-4 mb-1 rounded-sm text-gray-800 font-weight-400'
+                            'w-8 h-4 rounded-sm text-gray-400 font-weight-500'
                         }
                     >
                         {d.toUpperCase()}
@@ -163,6 +163,6 @@ export default function DateGrid(props: {
                     </button>
                 </span>
             </div>
-        </>
+        </div>
     );
 }

@@ -22,7 +22,7 @@ export default function D3DataPlot(props: {
         d3
             .scaleLinear()
             .domain([constants.DOMAINS[gas].from, constants.DOMAINS[gas].to])
-            .range([350, constants.PLOT.paddingTop])
+            .range([constants.PLOT.height - 50, constants.PLOT.paddingTop])
     );
 
     // Draw grid once initially
@@ -71,13 +71,12 @@ export default function D3DataPlot(props: {
     return (
         <div
             className={
-                'relative w-full p-2 flex-row-center text-gray-900 bg-white shadow rounded ' +
+                'relative w-full py-6 flex-row-center text-gray-900 ' +
                 `plot-css-${props.selectedGas} ` +
-                props.spectrometers
-                    .map(spectrometer =>
-                        props.selectedSpectrometers.includes(spectrometer)
-                            ? `plot-css-${props.selectedGas}-${spectrometer} `
-                            : ' '
+                props.selectedSpectrometers
+                    .map(
+                        spectrometer =>
+                            `plot-css-${props.selectedGas}-${spectrometer} `
                     )
                     .join(' ')
             }

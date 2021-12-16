@@ -1,6 +1,7 @@
 import React from 'react';
 import types from '../../types';
 import { getSpectrometerColor } from '../../utilities/colors';
+import constants from '../../utilities/constants';
 
 export default function DataSelector(props: {
     campaign: types.Campaign;
@@ -85,7 +86,7 @@ export default function DataSelector(props: {
                         key={gas}
                         type='button'
                         className={
-                            'relative min-w-[6rem] flex-row-left px-3 py-1.5 font-weight-600 ' +
+                            'relative min-w-[7.5rem] flex-row-left px-3 py-1.5 font-weight-600 ' +
                             'font-weight-600 text-sm font-medium ' +
                             (props.selectedGas === gas
                                 ? 'text-gray-900 bg-white '
@@ -104,7 +105,10 @@ export default function DataSelector(props: {
                             checked={props.selectedGas === gas}
                             className='mr-1.5 pointer-events-none'
                         />
-                        {gas}
+                        <span className='mr-1 font-weight-600'>{gas}</span>
+                        <span className='font-weight-400'>
+                            [{constants.UNITS[gas]}]
+                        </span>
                     </button>
                 ))}
             </span>

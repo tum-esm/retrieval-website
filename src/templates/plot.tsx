@@ -38,26 +38,30 @@ export default function Page(props: {
     // TODO: Implement flag plot
 
     return (
-        <div>
-            <FilterBar
-                date={date}
-                campaign={campaign}
-                dateCounts={dateCounts}
-                spectrometers={campaign.spectrometers}
-                locations={locations}
-                selectedSpectrometers={selectedSpectrometers}
-                setSelectedSpectrometers={setSelectedSpectrometers}
-                selectedGas={selectedGas}
-                setSelectedGas={setSelectedGas}
-            />
-            <D3DataPlot
-                gases={campaign.gases}
-                locations={locations}
-                spectrometers={campaign.spectrometers}
-                sensorDays={sensorDays}
-                selectedGas={selectedGas}
-                selectedSpectrometers={selectedSpectrometers}
-            />
-        </div>
+        <>
+            <header className='w-full'>
+                <FilterBar
+                    date={date}
+                    campaign={campaign}
+                    dateCounts={dateCounts}
+                    spectrometers={campaign.spectrometers}
+                    locations={locations}
+                    selectedSpectrometers={selectedSpectrometers}
+                    setSelectedSpectrometers={setSelectedSpectrometers}
+                    selectedGas={selectedGas}
+                    setSelectedGas={setSelectedGas}
+                />
+            </header>
+            <main className='w-full px-4 py-4'>
+                <D3DataPlot
+                    gases={campaign.gases}
+                    locations={locations}
+                    spectrometers={campaign.spectrometers}
+                    sensorDays={sensorDays}
+                    selectedGas={selectedGas}
+                    selectedSpectrometers={selectedSpectrometers}
+                />
+            </main>
+        </>
     );
 }

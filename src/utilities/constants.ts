@@ -4,6 +4,7 @@ const constants: {
     MONTH_LABEL: string[];
     PLOT: any;
     DOMAINS: types.PlotDomain;
+    UNITS: { [key in 'co2' | 'ch4' | 'co']: string };
 } = {
     MONTH_LABEL: [
         'Jan',
@@ -21,7 +22,7 @@ const constants: {
     ],
     PLOT: {
         width: 1000,
-        height: 400,
+        height: 350,
         paddingRight: 18,
         paddingTop: 10,
     },
@@ -47,6 +48,12 @@ const constants: {
             to: 1.915,
             step: 0.005,
         },
+    },
+
+    UNITS: {
+        co2: 'ppm',
+        ch4: 'ppm',
+        co: 'ppb',
     },
 };
 

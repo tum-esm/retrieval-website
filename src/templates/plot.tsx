@@ -3,6 +3,7 @@ import types from '../types';
 import FilterBar from '../components/filter-bar/filter-bar';
 import { first } from 'lodash';
 import D3DataPlot from '../components/plots/d3-data-plot';
+import Cookies from 'js-cookie';
 
 export default function Page(props: {
     pageContext: {
@@ -14,7 +15,11 @@ export default function Page(props: {
 }) {
     const { campaign, date, sensorDays } = props.pageContext;
     const dateCounts = JSON.parse(props.pageContext.dateCounts);
-    const [selectedGas, setSelectedGas] = useState(campaign.gases[0]);
+
+    const cookieGas = Cookies.get(`${campaign.identifier}-gas`);
+    const [selectedGas, setSelectedGas] = useState(
+        campaign.gases.includes(cookieGas) ? cookieGas : campaign.gases[0]
+    );
 
     const locations: string[] = campaign.spectrometers.map(s => {
         const representativeDay = first(
@@ -28,13 +33,20 @@ export default function Page(props: {
             return representativeDay.location;
         }
     });
+    const cookieSpectrometers = Cookies.get(
+        `${campaign.identifier}-spectrometers`
+    );
     const [selectedSpectrometers, setSelectedSpectrometers] = useState(
-        campaign.spectrometers
+        cookieSpectrometers !== undefined
+            ? cookieSpectrometers
+                  .split(',')
+                  .every(s => campaign.spectrometers.includes(s))
+                ? cookieSpectrometers.split(',')
+                : campaign.spectrometers
+            : campaign.spectrometers
     );
 
-    // TODO: Pass data to plot component
-    // TODO: Implement plot
-    // TODO: Connect selectors to plot (css classes)
+    // TODO: Remove data points that are out of range
     // TODO: Implement flag plot
 
     return (
@@ -47,9 +59,18 @@ export default function Page(props: {
                     spectrometers={campaign.spectrometers}
                     locations={locations}
                     selectedSpectrometers={selectedSpectrometers}
-                    setSelectedSpectrometers={setSelectedSpectrometers}
+                    setSelectedSpectrometers={spectrometers => {
+                        setSelectedSpectrometers(spectrometers);
+                        Cookies.set(
+                            `${campaign.identifier}-spectrometers`,
+                            spectrometers
+                        );
+                    }}
                     selectedGas={selectedGas}
-                    setSelectedGas={setSelectedGas}
+                    setSelectedGas={gas => {
+                        setSelectedGas(gas);
+                        Cookies.set(`${campaign.identifier}-gas`, gas);
+                    }}
                 />
             </header>
             <main className='w-full px-4 py-4'>

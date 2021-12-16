@@ -40,7 +40,7 @@ const constants: {
         },
         ch4: {
             from: 1.875,
-            to: 1.915,
+            to: 1.92,
             step: 0.005,
         },
         co: {

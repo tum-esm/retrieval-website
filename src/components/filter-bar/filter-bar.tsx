@@ -16,7 +16,7 @@ export default function FilterBar(props: {
     return (
         <div
             className={
-                'w-full h-44 px-6 py-2 flex-row-center text-gray-900 border-b border-gray-400'
+                'w-full h-44 px-6 py-2 flex-row-left text-gray-900 border-b border-gray-400'
             }
         >
             <DateGrid
@@ -25,9 +25,11 @@ export default function FilterBar(props: {
                 dateCounts={props.dateCounts}
             />
             <div className='h-full ml-2 mr-6 border-r border-gray-300' />
-            <div className='flex-grow' />
-            <div className='h-full ml-2 mr-6 border-r border-gray-300' />
-            <DataSelector campaign={props.campaign} />
+            <DataSelector
+                campaign={props.campaign}
+                selectedGas={props.selectedGas}
+                setSelectedGas={props.setSelectedGas}
+            />
         </div>
     );
 }

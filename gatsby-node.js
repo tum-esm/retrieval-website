@@ -117,7 +117,6 @@ exports.sourceNodes = async ({
                     const content = {
                         campaign: campaign,
                         date,
-                        count: dateCounts[date],
                         sensorDays: await getSensorDay(campaign, date),
                     };
                     createNode({
@@ -182,15 +181,33 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
             }
         `
     );
-    result.data.allPlotPage.nodes.forEach(({ campaign, date, sensorDays }) =>
-        createPage({
-            path: `/${campaign.identifier}/${date}`,
-            component: path.resolve(`src/templates/plot.tsx`),
-            context: {
-                campaign,
-                date,
-                sensorDays,
-            },
-        })
+    await Promise.all(
+        result.data.allPlotPage.nodes.map(
+            async ({ campaign, date, sensorDays }) => {
+                const dateCounts = (
+                    await graphql(
+                        `
+                        {
+                            campaign(identifier: {eq: "${campaign.identifier}"}) {
+                                dateCounts
+                            }
+                        }
+                    `
+                    )
+                ).data.campaign.dateCounts;
+                createPage({
+                    path: `/${campaign.identifier}/${date}`,
+                    component: path.resolve(`src/templates/plot.tsx`),
+                    context: {
+                        campaign,
+                        date,
+                        sensorDays,
+                        dateCounts,
+                    },
+                });
+
+                return;
+            }
+        )
     );
 };

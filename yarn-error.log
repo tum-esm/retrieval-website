@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /usr/local/bin/yarn add @†ypes/gatsby
+  /usr/local/bin/node /usr/local/bin/yarn add @heroicons/react/solid
 
 PATH: 
   /Users/moritz/google-cloud-sdk/bin:/Users/moritz/.poetry/bin:/Library/Frameworks/Python.framework/Versions/3.9/bin:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/Users/moritz/google-cloud-sdk/bin:/Users/moritz/.poetry/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/3.9/bin:/Library/Frameworks/Python.framework/Versions/3.10/bin
@@ -14,15 +14,17 @@ Platform:
   darwin arm64
 
 Trace: 
-  TypeError [ERR_UNESCAPED_CHARACTERS]: https://registry.yarnpkg.com/@†ypes%2fgatsby: Request path contains unescaped characters
-      at new NodeError (node:internal/errors:371:5)
-      at new ClientRequest (node:_http_client:154:13)
-      at Object.request (node:https:353:10)
-      at Request.module.exports.Request.start (/usr/local/lib/node_modules/yarn/lib/cli.js:141445:32)
-      at Request.module.exports.Request.end (/usr/local/lib/node_modules/yarn/lib/cli.js:142204:10)
-      at end (/usr/local/lib/node_modules/yarn/lib/cli.js:141258:14)
-      at Immediate.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:141272:7)
-      at processImmediate (node:internal/timers:464:21)
+  Error: https://registry.yarnpkg.com/@heroicons%2freact/solid: Request "https://registry.yarnpkg.com/@heroicons%2freact/solid" returned a 405
+      at Request.params.callback [as _callback] (/usr/local/lib/node_modules/yarn/lib/cli.js:67038:18)
+      at Request.self.callback (/usr/local/lib/node_modules/yarn/lib/cli.js:140883:22)
+      at Request.emit (node:events:390:28)
+      at Request.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:141855:10)
+      at Request.emit (node:events:390:28)
+      at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:141777:12)
+      at Object.onceWrapper (node:events:509:28)
+      at IncomingMessage.emit (node:events:402:35)
+      at endReadableNT (node:internal/streams/readable:1343:12)
+      at processTicksAndRejections (node:internal/process/task_queues:83:21)
 
 npm manifest: 
   {
@@ -44,6 +46,7 @@ npm manifest:
       "dependencies": {
           "@mdx-js/mdx": "^1.6.22",
           "@mdx-js/react": "^1.6.22",
+          "@types/lodash": "^4.14.178",
           "@types/node": "^16.11.13",
           "@types/react": "^17.0.37",
           "@types/react-dom": "^17.0.11",
@@ -1767,7 +1770,7 @@ Lockfile:
     dependencies:
       "@types/node" "*"
   
-  "@types/lodash@^4.14.92":
+  "@types/lodash@^4.14.178", "@types/lodash@^4.14.92":
     version "4.14.178"
     resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.178.tgz#341f6d2247db528d4a13ddbb374bcdc80406f4f8"
     integrity sha512-0d5Wd09ItQWH1qFbEyQ7oTQ3GZrMfth5JkbN3EvTKLXcHLRDSXeLnlvlOn0wvxVIwK5o2M8JzP/OWz7T3NRsbw==

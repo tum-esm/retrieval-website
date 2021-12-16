@@ -1,6 +1,6 @@
-import { pullAll } from 'lodash';
 import React from 'react';
 import types from '../../types';
+import { getSpectrometerColor } from '../../utilities/colors';
 
 export default function DataSelector(props: {
     campaign: types.Campaign;
@@ -20,7 +20,7 @@ export default function DataSelector(props: {
                         key={spectrometer}
                         type='button'
                         className={
-                            'relative min-w-[10rem] flex-row-left px-3 py-1.5 font-weight-600 ' +
+                            'relative min-w-[11rem] flex-row-left px-3 py-1.5 font-weight-600 ' +
                             'font-weight-600 text-sm font-medium ' +
                             (props.selectedSpectrometers.includes(spectrometer)
                                 ? 'text-gray-900 bg-white '
@@ -60,6 +60,22 @@ export default function DataSelector(props: {
                         <span className='font-weight-400'>
                             ({props.locations[i]})
                         </span>
+                        <div className='flex-grow' />
+                        <div
+                            className='w-3 h-3 bg-gray-300 rounded'
+                            style={
+                                props.selectedSpectrometers.includes(
+                                    spectrometer
+                                )
+                                    ? {
+                                          backgroundColor:
+                                              getSpectrometerColor(
+                                                  spectrometer
+                                              ),
+                                      }
+                                    : {}
+                            }
+                        />
                     </button>
                 ))}
             </span>

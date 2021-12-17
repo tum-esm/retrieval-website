@@ -1,15 +1,26 @@
-require('dotenv').config({ path: `.env` });
-
 module.exports = {
     siteMetadata: {
-        siteUrl: 'https://retrieval-plots.dostuffthatmatters.dev',
-        title: 'retrieval-plots-v2',
+        siteUrl: 'https://www.yourdomain.tld',
+        title: 'retrieval-website-v2',
     },
+
     plugins: [
         'gatsby-plugin-postcss',
+        `gatsby-plugin-sass`,
         'gatsby-plugin-react-helmet',
+        'gatsby-plugin-sitemap',
+        {
+            resolve: 'gatsby-plugin-manifest',
+            options: {
+                name: 'EM27 Retrieval Plots',
+                short_name: 'EM27 Retrieval Plots',
+                start_url: '/',
+                background_color: '#ffffff',
+                theme_color: '#f60948',
+                icon: 'src/assets/favicon.ico',
+            },
+        },
         'gatsby-plugin-mdx',
-        'gatsby-plugin-root-import',
         {
             resolve: 'gatsby-source-filesystem',
             options: {
@@ -19,22 +30,11 @@ module.exports = {
             __key: 'pages',
         },
         {
-            resolve: 'gatsby-source-strapi',
+            resolve: `gatsby-plugin-typescript`,
             options: {
-                apiURL: process.env.API_URL || 'http://localhost:1337',
-                collectionTypes: ['plot-meta'],
-                queryLimit: 1000,
-            },
-        },
-        {
-            resolve: `gatsby-plugin-manifest`,
-            options: {
-                name: 'EM27 Retrieval Plots',
-                short_name: 'EM27 Retrieval Plots',
-                start_url: '/',
-                background_color: '#ffffff',
-                theme_color: '#f60948',
-                icon: 'src/assets/favicon.ico',
+                isTSX: true, // defaults to false
+                jsxPragma: `jsx`, // defaults to "React"
+                allExtensions: true, // defaults to false
             },
         },
     ],

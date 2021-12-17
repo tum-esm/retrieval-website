@@ -1,12 +1,7 @@
 import { range } from 'lodash';
-import constants from 'utils/constants';
-import types from 'types';
+import constants from '../constants';
 
-export function implementTimeDividers(
-    svg: any,
-    axisDomain: types.plotAxisDomain,
-    xScale: (n: number) => number
-) {
+function implementTimeDividers(svg: any, xScale: (n: number) => number) {
     const lineClassName = `x-axis-line`;
     let lineGroup: any = svg.selectAll(`.${lineClassName}`);
     if (lineGroup.empty()) {
@@ -23,16 +18,16 @@ export function implementTimeDividers(
         .selectAll('line')
         .data(
             range(
-                axisDomain.from,
-                axisDomain.to + axisDomain.step,
-                axisDomain.step
+                constants.DOMAINS.time.from,
+                constants.DOMAINS.time.to + constants.DOMAINS.time.step,
+                constants.DOMAINS.time.step
             )
         );
     lines
         .enter()
         .append('line')
         .attr('y1', constants.PLOT.paddingTop - 1)
-        .attr('y2', 354)
+        .attr('y2', constants.PLOT.height - 46)
         .attr('stroke', '#CBD5E1')
         .attr('stroke-linecap', 'round')
         .attr('stroke-width', 1.4)
@@ -42,11 +37,7 @@ export function implementTimeDividers(
     lines.exit().remove();
 }
 
-export function implementFlagBars(
-    svg: any,
-    yScale: (n: number) => number,
-    flags: string[]
-) {
+function implementFlagBars(svg: any, yScale: (n: number) => number) {
     const lineClassName = `y-axis-bar`;
 
     let rectGroup: any = svg.selectAll(`.${lineClassName}`);
@@ -56,7 +47,9 @@ export function implementFlagBars(
             .attr('class', `${lineClassName} pointer-events-none`);
     }
 
-    let rects = rectGroup.selectAll('rect').data(range(0, flags.length));
+    let rects = rectGroup
+        .selectAll('rect')
+        .data(range(0, constants.FLAGS.length));
     rects
         .enter()
         .append('rect')
@@ -71,11 +64,7 @@ export function implementFlagBars(
     rects.exit().remove();
 }
 
-export function implementTimeLabels(
-    svg: any,
-    axisDomain: types.plotAxisDomain,
-    xScale: (n: number) => number
-) {
+function implementTimeLabels(svg: any, xScale: (n: number) => number) {
     const labelClassName = `x-axis-label`;
 
     let labelGroup: any = svg.selectAll(`.${labelClassName}`);
@@ -93,16 +82,16 @@ export function implementTimeLabels(
         .selectAll('text')
         .data(
             range(
-                axisDomain.from,
-                axisDomain.to + axisDomain.step,
-                axisDomain.step
+                constants.DOMAINS.time.from,
+                constants.DOMAINS.time.to + constants.DOMAINS.time.step,
+                constants.DOMAINS.time.step
             )
         );
     labels
         .enter()
         .append('text')
         .style('text-anchor', 'middle')
-        .attr('y', 372)
+        .attr('y', constants.PLOT.height - 28)
         .attr('x', (x: number, i: number) => xScale(x))
         .text((x: number, i: number) =>
             x
@@ -115,11 +104,7 @@ export function implementTimeLabels(
     labels.exit().remove();
 }
 
-export function implementFlagLabels(
-    svg: any,
-    yScale: (n: number) => number,
-    flags: string[]
-) {
+function implementFlagLabels(svg: any, yScale: (n: number) => number) {
     const labelClassName = `y-axis-label`;
 
     let labelGroup: any = svg.selectAll(`.${labelClassName}`);
@@ -135,7 +120,7 @@ export function implementFlagLabels(
 
     let labels: any = labelGroup
         .selectAll(`text`)
-        .data(flags.map((f, i) => [f, i]));
+        .data(constants.FLAGS.map((f, i) => [f, i]));
     labels
         .enter()
         .append('text')
@@ -149,7 +134,7 @@ export function implementFlagLabels(
     labels.exit().remove();
 }
 
-export function implementAxisTitles(svg: any) {
+function implementAxisTitles(svg: any) {
     if (svg.selectAll('.x-axis-title').empty()) {
         svg.append('text')
             .attr('class', 'x-axis-title font-medium fill-gray-900 text-xs')
@@ -177,14 +162,12 @@ export function implementAxisTitles(svg: any) {
 
 export function implementFlagGrid(
     svg: any,
-    domain: types.plotDomain,
     xScale: (x: number) => number,
-    yScale: (x: number) => number,
-    flags: string[]
+    yScale: (x: number) => number
 ) {
-    implementFlagBars(svg, yScale, flags);
-    implementFlagLabels(svg, yScale, flags);
-    implementTimeDividers(svg, domain.time, xScale);
-    implementTimeLabels(svg, domain.time, xScale);
+    implementFlagBars(svg, yScale);
+    implementFlagLabels(svg, yScale);
+    implementTimeDividers(svg, xScale);
+    implementTimeLabels(svg, xScale);
     implementAxisTitles(svg);
 }

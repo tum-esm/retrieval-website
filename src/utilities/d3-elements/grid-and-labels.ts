@@ -1,10 +1,10 @@
 import { range } from 'lodash';
-import constants from 'utils/constants';
-import types from 'types';
+import constants from '../constants';
+import types from '../../types';
 
-export function implementTimeDividers(
+function implementTimeDividers(
     svg: any,
-    axisDomain: types.plotAxisDomain,
+    axisDomain: types.PlotAxisDomain,
     xScale: (n: number) => number
 ) {
     const lineClassName = `x-axis-line`;
@@ -33,7 +33,7 @@ export function implementTimeDividers(
         .append('line')
         .attr('class', 'x-axis-line')
         .attr('y1', constants.PLOT.paddingTop)
-        .attr('y2', 354)
+        .attr('y2', constants.PLOT.height - 46)
         .attr('stroke', '#CBD5E1')
         .attr('stroke-linecap', 'round')
         .attr('stroke-width', 1.4)
@@ -43,13 +43,13 @@ export function implementTimeDividers(
     lines.exit().remove();
 }
 
-export function implementConcentrationDividers(
+function implementConcentrationDividers(
     svg: any,
-    axisDomain: types.plotAxisDomain,
+    axisDomain: types.PlotAxisDomain,
     yScale: (n: number) => number,
-    gas: 'co2' | 'ch4'
+    gas: string
 ) {
-    const lineClassName = `y-axis-line-${gas}`;
+    const lineClassName = `y-axis-line-${gas}-`;
 
     let lineGroup: any = svg.selectAll(`.${lineClassName}`);
     if (lineGroup.empty()) {
@@ -86,9 +86,9 @@ export function implementConcentrationDividers(
     lines.exit().remove();
 }
 
-export function implementTimeLabels(
+function implementTimeLabels(
     svg: any,
-    axisDomain: types.plotAxisDomain,
+    axisDomain: types.PlotAxisDomain,
     xScale: (n: number) => number
 ) {
     const labelClassName = `x-axis-label`;
@@ -117,7 +117,7 @@ export function implementTimeLabels(
         .enter()
         .append('text')
         .style('text-anchor', 'middle')
-        .attr('y', 372)
+        .attr('y', constants.PLOT.height - 28)
         .attr('x', (x: number, i: number) => xScale(x))
         .text((x: number, i: number) =>
             x
@@ -130,13 +130,13 @@ export function implementTimeLabels(
     labels.exit().remove();
 }
 
-export function implementConcentrationLabels(
+function implementConcentrationLabels(
     svg: any,
-    axisDomain: types.plotAxisDomain,
+    axisDomain: types.PlotAxisDomain,
     yScale: (n: number) => number,
-    gas: 'co2' | 'ch4'
+    gas: string
 ) {
-    const labelClassName = `y-axis-label-${gas}`;
+    const labelClassName = `y-axis-label-${gas}-`;
 
     let labelGroup: any = svg.selectAll(`.${labelClassName}`);
     if (labelGroup.empty()) {
@@ -166,12 +166,12 @@ export function implementConcentrationLabels(
         .attr('x', 60)
         .merge(labels)
         .attr('y', (y: number, i: number) => yScale(y))
-        .text((y: number, i: number) => y.toFixed(gas === 'co2' ? 0 : 3));
+        .text((y: number, i: number) => y.toFixed(gas === 'ch4' ? 3 : 0));
 
     labels.exit().remove();
 }
 
-export function implementAxisTitles(svg: any) {
+function implementAxisTitles(svg: any) {
     if (svg.selectAll('.x-axis-title').empty()) {
         svg.append('text')
             .attr('class', 'x-axis-title font-medium fill-gray-900 text-xs')
@@ -193,33 +193,31 @@ export function implementAxisTitles(svg: any) {
                 }, 14)`
             )
             .style('text-anchor', 'middle')
-            .text(`concentration [ppm]`);
+            .text(`average column concentration`);
     }
 }
 
 export function implementPlotGrid(
     svg: any,
-    domain: types.plotDomain,
     xScale: (x: number) => number,
     yScales: ((x: number) => number)[],
-    gases: types.gasMeta[]
+    gases: string[]
 ) {
-    implementTimeDividers(svg, domain.time, xScale);
-    implementTimeLabels(svg, domain.time, xScale);
+    implementTimeDividers(svg, constants.DOMAINS.time, xScale);
+    implementTimeLabels(svg, constants.DOMAINS.time, xScale);
     implementAxisTitles(svg);
-    gases.forEach(gm => {
-        const gasArrayIndex = gases.findIndex(s => s.name === gm.name);
+    gases.forEach((gas, i) => {
         implementConcentrationDividers(
             svg,
-            domain[gm.name],
-            yScales[gasArrayIndex],
-            gm.name
+            constants.DOMAINS[gas],
+            yScales[i],
+            gas
         );
         implementConcentrationLabels(
             svg,
-            domain[gm.name],
-            yScales[gasArrayIndex],
-            gm.name
+            constants.DOMAINS[gas],
+            yScales[i],
+            gas
         );
     });
 }

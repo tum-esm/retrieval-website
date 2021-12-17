@@ -1,53 +1,46 @@
-import types from 'types';
-
-export function getSensorColor(sensor: string) {
-    switch (sensor) {
-        case 'mb86':
-            return '#F87171'; // red-400
-        case 'mc15':
-            return '#34D399'; // emerald-400
-        case 'md16':
-            return '#60A5FA'; // blue-400
-        case 'me17':
-            return '#FBBF24'; // amber-400
-        default:
-            return '#9CA3AF'; // coolgray-400
-    }
-}
+import { zip } from 'lodash';
+import types from '../../types';
+import constants from '../constants';
+import { getSpectrometerColor } from '../colors';
 
 export const implementFlagCircles =
     (
         svg: any,
         xScale: (n: number) => number,
         yScale: (n: number) => number,
-        flags: string[],
-        sensors: string[]
+        spectrometers: string[]
     ) =>
-    (flagTimeseries: types.localFlagTimeseries) => {
-        const { sensor, data } = flagTimeseries;
+    (spectrometer: string, timeseries: types.Timeseries) => {
+        const data = zip(timeseries.xs, timeseries.ys).filter(
+            d =>
+                d[0] > constants.DOMAINS.time.from &&
+                d[0] < constants.DOMAINS.time.to &&
+                constants.FLAGS.includes(d[1])
+        );
 
         const sensorOffset =
-            (sensors.indexOf(sensor) - (sensors.length - 1) / 2) * 6;
+            (spectrometers.indexOf(spectrometer) -
+                (spectrometers.length - 1) / 2) *
+            6;
 
         let yLookup: { [key: number]: number } = {};
-        flags.forEach((flag, i) => {
-            yLookup[parseInt(flag)] = i;
+        constants.FLAGS.forEach((flag, i) => {
+            yLookup[flag] = i;
         });
 
-        const circleClassName = `circle-${sensor}`;
+        const circleClassName = `circle-${spectrometer}`;
 
         let circleGroup: any = svg.selectAll(`.${circleClassName}`);
         if (circleGroup.empty()) {
             circleGroup = svg
                 .append('g')
                 .attr('class', `${circleClassName} pointer-events-none`)
-                .attr('fill', getSensorColor(sensor));
+                .attr('fill', getSpectrometerColor(spectrometer));
         }
 
-        const flagInts = flags.map(f => parseInt(f));
         let circles: any = circleGroup
             .selectAll(`circle`)
-            .data(data.filter((d: number[]) => flagInts.includes(d[1])));
+            .data(data.filter((d: number[]) => constants.FLAGS.includes(d[1])));
         circles
             .enter()
             .append('circle')

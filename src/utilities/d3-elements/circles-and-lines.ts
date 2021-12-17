@@ -1,23 +1,10 @@
 import { zip, reduce } from 'lodash';
 import * as d3 from 'd3';
-import types from 'types';
+import types from '../../types';
+import { getSpectrometerColor } from '../colors';
+import constants from '../constants';
 
-export function getSensorColor(sensor: string) {
-    switch (sensor) {
-        case 'mb86':
-            return '#F87171'; // red-400
-        case 'mc15':
-            return '#34D399'; // emerald-400
-        case 'md16':
-            return '#60A5FA'; // blue-400
-        case 'me17':
-            return '#FBBF24'; // amber-400
-        default:
-            return '#9CA3AF'; // coolgray-400
-    }
-}
-
-export const generateLine = (
+const generateLine = (
     xScale: (x: number) => number,
     yScale: (y: number) => number
 ) =>
@@ -29,7 +16,7 @@ export const generateLine = (
         .y((d: number[]) => yScale(d[1]))
         .curve(d3.curveCatmullRom.alpha(0.5));
 
-export const generateLines =
+const generateLines =
     (xScale: (x: number) => number, yScale: (y: number) => number) =>
     (zippedData: number[][]) => {
         if (zippedData.length == 0) {
@@ -46,21 +33,6 @@ export const generateLines =
             ''
         );
     };
-
-/*const separateDataLines = (xs: types.dataPoint[]) => {
-    return ld.tail(
-        ld.reduce(
-            ld.tail(xs),
-            (acc: types.dataPoint[][], next: types.dataPoint) =>
-                next.x - ld.last(ld.last(acc)).x <= 1800
-                    ? ld.concat(ld.initial(acc), [
-                          ld.concat(ld.last(acc), next),
-                      ])
-                    : ld.concat(acc, [[next]]),
-            [[], [ld.head(xs)]]
-        )
-    );
-};*/
 
 const separateDataLines = (ts: number[][]): number[][][] => {
     let out: number[][][] = [];
@@ -83,29 +55,37 @@ export const implementCirclesAndLines =
     (svg: any, xScale: (n: number) => number) =>
     (
         yScale: (n: number) => number,
-        timeseries: types.localGasTimeseries,
-        tsIsRaw: boolean
+        gas: string,
+        spectrometer: string,
+        timeseries: types.Timeseries,
+        timeseriesIsRaw: boolean
     ) => {
-        const { gas, sensor, data } = timeseries;
+        const data = zip(timeseries.xs, timeseries.ys).filter(
+            d =>
+                d[0] > constants.DOMAINS.time.from &&
+                d[0] < constants.DOMAINS.time.to &&
+                d[1] > constants.DOMAINS[gas].from &&
+                d[1] < constants.DOMAINS[gas].to
+        );
 
         const circleClassName = `circle-${
-            tsIsRaw ? 'raw' : 'filtered'
-        }-${gas}-${sensor}`;
-        const lineClassName = `interpolation-${gas}-${sensor}`;
+            timeseriesIsRaw ? 'raw' : 'filtered'
+        }-${gas}-${spectrometer}`;
+        const lineClassName = `interpolation-${gas}-${spectrometer}`;
 
         let circleGroup: any = svg.selectAll(`.${circleClassName}`);
         if (circleGroup.empty()) {
             circleGroup = svg
                 .append('g')
                 .attr('class', `${circleClassName} pointer-events-none`)
-                .attr('fill', getSensorColor(sensor));
+                .attr('fill', getSpectrometerColor(spectrometer));
         }
 
         let circles: any = circleGroup.selectAll(`circle`).data(data);
         circles
             .enter()
             .append('circle')
-            .attr('r', tsIsRaw ? 1 : 1.5)
+            .attr('r', timeseriesIsRaw ? 1 : 1.5)
 
             // Keep all circles in sync with the data
             .merge(circles)
@@ -117,7 +97,7 @@ export const implementCirclesAndLines =
         circles.exit().remove();
 
         // Draw line elements
-        if (!tsIsRaw) {
+        if (!timeseriesIsRaw) {
             let lineGroup: any = svg.selectAll('.interpolated-lines');
             if (lineGroup.empty()) {
                 lineGroup = svg.append('g').attr('class', `interpolated-lines`);
@@ -129,8 +109,8 @@ export const implementCirclesAndLines =
                 line = lineGroup
                     .append('path')
                     .attr('class', `${lineClassName} pointer-events-none`)
-                    .style('stroke', getSensorColor(sensor))
-                    .style('stroke-width', tsIsRaw ? 2 : 3)
+                    .style('stroke', getSpectrometerColor(spectrometer))
+                    .style('stroke-width', timeseriesIsRaw ? 2 : 3)
                     .style('stroke-linecap', 'round')
                     .style('stroke-linejoin', 'round')
                     .style('fill', 'none');

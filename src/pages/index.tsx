@@ -1,23 +1,23 @@
+import { Link, useStaticQuery, graphql } from 'gatsby';
 import React from 'react';
-import { useStaticQuery, graphql, Link } from 'gatsby';
-import types from 'types';
-import { ArrowCircleRightIcon } from '@heroicons/react/solid';
-import { tail } from 'lodash';
+import types from '../types';
 import { Helmet } from 'react-helmet';
+import icons from '../assets/icons';
+import { tail } from 'lodash';
 
-const Page = () => {
-    const query = useStaticQuery(graphql`
-        query {
-            allStrapiPlotMeta {
+export default function Page() {
+    const data = useStaticQuery(graphql`
+        {
+            allCampaign {
                 nodes {
-                    campaignId
+                    displayDate
+                    identifier
                 }
             }
         }
     `);
-    const metas = query.allStrapiPlotMeta.nodes;
-
     const headingClasses = 'text-lg leading-tight text-center rounded';
+
     return (
         <>
             <Helmet title='EM27 Retrieval' defer={false} />
@@ -43,16 +43,19 @@ const Page = () => {
                     </h1>
                 </div>
                 <div className='max-w-full w-[28rem] flex-row-center'>
-                    {metas.map((m: types.plotMeta) => (
-                        <Link to={`/${m.campaignId}`} className='w-full'>
+                    {data.allCampaign.nodes.map((c: types.Campaign) => (
+                        <Link
+                            to={`/${c.identifier}/${c.displayDate}`}
+                            className='w-full'
+                        >
                             <div className='w-full p-2 pl-3 bg-white rounded-md shadow flex-row-center'>
                                 <div className='text-base font-semibold text-gray-600'>
-                                    {m.campaignId[0].toUpperCase()}
-                                    {tail(m.campaignId)}
+                                    {c.identifier[0].toUpperCase()}
+                                    {tail(c.identifier)}
                                 </div>
                                 <div className='flex-grow' />
-                                <div className='flex-shrink-0 w-5 h-5 text-gray-400'>
-                                    <ArrowCircleRightIcon />
+                                <div className='flex-shrink-0 w-5 h-5 text-gray-400 icon-campaign-list'>
+                                    {icons.arrowThickRightCircle}
                                 </div>
                             </div>
                         </Link>
@@ -73,6 +76,4 @@ const Page = () => {
             </main>
         </>
     );
-};
-
-export default Page;
+}

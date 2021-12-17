@@ -1,4 +1,5 @@
 const colors = require('tailwindcss/colors');
+
 const customColors = {
     // Primary
     blue: {
@@ -15,7 +16,8 @@ const customColors = {
     },
 
     // Neutrals
-    gray: colors.blueGray,
+    gray: colors.slate,
+    'gray-950': '#0B111F',
 
     green: {
         50: '#F0FCF9',
@@ -58,26 +60,19 @@ const customColors = {
 
     orange: colors.orange,
     teal: colors.teal,
+    sky: colors.sky,
+    indigo: colors.indigo,
+    purple: colors.purple,
+    pink: colors.pink,
     rose: colors.rose,
 };
 
 module.exports = {
-    mode: 'jit',
-    purge: [
-        './src/pages/**/*.{js,jsx,ts,tsx}',
-        './src/templates/**/*.{js,jsx,ts,tsx}',
-        './src/components/**/*.{js,jsx,ts,tsx}',
-        './src/assets/**/*.{js,jsx,ts,tsx}',
-        './src/utils/**/*.{js,jsx,ts,tsx}',
-    ],
-    darkMode: false, // or 'media' or 'class'
+    content: ['./src/**/*.{js,jsx,ts,tsx}'],
     theme: {
         extend: {
             colors: customColors,
             fill: customColors,
         },
-    },
-    variants: {
-        extend: {},
     },
 };

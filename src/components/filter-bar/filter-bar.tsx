@@ -1,40 +1,53 @@
 import React from 'react';
 import DateGrid from './date-grid';
-import DisplayDay from './display-day';
+import types from '../../types';
 import DataSelector from './data-selector';
-import types from 'types';
-import StationSelector from './station-selector';
+import { Link } from 'gatsby';
+import { ChevronLeftIcon } from '@heroicons/react/solid';
 
 export default function FilterBar(props: {
-    isFirstDay(): boolean;
-    isLastDay(): boolean;
-    prevDay(): void;
-    nextDay(): void;
-
-    dayObject: types.dayObject;
-    setDayObject(d: types.dayObject): void;
-
-    dayStrings: string[];
-    gases: { name: types.gas; unit: string }[];
-    stations: types.stationMeta[];
-    calibrationDays: { [key: string]: string };
-    visibleStations: boolean[];
-    setVisibleStations(s: boolean[]): void;
-
-    gasIndex: number;
-    setGasIndex(i: number): void;
+    date: string;
+    campaign: types.Campaign;
+    dateCounts: { [key: string]: number };
+    spectrometers: string[];
+    locations: string[];
+    selectedSpectrometers: string[];
+    setSelectedSpectrometers(ss: string[]): void;
+    selectedGas: string;
+    setSelectedGas(g: string): void;
 }) {
     return (
-        <div className={'w-full h-32 px-4 py-2 flex-row-center text-gray-900'}>
-            <DisplayDay {...props} />
-            <div className='h-full mx-6 border-r border-gray-300' />
-            <DateGrid {...props} />
+        <div
+            className={
+                'w-full h-44 pl-2 pr-6 py-2 flex-row-left text-gray-900 border-b border-gray-400 bg-gray-100 '
+            }
+        >
+            <Link to='/'>
+                <div
+                    className={
+                        'text-blue-600 underline text-sm flex-row-center font-weight-600 pr-2'
+                    }
+                >
+                    <ChevronLeftIcon className='w-5 h-5 mr-0.5' />
+                    <span> Back to Campaigns</span>
+                </div>
+            </Link>
             <div className='h-full ml-2 mr-6 border-r border-gray-300' />
-            <div className='flex-grow' />
+            <DateGrid
+                date={props.date}
+                campaign={props.campaign}
+                dateCounts={props.dateCounts}
+            />
             <div className='h-full ml-2 mr-6 border-r border-gray-300' />
-            <StationSelector {...props} />
-            <div className='h-full ml-2 mr-6 border-r border-gray-300' />
-            <DataSelector {...props} />
+            <DataSelector
+                campaign={props.campaign}
+                selectedGas={props.selectedGas}
+                setSelectedGas={props.setSelectedGas}
+                spectrometers={props.spectrometers}
+                locations={props.locations}
+                selectedSpectrometers={props.selectedSpectrometers}
+                setSelectedSpectrometers={props.setSelectedSpectrometers}
+            />
         </div>
     );
 }

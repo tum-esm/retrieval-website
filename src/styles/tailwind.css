@@ -17,6 +17,14 @@
     @apply flex flex-row items-center justify-center;
 }
 
+.flex-row-top {
+    @apply flex flex-row items-start justify-center;
+}
+
+.flex-row-left {
+    @apply flex flex-row items-center justify-start;
+}
+
 .flex-col-center {
     @apply flex flex-col items-center justify-center;
 }
@@ -157,4 +165,12 @@
         @apply focus:outline-none;
         @apply focus:ring-blue-400;
     }
+}
+
+.icon-campaign-list .primary {
+    @apply fill-blue-50;
+}
+
+.icon-campaign-list .secondary {
+    @apply fill-blue-700;
 }

@@ -2,6 +2,8 @@ import React from 'react';
 import DateGrid from './date-grid';
 import types from '../../types';
 import DataSelector from './data-selector';
+import { Link } from 'gatsby';
+import { ChevronLeftIcon } from '@heroicons/react/solid';
 
 export default function FilterBar(props: {
     date: string;
@@ -17,9 +19,20 @@ export default function FilterBar(props: {
     return (
         <div
             className={
-                'w-full h-44 px-6 py-2 flex-row-left text-gray-900 border-b border-gray-400 bg-gray-100 '
+                'w-full h-44 pl-2 pr-6 py-2 flex-row-left text-gray-900 border-b border-gray-400 bg-gray-100 '
             }
         >
+            <Link to='/'>
+                <div
+                    className={
+                        'text-blue-600 underline text-sm flex-row-center font-weight-600 '
+                    }
+                >
+                    <ChevronLeftIcon className='w-5 h-5 mr-0.5' />
+                    <span> Back to Campaigns</span>
+                </div>
+            </Link>
+            <div className='h-full ml-2 mr-6 border-r border-gray-300' />
             <DateGrid
                 date={props.date}
                 campaign={props.campaign}

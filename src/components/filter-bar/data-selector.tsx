@@ -15,7 +15,7 @@ export default function DataSelector(props: {
     console.log(props.selectedSpectrometers);
     return (
         <div className='flex-row-top gap-x-3'>
-            <span className='relative z-0 bg-gray-300 rounded-md shadow flex-col-center gap-y-px'>
+            <span className='relative z-0 rounded-md shadow flex-col-center gap-y-[1.5px] bg-gray-300'>
                 {props.spectrometers.map((spectrometer, i) => (
                     <button
                         key={spectrometer}
@@ -79,7 +79,7 @@ export default function DataSelector(props: {
                     </button>
                 ))}
             </span>
-            <span className='relative z-0 bg-gray-300 rounded-md shadow flex-col-center gap-y-px'>
+            <span className='relative z-0 bg-gray-300 rounded-md shadow flex-col-center gap-y-[1.5px]'>
                 {props.campaign.gases.map((gas, i) => (
                     <button
                         key={gas}
@@ -89,7 +89,7 @@ export default function DataSelector(props: {
                             'font-weight-600 text-sm font-medium ' +
                             (props.selectedGas === gas
                                 ? 'text-gray-900 bg-white '
-                                : 'text-gray-500 bg-gray-50 hover:bg-gray-100 ') +
+                                : 'text-gray-400 bg-gray-200 hover:bg-gray-100 ') +
                             'z-0 focus:z-10 focus:outline-none focus:ring-1 ' +
                             'focus:ring-indigo-500 ' +
                             (i === 0 ? 'rounded-t-md ' : ' ') +

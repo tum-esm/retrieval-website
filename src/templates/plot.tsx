@@ -49,45 +49,64 @@ export default function Page(props: {
 
     return (
         <>
-            <header className='w-full'>
-                <FilterBar
-                    date={date}
-                    campaign={campaign}
-                    dateCounts={dateCounts}
-                    spectrometers={campaign.spectrometers}
-                    locations={locations}
-                    selectedSpectrometers={selectedSpectrometers}
-                    setSelectedSpectrometers={spectrometers => {
-                        setSelectedSpectrometers(spectrometers);
-                        Cookies.set(
-                            `${campaign.identifier}-spectrometers`,
-                            spectrometers
-                        );
-                    }}
-                    selectedGas={selectedGas}
-                    setSelectedGas={gas => {
-                        setSelectedGas(gas);
-                        Cookies.set(`${campaign.identifier}-gas`, gas);
-                    }}
-                />
-            </header>
-            <main className='w-full px-4 py-4'>
-                <D3DataPlot
-                    gases={campaign.gases}
-                    locations={locations}
-                    spectrometers={campaign.spectrometers}
-                    sensorDays={sensorDays}
-                    selectedGas={selectedGas}
-                    selectedSpectrometers={selectedSpectrometers}
-                />
-                <D3FlagPlot
-                    spectrometers={campaign.spectrometers}
-                    sensorDays={sensorDays.filter(
-                        d => d.gas === campaign.gases[0]
-                    )}
-                    selectedSpectrometers={selectedSpectrometers}
-                />
-            </main>
+            <div className='hidden w-full h-auto lg:block'>
+                <header className='w-full'>
+                    <FilterBar
+                        date={date}
+                        campaign={campaign}
+                        dateCounts={dateCounts}
+                        spectrometers={campaign.spectrometers}
+                        locations={locations}
+                        selectedSpectrometers={selectedSpectrometers}
+                        setSelectedSpectrometers={spectrometers => {
+                            setSelectedSpectrometers(spectrometers);
+                            Cookies.set(
+                                `${campaign.identifier}-spectrometers`,
+                                spectrometers
+                            );
+                        }}
+                        selectedGas={selectedGas}
+                        setSelectedGas={gas => {
+                            setSelectedGas(gas);
+                            Cookies.set(`${campaign.identifier}-gas`, gas);
+                        }}
+                    />
+                </header>
+                <main className='w-full px-4 py-4'>
+                    <D3DataPlot
+                        gases={campaign.gases}
+                        locations={locations}
+                        spectrometers={campaign.spectrometers}
+                        sensorDays={sensorDays}
+                        selectedGas={selectedGas}
+                        selectedSpectrometers={selectedSpectrometers}
+                    />
+                    <D3FlagPlot
+                        spectrometers={campaign.spectrometers}
+                        sensorDays={sensorDays.filter(
+                            d => d.gas === campaign.gases[0]
+                        )}
+                        selectedSpectrometers={selectedSpectrometers}
+                    />
+                </main>
+            </div>
+            <div className='block w-full h-auto lg:hidden'>
+                <main className='w-screen min-h-screen px-4 py-16 bg-gray-100 flex-col-center'>
+                    <h1
+                        className={`mb-4 text-green-900 font-semibold text-xl text-center rounded max-w-md leading-normal`}
+                    >
+                        Please view this page on a larger screen or possibly
+                        zoom out:{' '}
+                        <span className='px-1.5 py-0.5 mx-1 font-mono text-lg bg-white rounded shadow'>
+                            ctrl/cmd
+                        </span>{' '}
+                        and{' '}
+                        <span className='px-1.5 py-0.5 mx-1 font-mono text-lg bg-white rounded shadow'>
+                            -
+                        </span>
+                    </h1>
+                </main>
+            </div>
         </>
     );
 }

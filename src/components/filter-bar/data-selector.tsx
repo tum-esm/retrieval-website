@@ -15,20 +15,22 @@ export default function DataSelector(props: {
     console.log(props.selectedSpectrometers);
     return (
         <div className='flex-row-top gap-x-3'>
-            <span className='relative z-0 rounded-md shadow flex-col-center gap-y-[1.5px] bg-gray-300'>
+            <span className='relative z-0 rounded-md shadow flex-col-center'>
                 {props.spectrometers.map((spectrometer, i) => (
                     <button
                         key={spectrometer}
                         type='button'
                         className={
                             'relative min-w-[11rem] flex-row-left px-3 py-1.5 font-weight-600 ' +
-                            'font-weight-600 text-sm font-medium ' +
+                            'font-weight-600 text-sm font-medium border-gray-300 ' +
+                            'border-t border-b first:border-t-0 last:border-b-0' +
                             (props.selectedSpectrometers.includes(spectrometer)
                                 ? 'text-gray-900 bg-white '
                                 : 'text-gray-400 bg-gray-200 hover:bg-gray-100 ') +
                             'z-0 focus:z-10 focus:outline-none focus:ring-1 ' +
-                            'focus:ring-indigo-500 focus:border-indigo-500 ' +
+                            'focus:ring-indigo-500 focus:border-transparent ' +
                             (i === 0 ? 'rounded-t-md ' : ' ') +
+                            (i > 0 ? '-mt-px ' : ' ') +
                             (i === props.spectrometers.length - 1
                                 ? 'rounded-b-md '
                                 : ' ')
@@ -53,7 +55,8 @@ export default function DataSelector(props: {
                             checked={props.selectedSpectrometers.includes(
                                 spectrometer
                             )}
-                            className='mr-1.5 pointer-events-none !fill-red-500'
+                            className='mr-1.5 pointer-events-none'
+                            readOnly
                         />
                         <span className='mr-1 font-weight-600'>
                             {spectrometer}
@@ -79,20 +82,22 @@ export default function DataSelector(props: {
                     </button>
                 ))}
             </span>
-            <span className='relative z-0 bg-gray-300 rounded-md shadow flex-col-center gap-y-[1.5px]'>
+            <span className='relative z-0 rounded-md shadow flex-col-center'>
                 {props.campaign.gases.map((gas, i) => (
                     <button
                         key={gas}
                         type='button'
                         className={
                             'relative min-w-[7.5rem] flex-row-left px-3 py-1.5 font-weight-600 ' +
-                            'font-weight-600 text-sm font-medium ' +
+                            'font-weight-600 text-sm font-medium border-gray-300 ' +
+                            'border-t border-b first:border-t-0 last:border-b-0' +
                             (props.selectedGas === gas
                                 ? 'text-gray-900 bg-white '
                                 : 'text-gray-400 bg-gray-200 hover:bg-gray-100 ') +
                             'z-0 focus:z-10 focus:outline-none focus:ring-1 ' +
-                            'focus:ring-indigo-500 ' +
+                            'focus:ring-indigo-500 focus:border-transparent ' +
                             (i === 0 ? 'rounded-t-md ' : ' ') +
+                            (i > 0 ? '-mt-px ' : ' ') +
                             (i === props.campaign.gases.length - 1
                                 ? 'rounded-b-md '
                                 : ' ')
@@ -103,6 +108,7 @@ export default function DataSelector(props: {
                             type='radio'
                             checked={props.selectedGas === gas}
                             className='mr-1.5 pointer-events-none'
+                            readOnly
                         />
                         <span className='mr-1 font-weight-600'>{gas}</span>
                         <span className='font-weight-400'>

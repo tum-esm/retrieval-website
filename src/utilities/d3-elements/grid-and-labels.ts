@@ -49,7 +49,7 @@ function implementConcentrationDividers(
     yScale: (n: number) => number,
     gas: string
 ) {
-    const lineClassName = `y-axis-line-${gas}`;
+    const lineClassName = `y-axis-line-${gas}-`;
 
     let lineGroup: any = svg.selectAll(`.${lineClassName}`);
     if (lineGroup.empty()) {
@@ -136,7 +136,7 @@ function implementConcentrationLabels(
     yScale: (n: number) => number,
     gas: string
 ) {
-    const labelClassName = `y-axis-label-${gas}`;
+    const labelClassName = `y-axis-label-${gas}-`;
 
     let labelGroup: any = svg.selectAll(`.${labelClassName}`);
     if (labelGroup.empty()) {
@@ -166,7 +166,7 @@ function implementConcentrationLabels(
         .attr('x', 60)
         .merge(labels)
         .attr('y', (y: number, i: number) => yScale(y))
-        .text((y: number, i: number) => y.toFixed(gas === 'co2' ? 0 : 3));
+        .text((y: number, i: number) => y.toFixed(gas === 'ch4' ? 3 : 0));
 
     labels.exit().remove();
 }

@@ -62,6 +62,8 @@ export const implementCirclesAndLines =
     ) => {
         const data = zip(timeseries.xs, timeseries.ys).filter(
             d =>
+                d[0] > constants.DOMAINS.time.from &&
+                d[0] < constants.DOMAINS.time.to &&
                 d[1] > constants.DOMAINS[gas].from &&
                 d[1] < constants.DOMAINS[gas].to
         );

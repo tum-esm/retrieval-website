@@ -12,6 +12,7 @@
 $gases: (
     co2: 0,
     ch4: 0,
+    co: 0,
 );
 
 $sensors: (
@@ -44,20 +45,29 @@ $sensors: (
 }
 
 @each $gas, $y in $gases {
-    .y-axis-label-#{$gas},
-    .y-axis-line-#{$gas} {
+    .y-axis-label-#{$gas}-,
+    .y-axis-line-#{$gas}- {
         opacity: 100%;
     }
 }
 
 .plot-css-co2 {
-    g[class*='ch4'] {
+    [class*='-ch4-'],
+    [class*='-co-'] {
         opacity: 0%;
     }
 }
 
 .plot-css-ch4 {
-    [class*='co2'] {
+    [class*='-co2-'],
+    [class*='-co-'] {
+        opacity: 0%;
+    }
+}
+
+.plot-css-co {
+    [class*='-ch4-'],
+    [class*='-co2-'] {
         opacity: 0%;
     }
 }

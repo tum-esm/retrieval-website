@@ -44,9 +44,9 @@ const constants: {
             step: 0.005,
         },
         co: {
-            from: 1.875,
-            to: 1.915,
-            step: 0.005,
+            from: 80,
+            to: 130,
+            step: 5,
         },
     },
 

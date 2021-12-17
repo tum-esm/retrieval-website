@@ -84,7 +84,7 @@ export default function Page(props: {
                 />
                 <D3FlagPlot
                     spectrometers={campaign.spectrometers}
-                    sensorDays={uniqBy(sensorDays, 'spectrometer').filter(
+                    sensorDays={sensorDays.filter(
                         d => d.gas === campaign.gases[0]
                     )}
                     selectedSpectrometers={selectedSpectrometers}

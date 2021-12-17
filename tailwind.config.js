@@ -68,13 +68,7 @@ const customColors = {
 };
 
 module.exports = {
-    content: [
-        './src/pages/**/*.{js,jsx,ts,tsx}',
-        './src/templates/**/*.{js,jsx,ts,tsx}',
-        './src/components/**/*.{js,jsx,ts,tsx}',
-        './src/assets/**/*.{js,jsx,ts,tsx}',
-        './src/utils/**/*.{js,jsx,ts,tsx}',
-    ],
+    content: ['./src/**/*.{js,jsx,ts,tsx}'],
     theme: {
         extend: {
             colors: customColors,

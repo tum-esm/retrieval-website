@@ -1,6 +1,5 @@
 import { range } from 'lodash';
 import constants from '../constants';
-import types from '../../types';
 
 function implementTimeDividers(svg: any, xScale: (n: number) => number) {
     const lineClassName = `x-axis-line`;
@@ -28,7 +27,7 @@ function implementTimeDividers(svg: any, xScale: (n: number) => number) {
         .enter()
         .append('line')
         .attr('y1', constants.PLOT.paddingTop - 1)
-        .attr('y2', 354)
+        .attr('y2', constants.PLOT.height - 46)
         .attr('stroke', '#CBD5E1')
         .attr('stroke-linecap', 'round')
         .attr('stroke-width', 1.4)
@@ -92,7 +91,7 @@ function implementTimeLabels(svg: any, xScale: (n: number) => number) {
         .enter()
         .append('text')
         .style('text-anchor', 'middle')
-        .attr('y', 372)
+        .attr('y', constants.PLOT.height - 28)
         .attr('x', (x: number, i: number) => xScale(x))
         .text((x: number, i: number) =>
             x

@@ -44,6 +44,7 @@ export default function D3FlagPlot(props: {
             );
 
             props.sensorDays.forEach((sensorDay, i) => {
+                console.log({ flags: sensorDay.flagTimeseries });
                 implementFlagCircles(
                     sensorDay.spectrometer,
                     sensorDay.flagTimeseries

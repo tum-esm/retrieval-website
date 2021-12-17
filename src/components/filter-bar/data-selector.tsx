@@ -63,19 +63,18 @@ export default function DataSelector(props: {
                         </span>
                         <div className='flex-grow' />
                         <div
-                            className='w-3 h-3 bg-gray-300 rounded'
-                            style={
-                                props.selectedSpectrometers.includes(
+                            className={
+                                'w-3 h-3 bg-gray-300 rounded ' +
+                                (props.selectedSpectrometers.includes(
                                     spectrometer
                                 )
-                                    ? {
-                                          backgroundColor:
-                                              getSpectrometerColor(
-                                                  spectrometer
-                                              ),
-                                      }
-                                    : {}
+                                    ? 'opacity-100 '
+                                    : 'opacity-40 ')
                             }
+                            style={{
+                                backgroundColor:
+                                    getSpectrometerColor(spectrometer),
+                            }}
                         />
                     </button>
                 ))}

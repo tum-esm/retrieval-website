@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import types from '../types';
 import FilterBar from '../components/filter-bar/filter-bar';
-import { first } from 'lodash';
+import { first, uniqBy } from 'lodash';
 import D3DataPlot from '../components/plots/d3-data-plot';
 import Cookies from 'js-cookie';
+import D3FlagPlot from '../components/plots/d3-flag-plot';
 
 export default function Page(props: {
     pageContext: {
@@ -79,6 +80,13 @@ export default function Page(props: {
                     spectrometers={campaign.spectrometers}
                     sensorDays={sensorDays}
                     selectedGas={selectedGas}
+                    selectedSpectrometers={selectedSpectrometers}
+                />
+                <D3FlagPlot
+                    spectrometers={campaign.spectrometers}
+                    sensorDays={uniqBy(sensorDays, 'spectrometer').filter(
+                        d => d.gas === campaign.gases[0]
+                    )}
                     selectedSpectrometers={selectedSpectrometers}
                 />
             </main>

@@ -5,6 +5,7 @@ const constants: {
     PLOT: any;
     DOMAINS: types.PlotDomain;
     UNITS: { [key in 'co2' | 'ch4' | 'co']: string };
+    FLAGS: number[];
 } = {
     MONTH_LABEL: [
         'Jan',
@@ -55,6 +56,7 @@ const constants: {
         ch4: 'ppm',
         co: 'ppb',
     },
+    FLAGS: [21, 8, 15, 33, 39, 37, 25, 24, 31],
 };
 
 export default constants;

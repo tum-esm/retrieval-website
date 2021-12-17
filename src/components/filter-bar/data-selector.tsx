@@ -12,7 +12,6 @@ export default function DataSelector(props: {
     selectedSpectrometers: string[];
     setSelectedSpectrometers(ss: string[]): void;
 }) {
-    console.log(props.selectedSpectrometers);
     return (
         <div className='flex-row-top gap-x-3'>
             <span className='relative z-0 rounded-md shadow flex-col-center'>

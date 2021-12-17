@@ -53,8 +53,6 @@ export default function D3FlagPlot(props: {
         }
     }, [d3Container.current]);
 
-    // TODO: fix css classes
-
     return (
         <div
             className={

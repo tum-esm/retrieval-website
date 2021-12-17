@@ -47,8 +47,6 @@ export default function Page(props: {
             : campaign.spectrometers
     );
 
-    // TODO: Implement flag plot
-
     return (
         <>
             <header className='w-full'>

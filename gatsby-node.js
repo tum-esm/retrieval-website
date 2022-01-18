@@ -4,13 +4,44 @@ const path = require('path');
 
 const API_URL = 'https://retrieval-cms.dostuffthatmatters.dev/api';
 
-async function getCampaigns(options) {
-    const campaignRequest = await axios.get(
-        `${API_URL}/campaign-plots?` +
-            `filters[public][$eq]=true` +
+function headers(accessToken) {
+    if (accessToken) {
+        return {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+        };
+    } else {
+        return { headers: { 'Content-Type': 'application/json' } };
+    }
+}
+
+const backend = {
+    get: (url, accessToken) => axios.get(API_URL + url, headers(accessToken)),
+    post: (url, data) => axios.post(API_URL + url, data, headers()),
+};
+
+async function getAccessToken() {
+    const authenticationResponse = await backend
+        .post('/auth/local', {
+            identifier: process.env.STRAPI_USERNAME,
+            password: process.env.STRAPI_PASSWORD,
+        })
+        .catch(e => {
+            console.log('USERNAME/PASSWORD FOR STRAPI IS INVALID');
+            process.abort();
+        });
+    return authenticationResponse.data.jwt;
+}
+
+async function getCampaigns(accessToken, options) {
+    const campaignRequest = await backend.get(
+        '/campaign-plots?filters[public][$eq]=true' +
             (options !== undefined
                 ? `&filters[listed][$eq]=${options.listed}`
-                : '')
+                : ''),
+        accessToken
     );
     return campaignRequest.data.data.map(a => ({
         ...a.attributes,
@@ -20,9 +51,9 @@ async function getCampaigns(options) {
     }));
 }
 
-async function getCampaignDates(campaign) {
-    const dateRequest = await axios.get(
-        `${API_URL}/sensor-days?` +
+async function getCampaignDates(accessToken, campaign) {
+    const dateRequest = await backend.get(
+        '/sensor-days?' +
             `filters[date][$gte]=${campaign.startDate}&` +
             `filters[date][$lte]=${campaign.endDate}&` +
             `fields=date,rawCount&` +
@@ -37,7 +68,8 @@ async function getCampaignDates(campaign) {
             join(
                 campaign.gases.map((g, i) => `filters[gas][$in][${i}]=${g}`),
                 '&'
-            )
+            ),
+        accessToken
     );
     const sensorDays = dateRequest.data.data;
     const dates = sensorDays.reduce((total, d) => {
@@ -51,9 +83,9 @@ async function getCampaignDates(campaign) {
     return dates;
 }
 
-async function getSensorDay(campaign, date) {
-    const request = await axios.get(
-        `${API_URL}/sensor-days?` +
+async function getSensorDay(accessToken, campaign, date) {
+    const request = await backend.get(
+        '/sensor-days?' +
             `filters[date][$eq]=${date}&` +
             `pagination[pageSize]=10000&` +
             join(
@@ -66,7 +98,8 @@ async function getSensorDay(campaign, date) {
             join(
                 campaign.gases.map((g, i) => `filters[gas][$in][${i}]=${g}`),
                 '&'
-            )
+            ),
+        accessToken
     );
     return request.data.data.map(record => record.attributes);
 }
@@ -81,10 +114,11 @@ exports.sourceNodes = async ({
     getNodesByType,
 }) => {
     const { createNode } = actions;
-    const campaigns = await getCampaigns();
+    const accessToken = await getAccessToken();
+    const campaigns = await getCampaigns(accessToken);
     await Promise.all(
         campaigns.map(async campaign => {
-            const dateCounts = await getCampaignDates(campaign);
+            const dateCounts = await getCampaignDates(accessToken, campaign);
 
             const latestDate = last(Object.keys(dateCounts).sort());
             let displayDate = undefined;
@@ -118,7 +152,11 @@ exports.sourceNodes = async ({
                     const content = {
                         campaign: campaign,
                         date,
-                        sensorDays: await getSensorDay(campaign, date),
+                        sensorDays: await getSensorDay(
+                            accessToken,
+                            campaign,
+                            date
+                        ),
                     };
                     createNode({
                         ...content,

@@ -3,7 +3,7 @@ namespace types {
         identifier: string;
         locations: string[];
         spectrometers: string[];
-        gases: string[];
+        gases: types.gas[];
         public: boolean;
         listed: boolean;
         startDate: string;
@@ -13,7 +13,7 @@ namespace types {
 
     export type SensorDay = {
         date: string;
-        gas: string;
+        gas: types.gas;
         location: string;
         spectrometer: string;
         filteredCount: number;
@@ -36,8 +36,16 @@ namespace types {
     };
 
     export type PlotDomain = {
-        [key in 'time' | 'co2' | 'ch4' | 'co']: PlotAxisDomain;
+        [key in 'time' | types.gas]: PlotAxisDomain;
     };
+
+    export type monthlyDomain = {
+        [key in types.gas]: {
+            [key: string]: { std: number; avg: number };
+        };
+    };
+
+    export type gas = 'co2' | 'ch4' | 'co';
 }
 
 export default types;

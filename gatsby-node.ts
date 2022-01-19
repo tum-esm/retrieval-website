@@ -231,7 +231,7 @@ exports.sourceNodes = async ({
                 })
             );
 
-            let monthlyRange: {
+            let monthlyDomain: {
                 [key in 'co2' | 'ch4' | 'co']: {
                     [key: string]: { std: number; avg: number };
                 };
@@ -243,7 +243,7 @@ exports.sourceNodes = async ({
             gases.forEach(gas => {
                 Object.keys(monthlyTimeseries[gas]).forEach(month => {
                     if (monthlyTimeseries[gas][month].length > 0) {
-                        monthlyRange[gas][month] = {
+                        monthlyDomain[gas][month] = {
                             std: math.std(monthlyTimeseries[gas][month]),
                             avg: mean(monthlyTimeseries[gas][month]),
                         };
@@ -253,7 +253,7 @@ exports.sourceNodes = async ({
 
             createNode({
                 campaignIdentifier: campaign.identifier,
-                monthlyRange: JSON.stringify(monthlyRange),
+                monthlyDomain: JSON.stringify(monthlyDomain),
                 id: createNodeId(
                     `${PLOT_SCALE_NODE_TYPE}-${campaign.identifier}`
                 ),
@@ -261,8 +261,8 @@ exports.sourceNodes = async ({
                 children: [],
                 internal: {
                     type: PLOT_SCALE_NODE_TYPE,
-                    content: JSON.stringify(monthlyRange),
-                    contentDigest: createContentDigest(monthlyRange),
+                    content: JSON.stringify(monthlyDomain),
+                    contentDigest: createContentDigest(monthlyDomain),
                 },
             });
 
@@ -314,17 +314,20 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
     await Promise.all(
         result.data.allPlotPage.nodes.map(
             async ({ campaign, date, sensorDays }: any) => {
-                const dateCounts = (
+                const { campaign: c, plotScale: s } = (
                     await graphql(
                         `
                         {
                             campaign(identifier: {eq: "${campaign.identifier}"}) {
                                 dateCounts
                             }
+                            plotScale(campaignIdentifier: {eq: "${campaign.identifier}"}) {
+                                monthlyDomain
+                            }
                         }
                     `
                     )
-                ).data.campaign.dateCounts;
+                ).data;
                 createPage({
                     path: `/${campaign.identifier}/${date}`,
                     component: path.resolve(`src/templates/plot.tsx`),
@@ -332,7 +335,8 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
                         campaign,
                         date,
                         sensorDays,
-                        dateCounts,
+                        dateCounts: c.dateCounts,
+                        monthlyDomain: s.monthlyDomain,
                     },
                 });
 

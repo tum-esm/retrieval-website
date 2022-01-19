@@ -5,12 +5,13 @@ import types from '../../types';
 import constants from '../../utilities/constants';
 
 export default function D3DataPlot(props: {
-    gases: string[];
+    gases: types.gas[];
     locations: string[];
     spectrometers: string[];
     sensorDays: types.SensorDay[];
     selectedGas: string;
     selectedSpectrometers: string[];
+    domains: types.PlotDomain;
 }) {
     const d3Container = useRef(null);
 
@@ -21,7 +22,7 @@ export default function D3DataPlot(props: {
     const yScales: ((x: number) => number)[] = props.gases.map(gas =>
         d3
             .scaleLinear()
-            .domain([constants.DOMAINS[gas].from, constants.DOMAINS[gas].to])
+            .domain([props.domains[gas].from, props.domains[gas].to])
             .range([constants.PLOT.height - 50, constants.PLOT.paddingTop])
     );
 
@@ -29,7 +30,13 @@ export default function D3DataPlot(props: {
     useEffect(() => {
         if (d3Container.current) {
             const svg = d3.select(d3Container.current);
-            d3Elements.implementPlotGrid(svg, xScale, yScales, props.gases);
+            d3Elements.implementPlotGrid(
+                svg,
+                xScale,
+                yScales,
+                props.gases,
+                props.domains
+            );
         }
     }, [d3Container.current]);
 
@@ -54,14 +61,16 @@ export default function D3DataPlot(props: {
                         sensorDay.gas,
                         sensorDay.spectrometer,
                         sensorDay.filteredTimeseries,
-                        false
+                        false,
+                        props.domains
                     );
                     implementCirclesAndLines(
                         yScales[gasArrayIndex],
                         sensorDay.gas,
                         sensorDay.spectrometer,
                         sensorDay.rawTimeseries,
-                        true
+                        true,
+                        props.domains
                     );
                 }
             });

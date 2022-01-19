@@ -73,6 +73,11 @@ module.exports = {
         extend: {
             colors: customColors,
             fill: customColors,
+            fontSize: {
+                '3xs': '.5rem',
+                '2xs': '.625rem',
+                xs: '.75rem',
+            },
         },
     },
 };

@@ -12,7 +12,7 @@ export const implementFlagCircles =
     ) =>
     (spectrometer: string, timeseries: types.Timeseries) => {
         const data = zip(timeseries.xs, timeseries.ys).filter(
-            d =>
+            (d: any) =>
                 d[0] > constants.DOMAINS.time.from &&
                 d[0] < constants.DOMAINS.time.to &&
                 constants.FLAGS.includes(d[1])
@@ -40,7 +40,7 @@ export const implementFlagCircles =
 
         let circles: any = circleGroup
             .selectAll(`circle`)
-            .data(data.filter((d: number[]) => constants.FLAGS.includes(d[1])));
+            .data(data.filter((d: any) => constants.FLAGS.includes(d[1])));
         circles
             .enter()
             .append('circle')

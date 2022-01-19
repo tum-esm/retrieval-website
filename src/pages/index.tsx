@@ -42,7 +42,7 @@ export default function Page() {
                         Plots of the EM27 Retrieval Output
                     </h1>
                 </div>
-                <div className='max-w-full w-[28rem] flex-row-center'>
+                <div className='max-w-full w-[28rem] flex-col-center gap-y-2'>
                     {data.allCampaign.nodes.map((c: types.Campaign) => (
                         <Link
                             to={`/${c.identifier}/${c.displayDate}`}

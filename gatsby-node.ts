@@ -137,6 +137,7 @@ async function getSensorDays(
 
 const CAMPAIGN_NODE_TYPE = 'Campaign';
 const PLOT_PAGE_NODE_TYPE = 'PlotPage';
+const PLOT_SCALE_NODE_TYPE = 'PlotScale';
 
 exports.sourceNodes = async ({
     actions,
@@ -250,7 +251,20 @@ exports.sourceNodes = async ({
                 });
             });
 
-            console.log(JSON.stringify({ monthlyRange }));
+            createNode({
+                campaignIdentifier: campaign.identifier,
+                monthlyRange: JSON.stringify(monthlyRange),
+                id: createNodeId(
+                    `${PLOT_SCALE_NODE_TYPE}-${campaign.identifier}`
+                ),
+                parent: null,
+                children: [],
+                internal: {
+                    type: PLOT_SCALE_NODE_TYPE,
+                    content: JSON.stringify(monthlyRange),
+                    contentDigest: createContentDigest(monthlyRange),
+                },
+            });
 
             return;
         })

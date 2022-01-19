@@ -1,10 +1,22 @@
 const axios = require('axios');
-const { join, last } = require('lodash');
+const { join, last, concat, mean } = require('lodash');
 const path = require('path');
 
 const API_URL = 'https://retrieval-cms.dostuffthatmatters.dev/api';
 
-function headers(accessToken) {
+namespace types {
+    export type campaign = {
+        identifier: string;
+        startDate: string;
+        endDate: string;
+        displayDate: string;
+        locations: string[];
+        gases: string[];
+    };
+    export type accessToken = string;
+}
+
+function headers(accessToken?: types.accessToken) {
     if (accessToken) {
         return {
             headers: {
@@ -18,8 +30,10 @@ function headers(accessToken) {
 }
 
 const backend = {
-    get: (url, accessToken) => axios.get(API_URL + url, headers(accessToken)),
-    post: (url, data) => axios.post(API_URL + url, data, headers()),
+    get: (url: string, accessToken: types.accessToken) =>
+        axios.get(API_URL + url, headers(accessToken)),
+    post: (url: string, data: any) =>
+        axios.post(API_URL + url, data, headers()),
 };
 
 async function getAccessToken() {
@@ -28,14 +42,17 @@ async function getAccessToken() {
             identifier: process.env.STRAPI_USERNAME,
             password: process.env.STRAPI_PASSWORD,
         })
-        .catch(e => {
+        .catch(() => {
             console.log('USERNAME/PASSWORD FOR STRAPI IS INVALID');
             process.abort();
         });
     return authenticationResponse.data.jwt;
 }
 
-async function getCampaigns(accessToken, options) {
+async function getCampaigns(
+    accessToken: types.accessToken,
+    options?: { listed: boolean; public: boolean }
+): Promise<types.campaign[]> {
     const campaignRequest = await backend.get(
         '/campaign-plots?filters[public][$eq]=true' +
             (options !== undefined
@@ -43,7 +60,7 @@ async function getCampaigns(accessToken, options) {
                 : ''),
         accessToken
     );
-    return campaignRequest.data.data.map(a => ({
+    return campaignRequest.data.data.map((a: any) => ({
         ...a.attributes,
         locations: a.attributes['locations'].split(' '),
         spectrometers: a.attributes['spectrometers'].split(' '),
@@ -51,7 +68,10 @@ async function getCampaigns(accessToken, options) {
     }));
 }
 
-async function getCampaignDates(accessToken, campaign) {
+async function getCampaignDates(
+    accessToken: types.accessToken,
+    campaign: types.campaign
+) {
     const dateRequest = await backend.get(
         '/sensor-days?' +
             `filters[date][$gte]=${campaign.startDate}&` +
@@ -72,18 +92,28 @@ async function getCampaignDates(accessToken, campaign) {
         accessToken
     );
     const sensorDays = dateRequest.data.data;
-    const dates = sensorDays.reduce((total, d) => {
-        const { date, rawCount } = d.attributes;
-        if (!Object.keys(total).includes(date)) {
-            return Object.assign(total, { [date]: rawCount });
-        } else {
-            return Object.assign(total, { [date]: rawCount + total[date] });
-        }
-    }, {});
+    const dates = sensorDays.reduce(
+        (
+            total: { [key: string]: number },
+            d: { attributes: { date: string; rawCount: number } }
+        ) => {
+            const { date, rawCount } = d.attributes;
+            if (!Object.keys(total).includes(date)) {
+                return Object.assign(total, { [date]: rawCount });
+            } else {
+                return Object.assign(total, { [date]: rawCount + total[date] });
+            }
+        },
+        {}
+    );
     return dates;
 }
 
-async function getSensorDay(accessToken, campaign, date) {
+async function getSensorDays(
+    accessToken: types.accessToken,
+    campaign: types.campaign,
+    date: string
+) {
     const request = await backend.get(
         '/sensor-days?' +
             `filters[date][$eq]=${date}&` +
@@ -101,7 +131,7 @@ async function getSensorDay(accessToken, campaign, date) {
             ),
         accessToken
     );
-    return request.data.data.map(record => record.attributes);
+    return request.data.data.map((record: any) => record.attributes);
 }
 
 const CAMPAIGN_NODE_TYPE = 'Campaign';
@@ -112,7 +142,7 @@ exports.sourceNodes = async ({
     createContentDigest,
     createNodeId,
     getNodesByType,
-}) => {
+}: any) => {
     const { createNode } = actions;
     const accessToken = await getAccessToken();
     const campaigns = await getCampaigns(accessToken);
@@ -128,7 +158,7 @@ exports.sourceNodes = async ({
                         ? latestDate
                         : campaign.displayDate;
             }
-            campaignNode = { ...campaign, displayDate };
+            const campaignNode = { ...campaign, displayDate };
 
             if (Object.keys(dateCounts).length > 0) {
                 createNode({
@@ -147,17 +177,33 @@ exports.sourceNodes = async ({
                 });
             }
 
+            let dailyAverages: any = {
+                co2: {},
+                ch4: {},
+                co: {},
+            };
+
             await Promise.all(
                 Object.keys(dateCounts).map(async date => {
                     const content = {
                         campaign: campaign,
                         date,
-                        sensorDays: await getSensorDay(
+                        sensorDays: await getSensorDays(
                             accessToken,
                             campaign,
                             date
                         ),
                     };
+                    ['co2', 'ch4', 'co'].forEach(gas => {
+                        dailyAverages[gas][date] = mean(
+                            concat(
+                                content.sensorDays
+                                    .filter((d: any) => d.gas === gas)
+                                    .map((d: any) => d.filteredTimeseries.ys)
+                            )
+                        );
+                    });
+
                     createNode({
                         ...content,
                         id: createNodeId(
@@ -175,6 +221,8 @@ exports.sourceNodes = async ({
                     return;
                 })
             );
+
+            console.log({ id: campaign.identifier, dailyAverages });
 
             return;
         })

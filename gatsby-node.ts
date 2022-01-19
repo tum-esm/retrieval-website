@@ -1,6 +1,7 @@
 const axios = require('axios');
-const { join, last, concat, mean } = require('lodash');
+const { join, last, concat, mean, round, uniq } = require('lodash');
 const path = require('path');
+const math = require('mathjs');
 
 const API_URL = 'https://retrieval-cms.dostuffthatmatters.dev/api';
 
@@ -177,7 +178,11 @@ exports.sourceNodes = async ({
                 });
             }
 
-            let dailyAverages: any = {
+            const gases: ('co2' | 'ch4' | 'co')[] = ['co2', 'ch4', 'co'];
+
+            let monthlyTimeseries: {
+                [key in 'co2' | 'ch4' | 'co']: { [key: string]: number[] };
+            } = {
                 co2: {},
                 ch4: {},
                 co: {},
@@ -194,13 +199,16 @@ exports.sourceNodes = async ({
                             date
                         ),
                     };
-                    ['co2', 'ch4', 'co'].forEach(gas => {
-                        dailyAverages[gas][date] = mean(
-                            concat(
-                                content.sensorDays
-                                    .filter((d: any) => d.gas === gas)
-                                    .map((d: any) => d.filteredTimeseries.ys)
-                            )
+
+                    const month = date.slice(0, 7);
+                    gases.forEach(gas => {
+                        monthlyTimeseries[gas][month] = concat(
+                            monthlyTimeseries[gas][month] === undefined
+                                ? []
+                                : monthlyTimeseries[gas][month],
+                            ...content.sensorDays
+                                .filter((d: any) => d.gas === gas)
+                                .map((d: any) => d.filteredTimeseries.ys)
                         );
                     });
 
@@ -222,14 +230,34 @@ exports.sourceNodes = async ({
                 })
             );
 
-            console.log({ id: campaign.identifier, dailyAverages });
+            let monthlyRange: {
+                [key in 'co2' | 'ch4' | 'co']: {
+                    [key: string]: { std: number; avg: number };
+                };
+            } = {
+                co2: {},
+                ch4: {},
+                co: {},
+            };
+            gases.forEach(gas => {
+                Object.keys(monthlyTimeseries[gas]).forEach(month => {
+                    if (monthlyTimeseries[gas][month].length > 0) {
+                        monthlyRange[gas][month] = {
+                            std: math.std(monthlyTimeseries[gas][month]),
+                            avg: mean(monthlyTimeseries[gas][month]),
+                        };
+                    }
+                });
+            });
+
+            console.log(JSON.stringify({ monthlyRange }));
 
             return;
         })
     );
 };
 
-exports.createPages = async ({ graphql, actions, reporter }) => {
+exports.createPages = async ({ graphql, actions, reporter }: any) => {
     const { createPage } = actions;
     const result = await graphql(
         `
@@ -271,7 +299,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     );
     await Promise.all(
         result.data.allPlotPage.nodes.map(
-            async ({ campaign, date, sensorDays }) => {
+            async ({ campaign, date, sensorDays }: any) => {
                 const dateCounts = (
                     await graphql(
                         `

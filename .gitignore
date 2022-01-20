@@ -3,4 +3,3 @@ node_modules/
 public
 yarn-error.log
 .env
-gatsby-node.js

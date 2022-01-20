@@ -1,12 +1,14 @@
 import types from '../types';
 
 const constants: {
+    GASES: types.gas[];
     MONTH_LABEL: string[];
     PLOT: any;
     DOMAINS: types.PlotDomain;
-    UNITS: { [key in 'co2' | 'ch4' | 'co']: string };
+    UNITS: { [key in types.gas]: string };
     FLAGS: number[];
 } = {
+    GASES: ['co2', 'ch4', 'co'],
     MONTH_LABEL: [
         'Jan',
         'Feb',
@@ -19,7 +21,7 @@ const constants: {
         'Sep',
         'Oct',
         'Nov',
-        'Dev',
+        'Dec',
     ],
     PLOT: {
         width: 1000,
@@ -36,8 +38,8 @@ const constants: {
         },
         co2: {
             from: 405, //407,
-            to: 414, //417,
-            step: 1,
+            to: 420, //417,
+            step: 1.5,
         },
         ch4: {
             from: 1.875,

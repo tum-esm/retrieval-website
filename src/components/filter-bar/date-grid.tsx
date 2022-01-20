@@ -139,10 +139,10 @@ export default function DateGrid(props: {
                         {calendarPage.year}
                     </div>
                 </div>
-                <span className='relative z-0 space-x-px bg-gray-300 rounded-md shadow flex-row-center'>
+                <span className='relative z-0 space-x-px bg-gray-300 rounded shadow flex-row-center'>
                     <button
                         type='button'
-                        className='relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white rounded-l-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'
+                        className='relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white rounded-l hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'
                         onClick={changeMonth({ forward: false })}
                     >
                         <span className='sr-only'>Previous</span>
@@ -153,7 +153,7 @@ export default function DateGrid(props: {
                     </button>
                     <button
                         type='button'
-                        className='relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white rounded-r-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'
+                        className='relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white rounded-r hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'
                         onClick={changeMonth({ forward: true })}
                     >
                         <span className='sr-only'>Next</span>

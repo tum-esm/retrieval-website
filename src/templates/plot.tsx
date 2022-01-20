@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import types from '../types';
 import FilterBar from '../components/filter-bar/filter-bar';
-import { first, uniqBy } from 'lodash';
+import { first } from 'lodash';
 import D3DataPlot from '../components/plots/d3-data-plot';
 import Cookies from 'js-cookie';
 import D3FlagPlot from '../components/plots/d3-flag-plot';
+import constants from '../utilities/constants';
 
 export default function Page(props: {
     pageContext: {
@@ -12,12 +13,26 @@ export default function Page(props: {
         date: string;
         sensorDays: types.SensorDay[];
         dateCounts: string;
+        monthlyDomain: string;
     };
 }) {
     const { campaign, date, sensorDays } = props.pageContext;
     const dateCounts = JSON.parse(props.pageContext.dateCounts);
+    const monthlyDomain: types.monthlyDomain = JSON.parse(
+        props.pageContext.monthlyDomain
+    );
 
-    const cookieGas = Cookies.get(`${campaign.identifier}-gas`);
+    const domains = constants.DOMAINS;
+    constants.GASES.forEach(gas => {
+        const computedDomain = monthlyDomain[gas][date.slice(0, 7)];
+        if (computedDomain !== undefined) {
+            domains[gas].from = computedDomain.avg - 4.5 * computedDomain.std;
+            domains[gas].to = computedDomain.avg + 4.5 * computedDomain.std;
+            domains[gas].step = computedDomain.std;
+        }
+    });
+
+    const cookieGas: any = Cookies.get(`${campaign.identifier}-gas`);
     const [selectedGas, setSelectedGas] = useState(
         campaign.gases.includes(cookieGas) ? cookieGas : campaign.gases[0]
     );
@@ -80,6 +95,7 @@ export default function Page(props: {
                         sensorDays={sensorDays}
                         selectedGas={selectedGas}
                         selectedSpectrometers={selectedSpectrometers}
+                        domains={domains}
                     />
                     <D3FlagPlot
                         spectrometers={campaign.spectrometers}

@@ -156,7 +156,7 @@ function implementAxisTitles(svg: any) {
                 }, 22)`
             )
             .style('text-anchor', 'middle')
-            .text(`flag from gfit retrieval`);
+            .text(`flag from GFIT retrieval`);
     }
 }
 

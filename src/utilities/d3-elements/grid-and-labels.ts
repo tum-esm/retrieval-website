@@ -144,7 +144,7 @@ function implementConcentrationLabels(
             .append('g')
             .attr(
                 'class',
-                `${labelClassName} pointer-events-none text-xs font-medium ` +
+                `${labelClassName} pointer-events-none text-2xs font-medium ` +
                     `fill-gray-600`
             );
     }
@@ -166,24 +166,29 @@ function implementConcentrationLabels(
         .attr('x', 60)
         .merge(labels)
         .attr('y', (y: number, i: number) => yScale(y))
-        .text((y: number, i: number) => y.toFixed(gas === 'ch4' ? 3 : 0));
+        .text((y: number, i: number) =>
+            y.toFixed({ ch4: 3, co2: 1, co: 1 }[gas])
+        );
 
     labels.exit().remove();
 }
 
-function implementAxisTitles(svg: any) {
-    if (svg.selectAll('.x-axis-title').empty()) {
+function implementAxisTitles(svg: any, gas: types.gas) {
+    if (svg.selectAll(`.x-axis-title`).empty()) {
         svg.append('text')
-            .attr('class', 'x-axis-title font-medium fill-gray-900 text-xs')
+            .attr('class', `x-axis-title font-medium fill-gray-900 text-xs`)
             .style('text-anchor', 'middle')
             .attr('y', constants.PLOT.height - 4)
             .attr('x', constants.PLOT.width / 2)
             .text('daytime [h] (UTC)');
     }
 
-    if (svg.selectAll('.y-axis-title').empty()) {
+    if (svg.selectAll(`.y-axis-title-${gas}-`).empty()) {
         svg.append('text')
-            .attr('class', 'y-axis-title font-medium fill-gray-900 text-xs')
+            .attr(
+                'class',
+                `y-axis-title-${gas}- font-medium fill-gray-900 text-xs`
+            )
             .attr('y', 0)
             .attr('x', 0)
             .attr(
@@ -193,7 +198,7 @@ function implementAxisTitles(svg: any) {
                 }, 14)`
             )
             .style('text-anchor', 'middle')
-            .text(`average column concentration`);
+            .text(`averaged column concentrations [${constants.UNITS[gas]}]`);
     }
 }
 
@@ -201,23 +206,14 @@ export function implementPlotGrid(
     svg: any,
     xScale: (x: number) => number,
     yScales: ((x: number) => number)[],
-    gases: string[]
+    gases: types.gas[],
+    domains: types.PlotDomain
 ) {
     implementTimeDividers(svg, constants.DOMAINS.time, xScale);
     implementTimeLabels(svg, constants.DOMAINS.time, xScale);
-    implementAxisTitles(svg);
     gases.forEach((gas, i) => {
-        implementConcentrationDividers(
-            svg,
-            constants.DOMAINS[gas],
-            yScales[i],
-            gas
-        );
-        implementConcentrationLabels(
-            svg,
-            constants.DOMAINS[gas],
-            yScales[i],
-            gas
-        );
+        implementAxisTitles(svg, gas);
+        implementConcentrationDividers(svg, domains[gas], yScales[i], gas);
+        implementConcentrationLabels(svg, domains[gas], yScales[i], gas);
     });
 }

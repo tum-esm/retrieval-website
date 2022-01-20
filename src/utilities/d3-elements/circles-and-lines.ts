@@ -2,7 +2,6 @@ import { zip, reduce } from 'lodash';
 import * as d3 from 'd3';
 import types from '../../types';
 import { getSpectrometerColor } from '../colors';
-import constants from '../constants';
 
 const generateLine = (
     xScale: (x: number) => number,
@@ -55,17 +54,18 @@ export const implementCirclesAndLines =
     (svg: any, xScale: (n: number) => number) =>
     (
         yScale: (n: number) => number,
-        gas: string,
+        gas: types.gas,
         spectrometer: string,
         timeseries: types.Timeseries,
-        timeseriesIsRaw: boolean
+        timeseriesIsRaw: boolean,
+        domains: types.PlotDomain
     ) => {
-        const data = zip(timeseries.xs, timeseries.ys).filter(
-            d =>
-                d[0] > constants.DOMAINS.time.from &&
-                d[0] < constants.DOMAINS.time.to &&
-                d[1] > constants.DOMAINS[gas].from &&
-                d[1] < constants.DOMAINS[gas].to
+        const data: any = zip(timeseries.xs, timeseries.ys).filter(
+            (d: any) =>
+                d[0] > domains.time.from &&
+                d[0] < domains.time.to &&
+                d[1] > domains[gas].from &&
+                d[1] < domains[gas].to
         );
 
         const circleClassName = `circle-${

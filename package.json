@@ -8,8 +8,8 @@
         "email": "moritz.makowski@tum.de"
     },
     "scripts": {
-        "develop": "export GATSBY_COMMIT_SHA=\"$(git rev-parse --short --verify HEAD)\" && gatsby develop",
-        "build": "export GATSBY_COMMIT_SHA=\"$(git rev-parse --short --verify HEAD)\" && gatsby build",
+        "develop": "tsc -p tsconfig.json && export GATSBY_COMMIT_SHA=\"$(git rev-parse --short --verify HEAD)\" && gatsby develop",
+        "build": "tsc -p tsconfig.json && export GATSBY_COMMIT_SHA=\"$(git rev-parse --short --verify HEAD)\" && gatsby build",
         "serve": "gatsby serve",
         "clean": "gatsby clean"
     },

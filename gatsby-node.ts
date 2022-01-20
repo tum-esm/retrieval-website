@@ -6,6 +6,7 @@ const math = require('mathjs');
 const API_URL = 'https://retrieval-cms.dostuffthatmatters.dev/api';
 // const API_URL = 'http://localhost:1337/api';
 
+const BATCH_SIZE = 50;
 namespace types {
     export type campaign = {
         identifier: string;
@@ -192,7 +193,10 @@ exports.sourceNodes = async ({
                     Object.keys(dateCounts).length
                 } dates`
             );
-            const dateBatches: string[][] = chunk(Object.keys(dateCounts), 80);
+            const dateBatches: string[][] = chunk(
+                Object.keys(dateCounts),
+                BATCH_SIZE
+            );
             console.log({ id: campaign.identifier, dateBatches });
             async function processDates() {
                 for (let i = 0; i < dateBatches.length; i++) {

@@ -24,7 +24,7 @@ export default function Page() {
             <main className='w-screen min-h-screen px-4 py-16 bg-gray-100 flex-col-center'>
                 <div className='absolute bottom-0 left-0 z-0 w-full flex-row-center'>
                     <div className='py-1 text-sm text-gray-400 font-weight-500'>
-                        {process.env.GATSBY_COMMIT_SHA
+                        {process.env.GATSBY_COMMIT_SHA !== undefined
                             ? `version ${process.env.GATSBY_COMMIT_SHA}`
                             : 'development'}
                     </div>

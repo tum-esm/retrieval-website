@@ -75,7 +75,7 @@ export default function DataSelector(props: {
                     <button
                         key={gas}
                         className={
-                            'relative min-w-[7.5rem] flex-row-left px-3 py-1.5 ' +
+                            'relative min-w-[5rem] flex-row-left px-3 py-1.5 ' +
                             'font-weight-600 text-sm font-medium border-gray-300 ' +
                             (props.selectedGas === gas
                                 ? 'text-gray-900 bg-white '
@@ -97,10 +97,25 @@ export default function DataSelector(props: {
                                     : 'bg-gray-300')
                             }
                         />
-                        <span className='mr-1 font-weight-600'>{gas}</span>
-                        <span className='font-weight-400'>
-                            [{constants.UNITS[gas]}]
-                        </span>
+                        <div className='flex flex-row mr-1 font-weight-600'>
+                            {gas === 'co2' && (
+                                <>
+                                    CO
+                                    <div className='scale-[80%] font-weight-700 translate-y-1'>
+                                        2
+                                    </div>
+                                </>
+                            )}
+                            {gas === 'ch4' && (
+                                <>
+                                    CH
+                                    <div className='scale-[80%] font-weight-700 translate-y-1'>
+                                        4
+                                    </div>
+                                </>
+                            )}
+                            {gas === 'co' && <>CO</>}
+                        </div>
                     </button>
                 ))}
             </div>

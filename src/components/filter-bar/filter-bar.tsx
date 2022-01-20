@@ -19,7 +19,7 @@ export default function FilterBar(props: {
     return (
         <div
             className={
-                'w-full h-44 pl-2 pr-6 py-2 flex-row-left text-gray-900 border-b border-gray-400 bg-gray-100 '
+                'w-full h-[11.5rem] pl-2 pr-6 py-2 flex-row-left text-gray-900 border-b border-gray-400 bg-gray-100 '
             }
         >
             <Link to='/'>

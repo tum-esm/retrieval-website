@@ -21,7 +21,7 @@ const constants: {
         'Sep',
         'Oct',
         'Nov',
-        'Dev',
+        'Dec',
     ],
     PLOT: {
         width: 1000,

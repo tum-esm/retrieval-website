@@ -1,9 +1,10 @@
 const axios = require('axios');
-const { join, last, concat, mean, round, uniq } = require('lodash');
+const { join, last, concat, mean, round, uniq, chunk } = require('lodash');
 const path = require('path');
 const math = require('mathjs');
 
 const API_URL = 'https://retrieval-cms.dostuffthatmatters.dev/api';
+// const API_URL = 'http://localhost:1337/api';
 
 namespace types {
     export type campaign = {
@@ -51,16 +52,9 @@ async function getAccessToken() {
 }
 
 async function getCampaigns(
-    accessToken: types.accessToken,
-    options?: { listed: boolean; public: boolean }
+    accessToken: types.accessToken
 ): Promise<types.campaign[]> {
-    const campaignRequest = await backend.get(
-        '/campaign-plots?filters[public][$eq]=true' +
-            (options !== undefined
-                ? `&filters[listed][$eq]=${options.listed}`
-                : ''),
-        accessToken
-    );
+    const campaignRequest = await backend.get('/campaign-plots', accessToken);
     return campaignRequest.data.data.map((a: any) => ({
         ...a.attributes,
         locations: a.attributes['locations'].split(' '),
@@ -78,7 +72,7 @@ async function getCampaignDates(
             `filters[date][$gte]=${campaign.startDate}&` +
             `filters[date][$lte]=${campaign.endDate}&` +
             `fields=date,rawCount&` +
-            `pagination[pageSize]=10000&` +
+            `pagination[pageSize]=100000&` +
             join(
                 campaign.locations.map(
                     (l, i) => `filters[location][$in][${i}]=${l}`
@@ -110,15 +104,17 @@ async function getCampaignDates(
     return dates;
 }
 
-async function getSensorDays(
+async function getAllCampaignSensorDays(
     accessToken: types.accessToken,
     campaign: types.campaign,
-    date: string
-) {
+    from: string,
+    to: string
+): Promise<any[]> {
     const request = await backend.get(
         '/sensor-days?' +
-            `filters[date][$eq]=${date}&` +
-            `pagination[pageSize]=10000&` +
+            `filters[date][$gte]=${from}&` +
+            `filters[date][$lte]=${to}&` +
+            `pagination[pageSize]=100000&` +
             join(
                 campaign.locations.map(
                     (l, i) => `filters[location][$in][${i}]=${l}`
@@ -146,7 +142,9 @@ exports.sourceNodes = async ({
     getNodesByType,
 }: any) => {
     const { createNode } = actions;
+    console.log('fetching access token');
     const accessToken = await getAccessToken();
+    console.log('fetching campaigns');
     const campaigns = await getCampaigns(accessToken);
     await Promise.all(
         campaigns.map(async campaign => {
@@ -189,47 +187,71 @@ exports.sourceNodes = async ({
                 co: {},
             };
 
-            await Promise.all(
-                Object.keys(dateCounts).map(async date => {
-                    const content = {
-                        campaign: campaign,
-                        date,
-                        sensorDays: await getSensorDays(
-                            accessToken,
-                            campaign,
-                            date
-                        ),
-                    };
-
-                    const month = date.slice(0, 7);
-                    gases.forEach(gas => {
-                        monthlyTimeseries[gas][month] = concat(
-                            monthlyTimeseries[gas][month] === undefined
-                                ? []
-                                : monthlyTimeseries[gas][month],
-                            ...content.sensorDays
-                                .filter((d: any) => d.gas === gas)
-                                .map((d: any) => d.filteredTimeseries.ys)
-                        );
-                    });
-
-                    createNode({
-                        ...content,
-                        id: createNodeId(
-                            `${PLOT_PAGE_NODE_TYPE}-${campaign.identifier}-${date}`
-                        ),
-                        parent: null,
-                        children: [],
-                        internal: {
-                            type: PLOT_PAGE_NODE_TYPE,
-                            content: JSON.stringify(content),
-                            contentDigest: createContentDigest(content),
-                        },
-                    });
-
-                    return;
-                })
+            console.log(
+                `Campaign ${campaign.identifier}: ${
+                    Object.keys(dateCounts).length
+                } dates`
             );
+            const dateBatches: string[][] = chunk(Object.keys(dateCounts), 80);
+            console.log({ id: campaign.identifier, dateBatches });
+            async function processDates() {
+                for (let i = 0; i < dateBatches.length; i++) {
+                    console.log(`starting batch ${campaign.identifier}.${i}`);
+                    const batchSensorDays = await getAllCampaignSensorDays(
+                        accessToken,
+                        campaign,
+                        dateBatches[i][0],
+                        dateBatches[i][dateBatches[i].length - 1]
+                    );
+                    console.log(
+                        `retrieved data for ${campaign.identifier}.${i}`
+                    );
+                    await Promise.all(
+                        dateBatches[i].map(async date => {
+                            const content = {
+                                campaign: campaign,
+                                date,
+                                sensorDays: batchSensorDays.filter(
+                                    d => d.date === date
+                                ),
+                            };
+
+                            const month = date.slice(0, 7);
+                            gases.forEach(gas => {
+                                monthlyTimeseries[gas][month] = concat(
+                                    monthlyTimeseries[gas][month] === undefined
+                                        ? []
+                                        : monthlyTimeseries[gas][month],
+                                    ...content.sensorDays
+                                        .filter((d: any) => d.gas === gas)
+                                        .map(
+                                            (d: any) => d.filteredTimeseries.ys
+                                        )
+                                );
+                            });
+
+                            createNode({
+                                ...content,
+                                id: createNodeId(
+                                    `${PLOT_PAGE_NODE_TYPE}-${campaign.identifier}-${date}`
+                                ),
+                                parent: null,
+                                children: [],
+                                internal: {
+                                    type: PLOT_PAGE_NODE_TYPE,
+                                    content: JSON.stringify(content),
+                                    contentDigest: createContentDigest(content),
+                                },
+                            });
+
+                            return;
+                        })
+                    );
+                    console.log(`finished batch ${campaign.identifier}.${i}`);
+                }
+            }
+
+            await processDates();
 
             let monthlyDomain: {
                 [key in 'co2' | 'ch4' | 'co']: {

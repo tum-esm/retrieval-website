@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import types from '../types';
 import FilterBar from '../components/filter-bar/filter-bar';
 import { first } from 'lodash';
@@ -32,9 +32,9 @@ export default function Page(props: {
         }
     });
 
-    const cookieGas: any = Cookies.get(`${campaign.identifier}-gas`);
-    const [selectedGas, setSelectedGas] = useState(
-        campaign.gases.includes(cookieGas) ? cookieGas : campaign.gases[0]
+    const [selectedGas, setSelectedGas] = useState(campaign.gases[0]);
+    const [selectedSpectrometers, setSelectedSpectrometers] = useState(
+        campaign.spectrometers
     );
 
     const locations: string[] = campaign.spectrometers.map(s => {
@@ -49,18 +49,31 @@ export default function Page(props: {
             return representativeDay.location;
         }
     });
-    const cookieSpectrometers = Cookies.get(
-        `${campaign.identifier}-spectrometers`
-    );
-    const [selectedSpectrometers, setSelectedSpectrometers] = useState(
-        cookieSpectrometers !== undefined
-            ? cookieSpectrometers
-                  .split(',')
-                  .every(s => campaign.spectrometers.includes(s))
-                ? cookieSpectrometers.split(',')
-                : campaign.spectrometers
-            : campaign.spectrometers
-    );
+
+    function updateSelection() {
+        const cookieSpectrometers = Cookies.get(
+            `${campaign.identifier}-spectrometers`
+        ).split(',');
+        if (
+            cookieSpectrometers !== undefined &&
+            cookieSpectrometers.every(s => campaign.spectrometers.includes(s))
+        ) {
+            setSelectedSpectrometers(cookieSpectrometers);
+        } else {
+            setSelectedSpectrometers(campaign.spectrometers);
+        }
+
+        const cookieGas: any = Cookies.get(`${campaign.identifier}-gas`);
+        if (campaign.gases.includes(cookieGas)) {
+            setSelectedGas(cookieGas);
+        } else {
+            setSelectedGas(campaign.gases[0]);
+        }
+    }
+
+    useEffect(() => {
+        updateSelection();
+    }, [campaign.identifier, date]);
 
     return (
         <>
@@ -77,7 +90,7 @@ export default function Page(props: {
                             setSelectedSpectrometers(spectrometers);
                             Cookies.set(
                                 `${campaign.identifier}-spectrometers`,
-                                spectrometers
+                                spectrometers.join(',')
                             );
                         }}
                         selectedGas={selectedGas}

@@ -25,7 +25,7 @@ const constants: {
     ],
     PLOT: {
         width: 1000,
-        height: 350,
+        height: 400,
         paddingRight: 18,
         paddingTop: 10,
     },

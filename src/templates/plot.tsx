@@ -26,8 +26,8 @@ export default function Page(props: {
     constants.GASES.forEach(gas => {
         const computedDomain = monthlyDomain[gas][date.slice(0, 7)];
         if (computedDomain !== undefined) {
-            domains[gas].from = computedDomain.avg - 4.5 * computedDomain.std;
-            domains[gas].to = computedDomain.avg + 4.5 * computedDomain.std;
+            domains[gas].from = computedDomain.avg - 6 * computedDomain.std;
+            domains[gas].to = computedDomain.avg + 6 * computedDomain.std;
             domains[gas].step = computedDomain.std;
         }
     });

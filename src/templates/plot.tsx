@@ -53,12 +53,14 @@ export default function Page(props: {
     function updateSelection() {
         const cookieSpectrometers = Cookies.get(
             `${campaign.identifier}-spectrometers`
-        ).split(',');
+        );
         if (
             cookieSpectrometers !== undefined &&
-            cookieSpectrometers.every(s => campaign.spectrometers.includes(s))
+            cookieSpectrometers
+                .split(',')
+                .every(s => campaign.spectrometers.includes(s))
         ) {
-            setSelectedSpectrometers(cookieSpectrometers);
+            setSelectedSpectrometers(cookieSpectrometers.split(','));
         } else {
             setSelectedSpectrometers(campaign.spectrometers);
         }

@@ -32,8 +32,8 @@ const constants: {
 
     DOMAINS: {
         time: {
-            from: 5.5,
-            to: 17.5,
+            from: 4,
+            to: 18,
             step: 1,
         },
         co2: {

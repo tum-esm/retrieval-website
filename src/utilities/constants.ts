@@ -7,6 +7,7 @@ const constants: {
     DOMAINS: types.PlotDomain;
     UNITS: { [key in types.gas]: string };
     FLAGS: number[];
+    LOCATION_LABELS: { [key: string]: string };
 } = {
     GASES: ['co2', 'ch4', 'co'],
     MONTH_LABEL: [
@@ -59,6 +60,17 @@ const constants: {
         co: 'ppb',
     },
     FLAGS: [21, 8, 15, 33, 39, 37, 25, 24, 31],
+    LOCATION_LABELS: {
+        TUM_I: 'Center, TUM',
+        FEL: 'East, Feldkirchen',
+        GRAE: 'West, Gräfelfing',
+        OBE: 'North, Oberschleißheim',
+        TAU: 'South, Taufkirchen',
+        HAW: 'East, HAW Bergedorf',
+        GEO: 'Center, Geomatikum',
+        ROS: 'South, Rosengarten',
+        JOR: 'West, Schulzentrum Jork',
+    },
 };
 
 export default constants;

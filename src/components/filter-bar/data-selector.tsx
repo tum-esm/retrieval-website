@@ -20,7 +20,7 @@ export default function DataSelector(props: {
                         key={spectrometer}
                         type='button'
                         className={
-                            'relative min-w-[11rem] flex-row-left px-3 py-1.5 ' +
+                            'relative min-w-[11rem] w-full flex-row-left px-3 py-1.5 ' +
                             'font-weight-600 text-sm font-medium border-gray-300 ' +
                             (props.selectedSpectrometers.includes(spectrometer)
                                 ? 'text-gray-900 bg-white '
@@ -61,11 +61,16 @@ export default function DataSelector(props: {
                                     getSpectrometerColor(spectrometer),
                             }}
                         />
-                        <span className='mr-1 font-weight-600'>
+                        <span className='mr-1 font-mono font-weight-600'>
                             {spectrometer}
                         </span>
                         <span className='font-weight-400'>
-                            ({props.locations[i].replace('GRAE', 'GRÄ')})
+                            (
+                            {constants.LOCATION_LABELS[props.locations[i]] !==
+                            undefined
+                                ? constants.LOCATION_LABELS[props.locations[i]]
+                                : props.locations[i]}
+                            )
                         </span>
                     </button>
                 ))}

@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { join, last, concat, mean, round, uniq, chunk } = require('lodash');
+const { join, last, first, concat, mean, chunk } = require('lodash');
 const path = require('path');
 const math = require('mathjs');
 
@@ -17,6 +17,12 @@ namespace types {
         gases: string[];
     };
     export type accessToken = string;
+}
+
+function assert(condition: boolean, message: string) {
+    if (!condition) {
+        throw message;
+    }
 }
 
 function headers(accessToken?: types.accessToken) {
@@ -108,9 +114,10 @@ async function getCampaignDates(
 async function getAllCampaignSensorDays(
     accessToken: types.accessToken,
     campaign: types.campaign,
-    from: string,
-    to: string
+    from: any,
+    to: any
 ): Promise<any[]> {
+    assert(from <= to, `from ${from} has to be <= to (${to})`);
     const request = await backend.get(
         '/sensor-days?' +
             `filters[date][$gte]=${from}&` +
@@ -194,7 +201,7 @@ exports.sourceNodes = async ({
                 } dates`
             );
             const dateBatches: string[][] = chunk(
-                Object.keys(dateCounts),
+                Object.keys(dateCounts).sort(),
                 BATCH_SIZE
             );
             console.log({ id: campaign.identifier, dateBatches });
@@ -204,8 +211,8 @@ exports.sourceNodes = async ({
                     const batchSensorDays = await getAllCampaignSensorDays(
                         accessToken,
                         campaign,
-                        dateBatches[i][0],
-                        dateBatches[i][dateBatches[i].length - 1]
+                        first(dateBatches[i]),
+                        last(dateBatches[i])
                     );
                     console.log(
                         `retrieved data for ${campaign.identifier}.${i}`

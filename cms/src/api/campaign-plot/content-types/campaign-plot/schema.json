@@ -1,0 +1,59 @@
+{
+  "kind": "collectionType",
+  "collectionName": "campaign_plots",
+  "info": {
+    "singularName": "campaign-plot",
+    "pluralName": "campaign-plots",
+    "displayName": "Campaign Plot",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "identifier": {
+      "type": "uid",
+      "required": true,
+      "minLength": 1
+    },
+    "locations": {
+      "type": "string",
+      "required": true,
+      "default": "TUM_I FEL",
+      "unique": true
+    },
+    "spectrometers": {
+      "type": "string",
+      "required": true,
+      "default": "ma61 mb86 mc15 md6 me17"
+    },
+    "gases": {
+      "type": "string",
+      "required": true,
+      "default": "co2 ch4",
+      "unique": false
+    },
+    "public": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "listed": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "startDate": {
+      "type": "date",
+      "required": true
+    },
+    "endDate": {
+      "type": "date",
+      "required": true
+    },
+    "displayDate": {
+      "type": "date"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "retrieval-cms-v3",
+  "private": true,
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "build": "strapi build",
+    "strapi": "strapi"
+  },
+  "dependencies": {
+    "@strapi/plugin-i18n": "4.0.4",
+    "@strapi/plugin-users-permissions": "4.0.4",
+    "@strapi/strapi": "4.0.4",
+    "mysql": "^2.18.1",
+    "sharp": "^0.29.3",
+    "strapi-provider-email-postmark": "file:providers/strapi-provider-email-postmark"
+  },
+  "devDependencies": {},
+  "author": {
+    "name": "Moritz Makowski",
+    "email": "moritz@dostuffthatmatters.dev"
+  },
+  "strapi": {
+    "uuid": "e14f01bb-118e-42aa-b236-9fe70c36e6f1"
+  },
+  "engines": {
+    "node": ">=12.x.x <=16.x.x",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT"
+}

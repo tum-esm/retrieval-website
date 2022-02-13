@@ -1,0 +1,56 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sensor_days",
+  "info": {
+    "singularName": "sensor-day",
+    "pluralName": "sensor-days",
+    "displayName": "Sensor Day",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "spectrometer": {
+      "type": "string",
+      "required": true
+    },
+    "location": {
+      "type": "string",
+      "required": true
+    },
+    "filteredTimeseries": {
+      "type": "json",
+      "required": true
+    },
+    "filteredCount": {
+      "type": "integer",
+      "required": true,
+      "min": 0
+    },
+    "rawTimeseries": {
+      "type": "json"
+    },
+    "rawCount": {
+      "type": "integer",
+      "min": 0
+    },
+    "flagTimeseries": {
+      "type": "json"
+    },
+    "flagCount": {
+      "type": "integer",
+      "min": 0
+    },
+    "gas": {
+      "type": "string",
+      "required": true,
+      "minLength": 1
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "strapi-provider-email-postmark",
+  "version": "4.0.0",
+  "description": "Strapi Email service provider for Postmark",
+  "author": {
+    "email": "scott.agirs@gmail.com",
+    "name": "Scott Agirs Neminskis"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "main": "./lib",
+  "dependencies": {
+    "postmark": "^2.7.8",
+    "@strapi/utils": "4.0.0"
+  },
+  "strapi": {
+    "isProvider": true
+  },
+  "keywords": [
+    "strapi",
+    "provider",
+    "email",
+    "postmark"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ijsto/strapi-provider-email-postmark.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ijsto/strapi-provider-email-postmark/issues"
+  },
+  "engines": {
+    "node": ">=10.0.0",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT"
+}

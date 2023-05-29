@@ -5,14 +5,6 @@ import tum_esm_utils
 import src
 
 PROFFAST_VERSION = "2.2"
-LOCATION_ID = "TUM_I"
-SERIAL_NUMBERS = {
-    "ma": "061",
-    "mb": "086",
-    "mc": "115",
-    "md": "116",
-    "me": "117",
-}
 
 # TODO: add caching (only consider dates where raw output
 # file has changed -> do a checksum of each file and store
@@ -20,10 +12,19 @@ SERIAL_NUMBERS = {
 
 
 class SensorDataLoader:
-    def __init__(self, sensor_id: str) -> None:
+    def __init__(
+        self,
+        sensor_id: str,
+        location_data: tum_esm_em27_metadata.EM27MetadataInterface,
+    ) -> None:
         self.config = src.config.Config.load()
         self.sensor_id = sensor_id
         self.data_dir = f"{self.config.data.src_dir}/{self.sensor_id}/proffast-{PROFFAST_VERSION}-outputs/successful"
+
+        self.location_data = location_data
+        self.serial_number = next(
+            filter(lambda s: s.sensor_id == self.sensor_id, location_data.sensors)
+        ).serial_number
 
     def get_dates(self) -> list[str]:
         if not os.path.isdir(self.data_dir):
@@ -36,27 +37,23 @@ class SensorDataLoader:
 
     def get_output_file_path(self, date: str) -> str:
         return (
-            f"comb_invparms_ma_SN{SERIAL_NUMBERS[self.sensor_id]}"
+            f"comb_invparms_ma_SN{str(self.serial_number).zfill(3)}"
             + f"_{date[2:]}-{date[2:]}.csv"
         )
 
-    def get_date_records(
-        self,
-        date: str,
-        location_data: tum_esm_em27_metadata.EM27MetadataInterface,
-    ) -> list[dict[Any, Any]]:
+    def get_date_records(self, date: str) -> list[dict[Any, Any]]:
         df = tum_esm_utils.files.load_raw_proffast_output(
             self.get_output_file_path(date)
         )
 
         records: list[dict[Any, Any]] = []
-        metadata = location_data.get(self.sensor_id, date)
+        location_id = self.location_data.get(self.sensor_id, date).location.location_id
 
         for row in df.iter_rows():
             records.append(
                 {
                     "proffast_version": PROFFAST_VERSION,
-                    "location_id": metadata.location.location_id,
+                    "location_id": location_id,
                     "sensor_id": self.sensor_id,
                     "raw": True,
                     "utc": row[0].isoformat(),

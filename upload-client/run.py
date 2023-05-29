@@ -13,13 +13,14 @@ for sensor_id in config.data.sensors_to_consider:
     sensor_data_loader = src.data.SensorDataLoader(sensor_id, location_data)
     pocketbase = src.pocketbase.PocketBase()
 
-    # in the future this will only return dates that have not
-    # been uploaded yet or changed since the last upload
-    dates = sensor_data_loader.get_dates()
+    # only returns dates that have not been uploaded yet
+    # prints out the number of new and cached dates
+    new_dates = sensor_data_loader.get_new_dates()
 
     with rich.progress.Progress(console=console, auto_refresh=False) as progress:
-        task = progress.add_task("uploading", total=len(dates))
-        for date in dates:
+        task = progress.add_task("Uploading", total=len(new_dates))
+        for date in new_dates:
             records = sensor_data_loader.get_date_records(date)
             pocketbase.upload_records(sensor_id, date, records)
             progress.update(task, advance=1, refresh=True)
+            sensor_data_loader.add_date_to_cache_list(date)

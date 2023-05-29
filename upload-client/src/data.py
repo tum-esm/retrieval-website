@@ -1,5 +1,6 @@
 import os
 from typing import Any
+import tum_esm_em27_metadata
 import tum_esm_utils
 import src
 
@@ -12,7 +13,6 @@ SERIAL_NUMBERS = {
     "md": "116",
     "me": "117",
 }
-
 
 # TODO: add caching (only consider dates where raw output
 # file has changed -> do a checksum of each file and store
@@ -40,18 +40,23 @@ class SensorDataLoader:
             + f"_{date[2:]}-{date[2:]}.csv"
         )
 
-    def get_date_records(self, date: str) -> list[dict[Any, Any]]:
+    def get_date_records(
+        self,
+        date: str,
+        location_data: tum_esm_em27_metadata.EM27MetadataInterface,
+    ) -> list[dict[Any, Any]]:
         df = tum_esm_utils.files.load_raw_proffast_output(
             self.get_output_file_path(date)
         )
 
         records: list[dict[Any, Any]] = []
+        metadata = location_data.get(self.sensor_id, date)
 
         for row in df.iter_rows():
             records.append(
                 {
                     "proffast_version": PROFFAST_VERSION,
-                    "location_id": LOCATION_ID,
+                    "location_id": metadata.location.location_id,
                     "sensor_id": self.sensor_id,
                     "raw": True,
                     "utc": row[0].isoformat(),
@@ -68,7 +73,6 @@ class SensorDataLoader:
                 }
             )
 
-        # TODO: fetch real location id from em27 location data
         # TODO: postprocess raw dataframe and add records to list
 
         return records

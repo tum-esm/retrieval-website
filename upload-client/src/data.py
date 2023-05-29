@@ -1,9 +1,9 @@
 import os
 from typing import Any
 import tum_esm_utils
+import src
 
 PROFFAST_VERSION = "2.2"
-SENSOR_IDS = ["ma"]
 LOCATION_ID = "TUM_I"
 SERIAL_NUMBERS = {
     "ma": "061",
@@ -12,7 +12,6 @@ SERIAL_NUMBERS = {
     "md": "116",
     "me": "117",
 }
-BASE_DIR = f"/mnt/dss-0002/proffast-archive"
 
 
 # TODO: add caching (only consider dates where raw output
@@ -22,8 +21,9 @@ BASE_DIR = f"/mnt/dss-0002/proffast-archive"
 
 class SensorDataLoader:
     def __init__(self, sensor_id: str) -> None:
+        self.config = src.config.Config.load()
         self.sensor_id = sensor_id
-        self.data_dir = f"{BASE_DIR}/{self.sensor_id}/proffast-{PROFFAST_VERSION}-outputs/successful"
+        self.data_dir = f"{self.config.data.src_dir}/{self.sensor_id}/proffast-{PROFFAST_VERSION}-outputs/successful"
 
     def get_dates(self) -> list[str]:
         if not os.path.isdir(self.data_dir):

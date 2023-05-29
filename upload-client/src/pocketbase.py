@@ -1,12 +1,7 @@
 from typing import Any
 import requests
-import polars as pl
 import multiprocessing
 import src
-
-THREAD_COUNT = 32
-MAX_REQUESTS_PER_SECONDS = 45
-MIN_SECONDS_PER_REQUEST = 1 / MAX_REQUESTS_PER_SECONDS
 
 
 class PocketBase:
@@ -14,6 +9,11 @@ class PocketBase:
         self.config = src.config.Config.load()
         self.headers = {"Authorization": f"Bearer {self.login()}"}
         self.endpoint = self.config.cms.url + "/api/collections/measurements/records"
+
+        self.thread_count = self.config.networking.thread_count
+        self.min_seconds_per_request = (
+            1 / self.config.networking.max_requests_per_seconds
+        )
 
     def login(self) -> str:
         r = requests.post(
@@ -33,8 +33,8 @@ class PocketBase:
 
         return token
 
-    def get_day_record_ids(self, sensor_id: str, date: str) -> list[str]:
-        with src.utils.ensure_min_section_duration(MIN_SECONDS_PER_REQUEST):
+    def __get_existing_record_ids(self, sensor_id: str, date: str) -> list[str]:
+        with src.utils.ensure_min_section_duration(self.min_seconds_per_request):
             # only supports up to 500 items per page
             filter_query = (
                 f"filter=("
@@ -52,7 +52,7 @@ class PocketBase:
             page_count: int = r.json()["totalPages"]
 
         for i in range(1, page_count):
-            with src.utils.ensure_min_section_duration(MIN_SECONDS_PER_REQUEST):
+            with src.utils.ensure_min_section_duration(self.min_seconds_per_request):
                 r = requests.get(
                     f"{self.endpoint}?{filter_query}&page={i+1}",
                     headers=self.headers,
@@ -62,9 +62,9 @@ class PocketBase:
 
         return item_ids
 
-    def create_record(self, new_record: dict[Any, Any]) -> None:
+    def __create_record(self, new_record: dict[Any, Any]) -> None:
         with src.utils.ensure_min_section_duration(
-            MIN_SECONDS_PER_REQUEST * THREAD_COUNT
+            self.min_seconds_per_request * self.thread_count
         ):
             response = requests.post(
                 self.endpoint,
@@ -75,9 +75,9 @@ class PocketBase:
                 response.status_code == 200
             ), f"Failed to create record: {response.text}, {new_record}"
 
-    def delete_record(self, record_id: str) -> None:
+    def __delete_record(self, record_id: str) -> None:
         with src.utils.ensure_min_section_duration(
-            MIN_SECONDS_PER_REQUEST * THREAD_COUNT
+            self.min_seconds_per_request * self.thread_count
         ):
             response = requests.delete(
                 f"{self.endpoint}/{record_id}",
@@ -87,23 +87,23 @@ class PocketBase:
                 response.status_code == 204
             ), f"Failed to delete record: {response.text}, {record_id}"
 
-    def upload_dataframe(self, sensor_id: str, date: str, df: pl.DataFrame) -> None:
-        thread_pool = multiprocessing.Pool(THREAD_COUNT)
+    def upload_records(
+        self, sensor_id: str, date: str, records: list[dict[Any, Any]]
+    ) -> None:
+        thread_pool = multiprocessing.Pool(self.thread_count)
 
         try:
             while True:
-                existing_record_ids = self.get_day_record_ids(sensor_id, date)
+                existing_record_ids = self.__get_existing_record_ids(sensor_id, date)
                 if len(existing_record_ids) == 0:
                     print("    done deleting existing records left")
                     break
 
                 print(f"    deleting {len(existing_record_ids)} existing records")
-                thread_pool.map(self.delete_record, existing_record_ids)
+                thread_pool.map(self.__delete_record, existing_record_ids)
 
-            print(f"    uploading {len(df)} new records")
-            thread_pool.starmap(
-                self.create_record, [(sensor_id, row) for row in df.iter_rows()]
-            )
+            print(f"    uploading {len(records)} new records")
+            thread_pool.map(self.__create_record, records)
 
             print("    done uploading new records")
             thread_pool.close()

@@ -25,6 +25,7 @@ class Config(pydantic.BaseModel):
         thread_count: int
         max_requests_per_seconds: float
 
+    @staticmethod
     def load() -> Config:
         with open(os.path.join(_PROJECT_DIR, "config.json"), "r") as f:
             return Config(**json.load(f))

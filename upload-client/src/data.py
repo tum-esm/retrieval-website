@@ -34,7 +34,7 @@ class SensorDataLoader:
             if os.path.isfile(self.get_output_file_path(date))
         ]
 
-    def get_output_file_path(self, date: str) -> None:
+    def get_output_file_path(self, date: str) -> str:
         return (
             f"comb_invparms_ma_SN{SERIAL_NUMBERS[self.sensor_id]}"
             + f"_{date[2:]}-{date[2:]}.csv"

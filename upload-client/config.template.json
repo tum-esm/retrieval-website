@@ -1,7 +1,15 @@
 {
+    "data": {
+        "sensors_to_consider": ["ma"],
+        "src_dir": "path-to-proffast-archive"
+    },
     "cms": {
         "url": "https://cms.example.com",
         "identifier": "some_username",
         "password": "some_password"
+    },
+    "networking": {
+        "thread_count": 32,
+        "max_requests_per_seconds": 45
     }
 }

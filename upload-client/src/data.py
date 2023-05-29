@@ -82,8 +82,10 @@ class SensorDataLoader:
                 cached_dates.append(date)
 
         console.print(
-            f"Found {len(new_dates)} new and {len(cached_dates)} cached date(s)",
-            style="bright_white",
+            f"  Found [blue]{len(new_dates)}[/blue] new and "
+            + f"[blue]{len(cached_dates)}[/blue] cached date(s)",
+            style="bold bright_white",
+            highlight=False,
         )
         """
         console.print(

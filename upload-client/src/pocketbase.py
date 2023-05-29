@@ -2,6 +2,7 @@ from typing import Any
 import requests
 import multiprocessing
 import src
+import rich.console
 
 
 class PocketBase:
@@ -33,7 +34,7 @@ class PocketBase:
 
         return token
 
-    def __get_existing_record_ids(self, sensor_id: str, date: str) -> list[str]:
+    def get_existing_record_ids(self, sensor_id: str, date: str) -> list[str]:
         with src.utils.ensure_min_section_duration(self.min_seconds_per_request):
             # only supports up to 500 items per page
             filter_query = (
@@ -62,7 +63,7 @@ class PocketBase:
 
         return item_ids
 
-    def __create_record(self, new_record: dict[Any, Any]) -> None:
+    def create_record(self, new_record: dict[Any, Any]) -> None:
         with src.utils.ensure_min_section_duration(
             self.min_seconds_per_request * self.thread_count
         ):
@@ -75,7 +76,7 @@ class PocketBase:
                 response.status_code == 200
             ), f"Failed to create record: {response.text}, {new_record}"
 
-    def __delete_record(self, record_id: str) -> None:
+    def delete_record(self, record_id: str) -> None:
         with src.utils.ensure_min_section_duration(
             self.min_seconds_per_request * self.thread_count
         ):
@@ -88,24 +89,30 @@ class PocketBase:
             ), f"Failed to delete record: {response.text}, {record_id}"
 
     def upload_records(
-        self, sensor_id: str, date: str, records: list[dict[Any, Any]]
+        self,
+        sensor_id: str,
+        date: str,
+        records: list[dict[Any, Any]],
+        console: rich.console.Console,
     ) -> None:
         thread_pool = multiprocessing.Pool(self.thread_count)
 
         try:
-            while True:
-                existing_record_ids = self.__get_existing_record_ids(sensor_id, date)
-                if len(existing_record_ids) == 0:
-                    print("    done deleting existing records left")
-                    break
+            existing_record_ids = self.get_existing_record_ids(sensor_id, date)
+            console.print(
+                f"    deleting {len(existing_record_ids)} existing records",
+                style="grey78",
+                highlight=False,
+            )
+            thread_pool.map(self.delete_record, existing_record_ids)
 
-                print(f"    deleting {len(existing_record_ids)} existing records")
-                thread_pool.map(self.__delete_record, existing_record_ids)
+            console.print(
+                f"    uploading {len(records)} new records",
+                style="grey78",
+                highlight=False,
+            )
+            thread_pool.map(self.create_record, records)
 
-            print(f"    uploading {len(records)} new records")
-            thread_pool.map(self.__create_record, records)
-
-            print("    done uploading new records")
             thread_pool.close()
         except KeyboardInterrupt:
             thread_pool.terminate()

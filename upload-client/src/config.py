@@ -8,9 +8,14 @@ _PROJECT_DIR = tum_esm_utils.files.get_parent_dir_path(__file__, current_depth=2
 
 
 class Config(pydantic.BaseModel):
+    location_data: Config.LocationDataConfig
     data: Config.DataConfig
     cms: Config.CMSConfig
     networking: Config.NetworkingConfig
+
+    class LocationDataConfig(pydantic.BaseModel):
+        github_repository: str
+        access_token: str
 
     class DataConfig(pydantic.BaseModel):
         sensors_to_consider: list[str]

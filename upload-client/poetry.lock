@@ -576,6 +576,22 @@ files = [
 ]
 
 [[package]]
+name = "tum-esm-em27-metadata"
+version = "2.0.0rc3"
+description = "Single source of truth for ESM's EM27 measurement logistics"
+category = "main"
+optional = false
+python-versions = ">=3.9,<4.0"
+files = [
+    {file = "tum_esm_em27_metadata-2.0.0rc3-py3-none-any.whl", hash = "sha256:9d1772ccd547c50aa5b8fd4a4bd30b3ebb817ff275494a84f5cff64278b5bac7"},
+    {file = "tum_esm_em27_metadata-2.0.0rc3.tar.gz", hash = "sha256:7a14b301989ae8fa16ce5013a7caafb3d2656b858d17c9547cd7deb63c59ba86"},
+]
+
+[package.dependencies]
+pydantic = ">=1.10.7,<2.0.0"
+tum-esm-utils = ">=1.4.0,<2.0.0"
+
+[[package]]
 name = "tum-esm-utils"
 version = "1.5.2"
 description = "Python utilities by the Professorship of Environmental Sensing and Modeling at the Technical University of Munich"
@@ -654,4 +670,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "3.11.*"
-content-hash = "bf988a12e1667cf82e94f95dccf3c270420ff987400f39ba1d5a459847d87a05"
+content-hash = "36c526640a6e93693f9518b9a5123bf3002c8378bbb0aac75f00f33a74541174"

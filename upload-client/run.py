@@ -1,12 +1,15 @@
 import src
 import rich.console
 import rich.progress
+import tum_esm_em27_metadata
 
 console = rich.console.Console()
 config = src.config.Config.load()
+location_data = tum_esm_em27_metadata.load_from_github(**config.location_data.dict())
 
 for sensor_id in config.data.sensors_to_consider:
     console.print(f"Processing data from sensor {sensor_id}", style="bold blue")
+
     sensor_data_loader = src.data.SensorDataLoader(sensor_id)
     pocketbase = src.pocketbase.PocketBase()
 

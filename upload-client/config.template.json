@@ -1,4 +1,8 @@
 {
+    "location_data": {
+        "github_repository": "tum-esm/em27-metadata-storage",
+        "access_token": "..."
+    },
     "data": {
         "sensors_to_consider": ["ma"],
         "src_dir": "path-to-proffast-archive"

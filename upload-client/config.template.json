@@ -1,0 +1,7 @@
+{
+    "cms": {
+        "url": "https://cms.example.com",
+        "identifier": "some_username",
+        "password": "some_password"
+    }
+}

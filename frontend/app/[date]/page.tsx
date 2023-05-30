@@ -1,27 +1,8 @@
-import { HeatmapItemType, heatmapItemSchema } from '@/app/lib/custom-types';
-import PocketBase from 'pocketbase';
+import { fetchDataHeatmap } from '@/app/lib/fetch-data-heatmap';
 
 export async function generateStaticParams() {
-    const pb = new PocketBase('https://esm-linode.dostuffthatmatters.dev');
-    await pb
-        .collection('users')
-        .authWithPassword(
-            process.env.NEXT_PUBLIC_POCKETBASE_IDENTITY || '',
-            process.env.NEXT_PUBLIC_POCKETBASE_PASSWORD || ''
-        );
-    if (!pb.authStore.isValid) {
-        throw new Error('Invalid auth data');
-    }
-
-    const results = await pb.collection('data_heatmap').getFullList({
-        sort: 'utc',
-    });
-    const parsedResults: HeatmapItemType[] = results.map(item =>
-        heatmapItemSchema.parse(item)
-    );
-    console.log(parsedResults);
-
-    return parsedResults.map(item => ({
+    const dataHeatmap = await fetchDataHeatmap();
+    return dataHeatmap.map(item => ({
         date: item.utc.substring(0, 10),
     }));
 }

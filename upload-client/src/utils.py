@@ -50,6 +50,8 @@ def post_process_dataframe(df: pl.DataFrame) -> pl.DataFrame:
     # influence the smoothed value of the current data point
     # even if that point is the next point.
 
+    df = df.sort("utc")
+
     lower_utc_bound: pl.Datetime = (
         df.select(pl.min("utc") - pl.duration(seconds=1)).to_series().to_list()[0]
     )
@@ -114,6 +116,7 @@ def post_process_dataframe(df: pl.DataFrame) -> pl.DataFrame:
             .otherwise(pl.exclude(["small_gap"]))
         )
         .select(pl.exclude("small_gap"))
+        .set_sorted("utc")
         .groupby_dynamic("utc", every=SAMPLING_RATE)
         .agg(pl.exclude("utc").mean())
     )

@@ -110,34 +110,59 @@ class SensorDataLoader:
         )
 
     def get_date_records(self, date: str) -> list[dict[Any, Any]]:
+        records: list[dict[Any, Any]] = []
+        location_id = self.location_data.get(self.sensor_id, date).location.location_id
+        data_columns = [
+            "gnd_p",
+            "gnd_t",
+            "app_sza",
+            "azimuth",
+            "xh2o",
+            "xair",
+            "xco2",
+            "xch4",
+            "xco",
+            "xch4_s5p",
+        ]
+
         df = tum_esm_utils.files.load_raw_proffast_output(
             self.get_output_file_path(date)
         )
-        records: list[dict[Any, Any]] = []
-        location_id = self.location_data.get(self.sensor_id, date).location.location_id
+        postprocessed_df = src.utils.post_process_dataframe(df)
+        assert df.columns == ["utc", *data_columns]
+        assert postprocessed_df.columns == ["utc", *data_columns]
+
+        common_data = {
+            "proffast_version": PROFFAST_VERSION,
+            "location_id": location_id,
+            "sensor_id": self.sensor_id,
+        }
 
         for row in df.iter_rows():
             records.append(
                 {
-                    "proffast_version": PROFFAST_VERSION,
-                    "location_id": location_id,
-                    "sensor_id": self.sensor_id,
+                    **common_data,
                     "raw": True,
                     "utc": row[0].isoformat(),
-                    "gnd_p": round(row[1], 6),
-                    "gnd_t": round(row[2], 6),
-                    "app_sza": round(row[3], 6),
-                    "azimuth": round(row[4], 6),
-                    "xh2o": round(row[5], 6),
-                    "xair": round(row[6], 6),
-                    "xco2": round(row[7], 6),
-                    "xch4": round(row[8], 6),
-                    "xco": round(row[9], 6),
-                    "xch4_s5p": round(row[10], 6),
+                    **{
+                        data_columns[i]: round(row[i + 1], 6)
+                        for i in range(len(data_columns))
+                    },
                 }
             )
 
-        # TODO: postprocess raw dataframe and add records to list
+        for row in postprocessed_df.iter_rows():
+            records.append(
+                {
+                    **common_data,
+                    "raw": False,
+                    "utc": row[0].isoformat(),
+                    **{
+                        data_columns[i]: round(row[i + 1], 6)
+                        for i in range(len(data_columns))
+                    },
+                }
+            )
 
         return records
 

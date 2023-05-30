@@ -26,7 +26,7 @@ for sensor_id in config.data.sensors_to_consider:
                 style="bold bright_white",
                 highlight=False,
             )
-            records = sensor_data_loader.get_date_records(date)
+            records = sensor_data_loader.get_date_records(date, console)
             pocketbase.upload_records(sensor_id, date, records, console)
             progress.update(task, advance=1, refresh=True)
             sensor_data_loader.add_date_to_cache_list(date)

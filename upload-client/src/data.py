@@ -109,7 +109,9 @@ class SensorDataLoader:
             + f"_{date[2:]}-{date[2:]}.csv"
         )
 
-    def get_date_records(self, date: str) -> list[dict[Any, Any]]:
+    def get_date_records(
+        self, date: str, console: rich.console.Console
+    ) -> list[dict[Any, Any]]:
         records: list[dict[Any, Any]] = []
         location_id = self.location_data.get(self.sensor_id, date).location.location_id
         data_columns = [
@@ -131,6 +133,17 @@ class SensorDataLoader:
         postprocessed_df = src.utils.post_process_dataframe(df)
         assert df.columns == ["utc", *data_columns]
         assert postprocessed_df.columns == ["utc", *data_columns]
+
+        console.print(
+            f"    raw dataframe has [blue]{len(df)}[/blue] rows",
+            highlight=False,
+            style="grey78",
+        )
+        console.print(
+            f"    postprocessed dataframe has [blue]{len(postprocessed_df)}[/blue] rows",
+            highlight=False,
+            style="grey78",
+        )
 
         common_data = {
             "proffast_version": PROFFAST_VERSION,

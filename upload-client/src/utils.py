@@ -6,8 +6,8 @@ from typing import Generator
 from scipy.signal import savgol_filter
 
 
-SAMPLING_RATE = "1m"
-MAX_INTERPOLATION_GAP_SECONDS = 180  # 3 minutes
+SAMPLING_RATE = "2m"
+MAX_INTERPOLATION_GAP_SECONDS = 300  # 5 minutes
 
 
 @contextmanager

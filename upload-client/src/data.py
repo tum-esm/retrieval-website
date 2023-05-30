@@ -87,32 +87,18 @@ class SensorDataLoader:
             style="bold bright_white",
             highlight=False,
         )
-        """
-        console.print(
-            f"  new dates: {new_dates}",
-            style="grey78",
-            no_wrap=False,
-            highlight=False,
-        )
-        console.print(
-            f"  cached dates: {cached_dates}",
-            style="grey78",
-            no_wrap=False,
-            highlight=False,
-        )"""
         return new_dates
 
     def get_output_file_path(self, date: str) -> str:
         return (
-            f"{self.data_dir}/{date}/comb_invparms_ma_SN"
+            f"{self.data_dir}/{date}/comb_invparms_{self.sensor_id}_SN"
             + f"{str(self.serial_number).zfill(3)}"
             + f"_{date[2:]}-{date[2:]}.csv"
         )
 
-    def get_date_records(
+    def get_date_record(
         self, date: str, console: rich.console.Console
-    ) -> list[dict[Any, Any]]:
-        records: list[dict[Any, Any]] = []
+    ) -> dict[Any, Any]:
         location_id = self.location_data.get(self.sensor_id, date).location.location_id
         data_columns = [
             "gnd_p",
@@ -145,44 +131,56 @@ class SensorDataLoader:
             style="grey78",
         )
 
-        common_data = {
-            "proffast_version": PROFFAST_VERSION,
-            "location_id": location_id,
-            "sensor_id": self.sensor_id,
-        }
+        raw_measurements: list[dict[str, Any]] = []
+        postprocessed_measurements: list[dict[str, Any]] = []
 
-        def nullify(x: Any) -> Any:
+        def to_clean_float(x: Any) -> Any:
             if x in [np.nan, np.inf, -np.inf]:
                 return None
-            return x
+            return round(x, 6)
 
         for row in df.iter_rows():
-            records.append(
+            raw_measurements.append(
                 {
-                    **common_data,
-                    "raw": True,
-                    "utc": row[0].isoformat(),
-                    **{
-                        data_columns[i]: nullify(round(row[i + 1], 6))
-                        for i in range(len(data_columns))
-                    },
+                    k: to_clean_float(v)
+                    for k, v in {
+                        "utc_hour": row[0].hour
+                        + (row[0].minute / 60)
+                        + (row[0].second / 3600),
+                        **{
+                            data_columns[i]: row[i + 1]
+                            for i in range(len(data_columns))
+                        },
+                    }.items()
                 }
             )
 
         for row in postprocessed_df.iter_rows():
-            records.append(
+            postprocessed_measurements.append(
                 {
-                    **common_data,
-                    "raw": False,
-                    "utc": row[0].isoformat(),
-                    **{
-                        data_columns[i]: nullify(round(row[i + 1], 6))
-                        for i in range(len(data_columns))
-                    },
+                    k: to_clean_float(v)
+                    for k, v in {
+                        "utc_hour": row[0].hour
+                        + (row[0].minute / 60)
+                        + (row[0].second / 3600),
+                        **{
+                            data_columns[i]: row[i + 1]
+                            for i in range(len(data_columns))
+                        },
+                    }.items()
                 }
             )
 
-        return records
+        return {
+            "proffast_version": PROFFAST_VERSION,
+            "sensor_id": self.sensor_id,
+            "location_id": location_id,
+            "utc_date": f"{date[:4]}-{date[4:6]}-{date[6:]}",
+            "raw_measurement_count": len(df),
+            "postprocessed_measurement_count": len(postprocessed_df),
+            "raw_measurements": json.dumps(raw_measurements),
+            "postprocessed_measurements": json.dumps(postprocessed_measurements),
+        }
 
     def add_date_to_cache_list(self, date: str) -> None:
         csv_path = self.get_output_file_path(date)

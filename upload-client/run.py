@@ -21,7 +21,9 @@ with open(
     )
 
     for sensor_id in config.data.sensors_to_consider:
-        console.print(f"Processing data from sensor {sensor_id}", style="bold blue")
+        console.print(
+            f"Processing data from sensor {sensor_id}", style="bold deep_pink3"
+        )
 
         sensor_data_loader = src.data.SensorDataLoader(sensor_id, location_data)
         pocketbase = src.pocketbase.PocketBase()
@@ -34,13 +36,14 @@ with open(
             task = progress.add_task(
                 f"Uploading data of {sensor_id}", total=len(new_dates)
             )
-            for date in new_dates:
+            date_count = len(new_dates)
+            for i, date in enumerate(new_dates):
                 console.print(
-                    f"  Uploading [blue]{date}[/blue] ({datetime.utcnow().isoformat(timespec='seconds')} UTC)",
+                    f"  Uploading [blue]{sensor_id}/{date}[/blue] ({datetime.utcnow().isoformat(timespec='seconds')} UTC) {i+1}/{date_count}",
                     style="bold bright_white",
                     highlight=False,
                 )
-                records = sensor_data_loader.get_date_records(date, console)
-                pocketbase.upload_records(sensor_id, date, records, console)
+                record = sensor_data_loader.get_date_record(date, console)
+                pocketbase.upload_record(sensor_id, date, record, console)
                 progress.update(task, advance=1, refresh=True)
                 sensor_data_loader.add_date_to_cache_list(date)

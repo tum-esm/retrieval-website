@@ -176,7 +176,7 @@ class SensorDataLoader:
                     "raw": False,
                     "utc": row[0].isoformat(),
                     **{
-                        data_columns[i]: round(row[i + 1], 6)
+                        data_columns[i]: nullify(round(row[i + 1], 6))
                         for i in range(len(data_columns))
                     },
                 }

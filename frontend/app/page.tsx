@@ -11,7 +11,7 @@ export default async function Page() {
         };
     } = {};
     dataHeatmap.forEach(d => {
-        const date = new Date(d.utc.substring(0, 10));
+        const date = new Date(d.utc_date);
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
         if (!calendarData[year]) {
@@ -29,13 +29,16 @@ export default async function Page() {
         <main className='flex flex-col items-center w-screen min-h-screen p-12 gap-y-4'>
             <h1 className='text-3xl font-medium'>TUM ESM Retrieval Website</h1>
             <h2 className='text-2xl font-medium'>Proffast 2.2 Data</h2>
-            {Object.keys(calendarData).map((year, index) => (
-                <div className='w-full max-w-6xl'>
+            {Object.keys(calendarData).map(year => (
+                <div className='w-full max-w-6xl' key={year}>
                     <h3 className='pb-2 text-xl font-semibold'>{year}</h3>
                     <div className='grid grid-cols-4 gap-x-6 gap-y-6'>
                         {Object.keys(calendarData[parseInt(year)]).map(
                             month => (
-                                <div className='flex flex-col w-full'>
+                                <div
+                                    className='flex flex-col w-full'
+                                    key={month}
+                                >
                                     <h4
                                         className={
                                             'w-full pb-1 text-base font-medium text-left ' +
@@ -55,7 +58,6 @@ export default async function Page() {
                                             year: parseInt(year),
                                             month: parseInt(month),
                                         }}
-                                        key={month}
                                         data={
                                             calendarData[parseInt(year)][
                                                 parseInt(month)

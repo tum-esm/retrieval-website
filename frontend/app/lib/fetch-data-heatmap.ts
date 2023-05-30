@@ -12,8 +12,6 @@ export async function fetchDataHeatmap(): Promise<HeatmapItemType[]> {
     if (!pb.authStore.isValid) {
         throw new Error('Invalid auth data');
     }
-    const results = await pb.collection('data_heatmap').getFullList({
-        sort: 'utc',
-    });
+    const results = await pb.collection('data_heatmap').getFullList();
     return results.map(item => heatmapItemSchema.parse(item));
 }

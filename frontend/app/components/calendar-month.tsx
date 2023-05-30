@@ -16,7 +16,7 @@ export default function CalendarMonth(props: {
         year: number;
     };
     data: {
-        utc: string;
+        utc_date: string;
         total: number;
     }[];
 }) {
@@ -24,7 +24,7 @@ export default function CalendarMonth(props: {
     const daysInMonth = getDaysInMonth(props.identifier);
     const dailyMeasurementCounts: { [key: number]: number } = {};
     props.data.forEach(d => {
-        const day = new Date(d.utc.substring(0, 10)).getDate();
+        const day = new Date(d.utc_date).getDate();
         dailyMeasurementCounts[day] = d.total;
     });
     const weekCount = Math.ceil((firstWeekday + daysInMonth) / 7);
@@ -52,6 +52,7 @@ export default function CalendarMonth(props: {
                             'flex items-center justify-center ' +
                             'text-xs font-medium text-gray-300'
                         }
+                        key={day}
                     >
                         {day}
                     </div>
@@ -62,7 +63,12 @@ export default function CalendarMonth(props: {
                     {range(0, 7).map(dayIndex => {
                         const day = weekIndex * 7 + dayIndex + 1 - firstWeekday;
                         if (day < 1 || day > daysInMonth) {
-                            return <div className='w-[calc((1/7)*100%)] h-5' />;
+                            return (
+                                <div
+                                    key={day}
+                                    className='w-[calc((1/7)*100%)] h-5'
+                                />
+                            );
                         }
                         return (
                             <Link

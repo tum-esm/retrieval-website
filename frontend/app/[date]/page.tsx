@@ -4,9 +4,7 @@ import Link from 'next/link';
 
 export async function generateStaticParams() {
     const dataHeatmap = await fetchDataHeatmap();
-    return dataHeatmap.map(item => ({
-        date: item.utc.substring(0, 10),
-    }));
+    return dataHeatmap.map(item => ({ date: item.utc_date }));
 }
 
 export default async function Page({ params }: { params: { date: string } }) {
@@ -38,8 +36,6 @@ export default async function Page({ params }: { params: { date: string } }) {
         md: sensorLocations.md === undefined ? 'bg-slate-300' : 'bg-amber-500',
         me: sensorLocations.me === undefined ? 'bg-slate-300' : 'bg-green-500',
     };
-
-    console.log(sensorLocations);
 
     const plottedProperties = [
         {
@@ -74,26 +70,28 @@ export default async function Page({ params }: { params: { date: string } }) {
             <main className='w-screen min-h-screen'>
                 <div
                     className={
-                        'fixed top-0 left-0 w-[24rem] h-screen bg-slate-100 p-6 space-y-2 ' +
+                        'fixed top-0 left-0 w-[16rem] h-screen bg-slate-100 p-4 space-y-2 ' +
                         'z-0 border-r border-slate-300'
                     }
                 >
                     <h1 className='w-full text-lg text-center'>
-                        Proffast 2.2 Outputs |{' '}
+                        Proffast 2.2 Outputs
+                        <br />
                         <span className='font-semibold'>{params.date}</span>
                     </h1>
-                    <h2 className='pt-8 font-medium'>TUM ESM Sensors:</h2>
-                    <div className='flex-col space-y-1 overflow-hidden'>
+                    <h2 className='pt-6 font-medium'>TUM ESM Sensors:</h2>
+                    <div className='flex-col space-y-1.5 overflow-hidden'>
                         {Object.entries(sensorLocations).map(
                             ([sensorId, locationId]) => (
                                 <div
                                     className={
-                                        'flex flex-row items-center px-3 py-1 rounded ' +
-                                        'border text-sm ' +
+                                        'flex flex-row items-center px-2 rounded ' +
+                                        ' text-sm ' +
                                         (locationId === undefined
-                                            ? 'cursor-not-allowed bg-slate-50 border-slate-200 '
-                                            : 'bg-white hover:bg-slate-50 cursor-pointer border-slate-300')
+                                            ? 'cursor-not-allowed border-slate-200 '
+                                            : 'border-slate-300')
                                     }
+                                    key={sensorId}
                                 >
                                     <div
                                         className={
@@ -126,45 +124,46 @@ export default async function Page({ params }: { params: { date: string } }) {
                             )
                         )}
                     </div>
-                    <h2 className='pt-8 font-medium'>Plotted Properties:</h2>
+                    <h2 className='pt-6 font-medium'>Plotted Properties:</h2>
                     <div className='flex-col space-y-1 overflow-hidden'>
                         {plottedProperties.map(property => (
                             <Link
                                 className={
-                                    'underline text-sm font-medium text-slate-500 block'
+                                    'px-2 underline text-sm font-medium text-slate-500 block'
                                 }
                                 href={`/${params.date}#${property.name}`}
+                                key={property.name}
                             >
                                 {property.displayName} [{property.unit}]
                             </Link>
                         ))}
                     </div>
                 </div>
-                <div className='relative left-[24rem] p-6 z-20 overflow-y-visible w-[calc(100vw-24rem)] min-h-screen'>
-                    <h1 className='my-2 text-2xl font-semibold' id='xco2'>
+                <div className='relative left-[16rem] p-6 z-20 overflow-y-visible w-[calc(100vw-16rem)] min-h-screen'>
+                    <h1 className='pt-8 mb-2 -mt-6 text-lg font-bold' id='xco2'>
                         XCO2
                     </h1>
                     <div className='h-[30rem] w-full bg-red-100 rounded' />
-                    <h1 className='my-2 text-2xl font-semibold' id='xch4'>
+                    <h1 className='pt-8 mb-2 -mt-6 text-lg font-bold' id='xch4'>
                         XCH4
                     </h1>
                     <div className='h-[30rem] w-full bg-red-100 rounded' />
                     <h1
-                        className='my-2 text-2xl font-semibold'
+                        className='pt-8 mb-2 -mt-6 text-lg font-bold'
                         id='groundPressure'
                     >
                         Ground Pressure
                     </h1>
                     <div className='h-[30rem] w-full bg-red-100 rounded' />
                     <h1
-                        className='my-2 text-2xl font-semibold'
+                        className='pt-8 mb-2 -mt-6 text-lg font-bold'
                         id='solarZenithAngle'
                     >
                         Solar Zenith Angle
                     </h1>
                     <div className='h-[30rem] w-full bg-red-100 rounded' />
                     <h1
-                        className='my-2 text-2xl font-semibold'
+                        className='pt-8 mb-2 -mt-6 text-lg font-bold'
                         id='solarAzimuthAngle'
                     >
                         Solar Azimuth Angle

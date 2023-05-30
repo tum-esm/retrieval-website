@@ -4,10 +4,11 @@ import {
 } from '@/app/lib/custom-types';
 import PocketBase from 'pocketbase';
 
+const pb = new PocketBase('https://esm-linode.dostuffthatmatters.dev');
+
 export async function fetchDayMeasurementData(
     date: string
 ): Promise<DayMeasurementType[]> {
-    const pb = new PocketBase('https://esm-linode.dostuffthatmatters.dev');
     await pb
         .collection('users')
         .authWithPassword(
@@ -17,9 +18,8 @@ export async function fetchDayMeasurementData(
     if (!pb.authStore.isValid) {
         throw new Error('Invalid auth data');
     }
-    const results = await pb.collection('measurements').getFullList({
-        filter: `utc~'${date}'&&proffast_version='2.2'`,
-        sort: 'utc',
+    const results = await pb.collection('bulk_measurements').getFullList({
+        filter: `utc_date='${date}'&&proffast_version='2.2'`,
     });
     return results.map(item => dayMeasurementSchema.parse(item));
 }

@@ -1,4 +1,5 @@
 import { range } from 'lodash';
+import Link from 'next/link';
 
 function getDaysInMonth(p: { month: number; year: number }): number {
     return new Date(p.year, p.month, 0).getDate();
@@ -60,12 +61,11 @@ export default function CalendarMonth(props: {
                 <div className='flex flex-row h-5 gap-x-1' key={weekIndex}>
                     {range(0, 7).map(dayIndex => {
                         const day = weekIndex * 7 + dayIndex + 1 - firstWeekday;
-                        const measurementCount = dailyMeasurementCounts[day];
                         if (day < 1 || day > daysInMonth) {
                             return <div className='w-[calc((1/7)*100%)] h-5' />;
                         }
                         return (
-                            <div
+                            <Link
                                 className={
                                     'rounded-sm w-[calc((1/7)*100%)] h-5 ' +
                                     'flex items-center justify-center ' +
@@ -73,9 +73,16 @@ export default function CalendarMonth(props: {
                                     getBgColor(day)
                                 }
                                 key={day}
+                                href={
+                                    `/${props.identifier.year}-` +
+                                    `${props.identifier.month < 10 ? '0' : ''}${
+                                        props.identifier.month
+                                    }-` +
+                                    `${day < 10 ? '0' : ''}${day}`
+                                }
                             >
                                 {day}
-                            </div>
+                            </Link>
                         );
                     })}
                 </div>

@@ -1,17 +1,5 @@
+import { HeatmapItemType, heatmapItemSchema } from '@/app/lib/custom-types';
 import PocketBase from 'pocketbase';
-import { z } from 'zod';
-
-const heatmapItemSchema = z.object({
-    collectionId: z.string(),
-    collectionName: z.string(),
-    id: z.string(),
-    total: z.number(),
-    utc: z.string(),
-    created: z.string(),
-    updated: z.string(),
-    expand: z.object({}),
-});
-type HeatmapItem = z.infer<typeof heatmapItemSchema>;
 
 export async function generateStaticParams() {
     const pb = new PocketBase('https://esm-linode.dostuffthatmatters.dev');
@@ -28,7 +16,7 @@ export async function generateStaticParams() {
     const results = await pb.collection('data_heatmap').getFullList({
         sort: 'utc',
     });
-    const parsedResults: HeatmapItem[] = results.map(item =>
+    const parsedResults: HeatmapItemType[] = results.map(item =>
         heatmapItemSchema.parse(item)
     );
     console.log(parsedResults);

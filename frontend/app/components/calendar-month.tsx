@@ -28,25 +28,40 @@ export default function CalendarMonth(props: {
     });
     const weekCount = Math.ceil((firstWeekday + daysInMonth) / 7);
 
+    const getBgColor = (day: number): string => {
+        const measurementCount = dailyMeasurementCounts[day];
+        if (measurementCount === undefined || measurementCount === 0) {
+            return 'bg-gray-200 text-gray-400';
+        } else if (measurementCount < 500) {
+            return 'bg-green-300 text-green-800';
+        } else if (measurementCount < 1500) {
+            return 'bg-green-400 text-green-900';
+        } else {
+            return 'bg-green-500 text-green-950';
+        }
+    };
+
     return (
-        <div className='flex flex-col bg-red-600 gap-y-1'>
+        <div className='flex flex-col w-full gap-y-1'>
             {range(0, weekCount).map(weekIndex => (
-                <div
-                    className='flex flex-row bg-red-400 gap-x-1'
-                    key={weekIndex}
-                >
+                <div className='flex flex-row h-5 gap-x-1' key={weekIndex}>
                     {range(0, 7).map(dayIndex => {
                         const day = weekIndex * 7 + dayIndex + 1 - firstWeekday;
                         const measurementCount = dailyMeasurementCounts[day];
+                        if (day < 1 || day > daysInMonth) {
+                            return <div className='w-[calc((1/7)*100%)] h-5' />;
+                        }
                         return (
                             <div
-                                className='inline bg-red-200 calendar-day'
+                                className={
+                                    'rounded-sm w-[calc((1/7)*100%)] h-5 ' +
+                                    'flex items-center justify-center ' +
+                                    'text-sm font-medium ' +
+                                    getBgColor(day)
+                                }
                                 key={day}
                             >
-                                <div className='calendar-day-number'>{day}</div>
-                                <div className='calendar-day-measurement-count'>
-                                    {measurementCount}
-                                </div>
+                                {day}
                             </div>
                         );
                     })}

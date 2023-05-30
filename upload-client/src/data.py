@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Any, Optional
 import json
 import os
+import numpy as np
 import src
 import pydantic
 import rich.console
@@ -12,7 +13,6 @@ import tum_esm_em27_metadata
 PROFFAST_VERSION = "2.2"
 _PROJECT_DIR = tum_esm_utils.files.get_parent_dir_path(__file__, current_depth=2)
 CACHE_PATH = os.path.join(_PROJECT_DIR, "cache.json")
-console = rich.console.Console()
 
 
 class Cache(pydantic.BaseModel):
@@ -65,7 +65,7 @@ class SensorDataLoader:
 
         self.cache = Cache.load()
 
-    def get_new_dates(self) -> list[str]:
+    def get_new_dates(self, console: rich.console.Console) -> list[str]:
         if not os.path.isdir(self.data_dir):
             return []
         new_dates: list[str] = []
@@ -151,6 +151,11 @@ class SensorDataLoader:
             "sensor_id": self.sensor_id,
         }
 
+        def nullify(x: Any) -> Any:
+            if x in [np.nan, np.inf, -np.inf]:
+                return None
+            return x
+
         for row in df.iter_rows():
             records.append(
                 {
@@ -158,7 +163,7 @@ class SensorDataLoader:
                     "raw": True,
                     "utc": row[0].isoformat(),
                     **{
-                        data_columns[i]: round(row[i + 1], 6)
+                        data_columns[i]: nullify(round(row[i + 1], 6))
                         for i in range(len(data_columns))
                     },
                 }

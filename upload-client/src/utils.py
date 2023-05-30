@@ -121,4 +121,8 @@ def post_process_dataframe(df: pl.DataFrame) -> pl.DataFrame:
         .agg(pl.exclude("utc").mean())
     )
 
-    return df
+    data_column_names = df.columns
+    data_column_names.remove("utc")
+    df_without_null_rows = df.filter(~pl.all(pl.col(data_column_names).is_nan()))
+
+    return df_without_null_rows

@@ -43,6 +43,19 @@ export default function CalendarMonth(props: {
 
     return (
         <div className='flex flex-col w-full gap-y-1'>
+            <div className='flex flex-row h-5 gap-x-1'>
+                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(day => (
+                    <div
+                        className={
+                            'rounded-sm w-[calc((1/7)*100%)] h-5 ' +
+                            'flex items-center justify-center ' +
+                            'text-xs font-medium text-gray-300'
+                        }
+                    >
+                        {day}
+                    </div>
+                ))}
+            </div>
             {range(0, weekCount).map(weekIndex => (
                 <div className='flex flex-row h-5 gap-x-1' key={weekIndex}>
                     {range(0, 7).map(dayIndex => {
